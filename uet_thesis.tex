@@ -1,0 +1,136 @@
+%% ----------------------------------------------------------------
+%% uet_thesis.tex -- MAIN FILE (compile this file)
+%% Unified FYP Design Document Template
+%% ----------------------------------------------------------------
+
+\documentclass[a4paper,12pt,oneside]{uet_thesis}
+\graphicspath{{Figures/}}
+
+% Packages required by the design-document template.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[square,numbers,comma,sort&compress]{natbib}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[compact]{titlesec}
+
+% Match the compact heading treatment used by the supplied UET template.
+\titlespacing{\section}{0pt}{*0}{*0}
+\titlespacing{\subsection}{0pt}{*0}{*0}
+\titlespacing{\subsubsection}{0pt}{*0}{*0}
+
+\definecolor{GuidanceGray}{HTML}{4D4D4D}
+\definecolor{PlaceholderBlue}{HTML}{1F5AA6}
+\definecolor{ExampleGray}{HTML}{F2F4F7}
+
+\hypersetup{urlcolor=blue,colorlinks=true,linkcolor=blue,citecolor=blue}
+\pdfstringdefDisableCommands{\def\quad{ }}
+\setlength{\parskip}{6pt}
+\setlist[itemize]{topsep=0.25em,itemsep=0.15em,leftmargin=1.6em}
+\setlist[enumerate]{topsep=0.25em,itemsep=0.15em,leftmargin=1.8em}
+\renewcommand{\arraystretch}{1.2}
+
+\newcommand{\placeholder}[1]{\textcolor{PlaceholderBlue}{\textit{<#1>}}}
+\newcommand{\applicability}[1]{\texorpdfstring{\normalfont\small\textit{(#1)}}{(#1)}}
+
+\newenvironment{guidance}
+  {\begin{quote}\small\color{GuidanceGray}\textbf{Guidance.} }
+  {\end{quote}}
+
+\newenvironment{examplebox}
+  {\begin{quote}\small\color{GuidanceGray}\textbf{Example (replace or remove).} }
+  {\end{quote}}
+
+\newcommand{\diagramplaceholder}[2]{%
+  \begin{figure}[H]
+    \centering
+    \fcolorbox{GuidanceGray}{ExampleGray}{%
+      \begin{minipage}[c][4.0cm][c]{0.86\textwidth}
+        \centering
+        \textbf{#1}\\[0.5em]
+        \placeholder{Insert a clear, readable diagram here}\\[0.5em]
+        \small #2
+      \end{minipage}}
+    \caption{#1}
+  \end{figure}
+}
+
+\begin{document}
+\frontmatter
+
+% -----------------------------------------------------------------------------
+% Title-page information: replace all sample values.
+% -----------------------------------------------------------------------------
+\title{\texorpdfstring{surplusSpace\\[1.5em]{\large Final Year Project Design Document}}{}}
+\session{2023--2027 \quad Project Type: Development / Hybrid}
+\advisor{Ms. Anam Iftikhar}
+\authors{%
+Hafsa Shahid \quad 2023-CS-708 \\
+Fatima Irfan \quad 2023-CS-715 \\
+Daniyal Jumshaid \quad 2023-CS-734 \\
+Noor Fatima Malik \quad 2023-CS-739}
+\addresses{\deptname \\ \univname}
+\date{\today}
+\subject{Final Year Project Design Document}
+\keywords{software design, requirements, final year project}
+\maketitle
+
+\setstretch{1.3}
+\fancyhead{}
+\rhead{\thepage}
+\lhead{}
+\pagestyle{fancy}
+
+\chapter*{Template Instructions}
+\addcontentsline{toc}{chapter}{Template Instructions}
+This template supports development, research, hybrid, and game projects. Complete
+all common sections and retain conditional sections only when they apply to the
+selected project. Keep the document concise and use cross-references instead of
+repeating information.
+
+\begin{itemize}
+  \item Replace every \placeholder{placeholder} and remove all example text before submission.
+  \item State the project type on the title page: Development, Research, Hybrid, or Game.
+  \item Assign stable identifiers to objectives, scope items, requirements, risks, and design elements.
+  \item Write one clear idea or testable requirement per numbered item.
+  \item Use standard UML notation where UML diagrams are included.
+  \item Cite every external idea, dataset, standard, figure, and factual claim.
+  \item Keep detailed test cases and results in the separate software testing document; reference them through the traceability matrix.
+\end{itemize}
+\clearpage
+
+\lhead{\emph{Design Document}}
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+\pagestyle{fancy}
+\onehalfspacing
+
+\input{./Chapters/Chapter1}
+\input{./Chapters/Chapter2}
+\input{./Chapters/Chapter3}
+\input{./Chapters/Chapter4}
+\input{./Chapters/Chapter5}
+
+\addtocontents{toc}{\vspace{2em}}
+\appendix
+\input{./Chapters/AppendixA}
+\input{./Chapters/AppendixB}
+
+\addtocontents{toc}{\vspace{2em}}
+\backmatter
+\label{References}
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

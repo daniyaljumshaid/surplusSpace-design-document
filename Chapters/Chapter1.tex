@@ -1,0 +1,145 @@
+% This file is included by uet_thesis.tex.
+% Replace blue placeholders and remove example text before submission.
+
+\chapter{Project Overview}
+\label{chap:overview}
+% =============================================================================
+
+\section{Executive Summary}
+surplusSpace is an AI-gated marketplace for surplus construction materials. It
+addresses the lack of a trustworthy channel through which sellers and buyers can
+exchange surplus bricks, steel/rebar, tiles/marble, and wood. A seller creates a
+lot with its quantity, description, price, and 3--5 representative photographs.
+Before publication, the system classifies the material, detects selected visible
+defects, derives a condition grade, checks description--image consistency, and
+estimates a fair surplus price against a new-material reference price. A decision
+engine automatically publishes listings that pass the checks and routes uncertain
+or risky listings to an Admin, who has final authority to override the AI.
+Customers and Contractors use a switchable account to search by location, price,
+and category, negotiate through real-time chat, and reserve lots. An AI Listing
+Assistant answers questions using only the listing's own data. The project is
+limited to four material categories and evaluates classification, defect
+detection, price estimation, and agreement between automated decisions and Admin
+judgement.
+
+\section{Background and Motivation}
+Surplus bricks, steel/rebar, tiles/marble, and wood are often wasted because
+sellers and buyers lack a trustworthy exchange channel. Existing classifieds
+platforms do not automatically check listing condition, price fairness, or
+description accuracy, while manual moderation is difficult to scale. The project
+therefore combines a construction-material marketplace with an AI verification
+step and a human Admin fallback. The scope is deliberately limited to four
+material categories and documented defect classes so that the system can be
+developed and evaluated within the 12-month project.
+
+\section{Problem Statement}
+Contractors and sellers listing surplus construction material have no automated
+way to verify, before a listing reaches buyers, that its condition, price, and
+description are consistent and honest. Existing marketplace platforms rely mainly
+on manual or after-the-fact moderation, which does not scale and leaves buyers
+exposed to misrepresented listings. A marketplace is therefore needed that
+screens each listing before publication while retaining a human Admin as the
+final authority.
+
+\section{Research Questions and Hypotheses \applicability{Research, Hybrid; hypotheses if applicable}}
+\begin{guidance}
+State focused questions derived from the problem statement. Include hypotheses
+only when the study tests predicted relationships or differences. Exploratory or
+qualitative studies may not require hypotheses.
+\end{guidance}
+
+\begin{table}[H]
+\centering
+\caption{Research questions and hypotheses}
+\label{tab:research-questions}
+\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth}X X@{}}
+\toprule
+\textbf{ID} & \textbf{Research question} & \textbf{Hypothesis, if applicable} \\
+\midrule
+RQ-01 & \placeholder{Focused and answerable research question} & \placeholder{H1 or Not applicable} \\
+RQ-02 & \placeholder{Additional research question, if required} & \placeholder{H2 or Not applicable} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Objectives}
+\begin{table}[H]
+\centering
+\caption{Project objectives}
+\label{tab:objectives}
+\begin{tabularx}{\textwidth}{@{}p{0.14\textwidth}X@{}}
+\toprule
+\textbf{ID} & \textbf{Objective} \\
+\midrule
+OBJ-01 & Enable Customers and Contractors to create, discover, negotiate, reserve, and track lot-based surplus-material listings through a single marketplace. \\
+OBJ-02 & Classify the four scoped material categories, detect selected visible defects, assess condition, check description--image consistency, and estimate a fair surplus price. \\
+OBJ-03 & Provide human-in-the-loop review for uncertain listings and a contextual assistant that answers buyers using only available listing information. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Proposed Approach}
+The project will develop a marketplace with Admin, Customer, and Contractor
+roles. Its AI pipeline uses CLIP zero-shot classification, material-specific YOLO
+defect detection, a condition engine, description--image consistency checks, and
+XGBoost price estimation. A decision engine auto-publishes clean listings and
+sends uncertain or Mixed-condition listings to an Admin review queue. The core
+platform provides lot-based listings, location and category search, real-time
+chat, negotiation, ratings, saved-search alerts, reservation, and pickup-status
+tracking.
+
+\section{Scope}
+\subsection{In Scope}
+
+\begin{table}[H]
+\centering
+\caption{In-scope items}
+\label{tab:in-scope}
+\begin{tabularx}{\textwidth}{@{}p{0.14\textwidth}X p{0.20\textwidth}@{}}
+\toprule
+\textbf{Scope ID} & \textbf{Included item} & \textbf{Objective(s)} \\
+\midrule
+SCP-01 & Lot-based listings with quantity, description, price, and 3--5 representative photographs. & OBJ-01 \\
+SCP-02 & Customer/Contractor search, negotiation, reservation, and pickup-status tracking. & OBJ-01 \\
+SCP-03 & AI classification, defect detection, condition grading, consistency checking, and price estimation for the four scoped categories. & OBJ-02 \\
+SCP-04 & Admin review queue with approval, rejection, edit requests, threshold tuning, and AI override. & OBJ-03 \\
+SCP-05 & Location, price, and category search; real-time chat and negotiation; ratings, saved-search alerts, reservation, and pickup tracking. & OBJ-01 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Out of Scope \applicability{If applicable}}
+\begin{table}[H]
+\centering
+\caption{Out-of-scope items}
+\label{tab:out-of-scope}
+\begin{tabularx}{\textwidth}{@{}p{0.14\textwidth}X X@{}}
+\toprule
+\textbf{ID} & \textbf{Excluded item} & \textbf{Reason} \\
+\midrule
+EXC-01 & Integration with the university's central timetable system. & The external interface is unavailable during the FYP period. \\
+EXC-02 & Hidden or internal defects and engineering-grade structural inspection. & The project targets only visible defects supported by validated datasets. \\
+EXC-03 & Real payment processing and contractor/business financial verification. & Payment compliance and financial verification are outside the project goals. \\
+EXC-04 & Guaranteeing the condition of every item in a large lot. & AI assessment applies only to uploaded representative samples. \\
+EXC-05 & Automated dispute resolution and delivery. & Buyers and sellers arrange pickup; disputes remain manual Admin work. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Users and Stakeholders}
+\begin{table}[H]
+\centering
+\caption{Users and stakeholders}
+\label{tab:stakeholders}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}p{0.18\textwidth}X X@{}}
+\toprule
+\textbf{Stakeholder} & \textbf{Role} & \textbf{Need or interest} & \textbf{Design influence} \\
+\midrule
+Contractor/Seller & Primary user & Create lots, negotiate, and sell surplus material & Lot-based listing and seller tools \\
+Customer/Buyer & Primary user & Find trustworthy material and reserve lots & Location, price, category search and AI assistant \\
+Admin & Moderator & Review flagged listings, manage users and categories, and override AI decisions & Review queue, thresholds, dashboard, and moderation controls \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =============================================================================

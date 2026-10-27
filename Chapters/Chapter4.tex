@@ -1,0 +1,269 @@
+% This file is included by uet_thesis.tex.
+% Replace blue placeholders and remove example text before submission.
+
+\chapter{Design Specification}
+\label{chap:design}
+% =============================================================================
+
+\section{System Context, Architecture, and Interfaces \applicability{Development, Hybrid, Game; Research Software Prototype}}
+The system boundary contains the Flutter web/Android client, the ASP.NET Core
+marketplace API, the PostgreSQL/PostGIS database, Redis, SignalR, and the
+asynchronous Python/FastAPI AI service. Customers and Contractors submit and
+discover lots, communicate, negotiate, and reserve them. Admins manage users,
+categories, thresholds, flagged listings, and AI overrides. AWS S3 stores listing
+photographs. The AI service returns classification, defect, condition,
+consistency, and price signals to the decision engine.
+
+\begin{table}[H]
+\centering
+\caption{Major interfaces}
+\label{tab:major-interfaces}
+\begin{tabularx}{\textwidth}{@{}p{0.16\textwidth}p{0.22\textwidth}X X@{}}
+\toprule
+\textbf{ID} & \textbf{Interface} & \textbf{Purpose and exchanged information} & \textbf{Protocol or format} \\
+\midrule
+INT-01 & Flutter client--ASP.NET Core API & Authentication, listings, search, reservations, and Admin operations & REST/JSON \\
+INT-02 & ASP.NET Core--FastAPI AI service & Listing photos and metadata exchanged for AI assessment results & Asynchronous API \\
+INT-03 & ASP.NET Core--SignalR & Real-time chat and negotiation messages & SignalR \\
+INT-04 & Platform--PostgreSQL/PostGIS and Redis & Persistent marketplace data, geospatial queries, cache, and presence & Database/cache protocols \\
+INT-05 & Platform--AWS S3 & Listing-photo upload and retrieval & Object storage API \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Research Methodology and Experimental Design \applicability{Research, Hybrid}}
+\subsection{Study or Experimental Design}
+The project will evaluate the integrated system using held-out image data and
+Admin review decisions. Each submitted lot passes through the same classification,
+defect, condition, consistency, and price stages. Results are compared with
+validated labels, sourced reference prices, and human review outcomes.
+
+\subsection{Population, Sample, Participants, or Dataset}
+The AI pipeline will use existing public building-defect datasets, including
+YOLO-format datasets, SDNET2018, and MBDD2025, supplemented by a small
+team-collected validation set of marketplace-style phone photographs. New-material
+prices will be collected from published Pakistani construction-pricing sources.
+Surplus depreciation will be informed by structured interviews with 5--10 Lahore
+dealers and contractors. User requirements will be validated through interviews
+with 4--6 contractors/suppliers and a brief questionnaire.
+
+\subsection{Variables and Data Collection Techniques}
+
+\begin{table}[H]
+\centering
+\caption{Variables and data collection}
+\label{tab:variables}
+\begin{tabularx}{\textwidth}{@{}p{0.16\textwidth}p{0.23\textwidth}X X@{}}
+\toprule
+\textbf{ID} & \textbf{Variable or construct} & \textbf{Operational definition or measure} & \textbf{Collection source or instrument} \\
+\midrule
+VAR-01 & \placeholder{Variable or construct} & \placeholder{How it is defined or measured} & \placeholder{Instrument, sensor, dataset field, interview, etc.} \\
+VAR-02 & Material classification accuracy & Correct predicted category across Bricks, Steel/Rebar, Tiles/Marble, and Wood & Held-out image set \\
+VAR-03 & Defect detection performance & Precision and recall for each configured defect class & Labelled public datasets and real-photo validation set \\
+VAR-04 & Price-estimate error & MAE and RMSE against reference prices & Published Pakistani price sources \\
+VAR-05 & Decision agreement & Agreement between automated publish/flag result and Admin decision & Admin review outcomes \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Analysis and Evaluation Protocol}
+Evaluation will report material-classification accuracy and confusion patterns,
+defect-detection precision and recall per defect class, agreement between the
+automated publish/flag decision and Admin review decisions, and price-estimate
+MAE/RMSE against sourced reference prices. The real-photo validation set will be
+kept separate from training data.
+
+
+
+\section{Behavioural and Interaction Design \applicability{Development, Hybrid, Game; Research if applicable}}
+\begin{guidance}
+Include only the models needed to explain the project's behaviour and interaction.
+Each UML diagram must use standard UML notation~\citep{omguml251}, remain readable, and be followed by a
+brief explanation of important flows, alternatives, or design decisions.
+\end{guidance}
+
+\subsection{Use-Case Model}
+The principal use cases are Create Lot Listing, Search Listings, Chat and
+Negotiate, Reserve Lot, Review Flagged Listing, Override AI Decision, and Ask the
+AI Listing Assistant.
+
+\begin{table}[H]
+\centering
+\caption{Use-case specification}
+\label{tab:use-case-specification}
+\begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}X@{}}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+Use-case ID and name & UC-01: Create and verify lot listing \\
+Primary actor & Contractor/Seller \\
+Preconditions & Authenticated account and lot details with 3--5 photographs \\
+Trigger & Seller submits a listing \\
+Main flow & Store lot; run AI pipeline; publish if checks pass or queue for Admin review \\
+Alternative or exception flows & Low confidence, disagreement, or Mixed condition routes to Admin \\
+Postconditions & Listing is published, rejected, or awaiting review \\
+Related requirements & FR-01--FR-05, NFR-01--NFR-02 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Activity Model}
+\begin{guidance}
+Model an important workflow using actions, control flows, decisions with guards,
+parallel paths where required, and clear initial and final nodes. Use swimlanes when
+responsibility changes are important.
+\end{guidance}
+\diagramplaceholder{Activity diagram}{Example workflow: submit request, check availability, approve or reject, and notify the student.}
+
+\subsection{State-Machine Model \applicability{State-dependent systems and games}}
+\begin{guidance}
+Model the lifecycle of one important stateful entity. Show states, triggering
+events, guards where needed, actions, and initial and final states.
+\end{guidance}
+\diagramplaceholder{State-machine diagram}{Example entity: Appointment; states may include Requested, Approved, Rescheduled, Completed, and Cancelled.}
+
+\subsection{Sequence Model}
+\begin{guidance}
+Show how an important scenario is realized through time-ordered messages among
+actors, system components, and external services. Use activation bars and combined
+fragments such as \texttt{alt}, \texttt{opt}, or \texttt{loop} where appropriate.
+\end{guidance}
+\diagramplaceholder{Sequence diagram}{Example scenario: a student submits an appointment request and receives confirmation.}
+
+\section{Structural Design \applicability{Development, Hybrid, Game; Research if applicable}}
+\begin{guidance}
+Describe the static structure needed to realize the requirements. Keep models at a
+level appropriate to the project and avoid including generated framework classes
+that do not communicate a design decision.
+\end{guidance}
+
+\subsection{Class or Domain Model}
+\begin{guidance}
+Show important domain concepts or software classes, relevant attributes and
+operations, relationships, multiplicities, and inheritance where justified.
+\end{guidance}
+\diagramplaceholder{Class or domain diagram}{Example classes: Student, Adviser, Appointment, AvailabilitySlot, and Notification.}
+
+\subsection{Component Model}
+\begin{guidance}
+Show deployable or replaceable software components, their provided and required
+interfaces, and dependencies.
+\end{guidance}
+\diagramplaceholder{Component diagram}{Example components: Web Client, Appointment Service, Authentication Service, and Data Store.}
+
+\subsection{Package Model \applicability{If required}}
+\begin{guidance}
+Use a package diagram when the organization and dependencies of modules or layers
+need clarification. Omit it when the component or class model already communicates
+the structure adequately.
+\end{guidance}
+\diagramplaceholder{Package diagram}{Example packages: presentation, application, domain, and infrastructure.}
+
+\subsection{Deployment Model \applicability{Deployed, distributed, networked, or multi-device systems}}
+\begin{guidance}
+Show execution nodes, devices, environments, deployed artifacts, and communication
+paths. Distinguish physical or virtual nodes from software components.
+\end{guidance}
+\diagramplaceholder{Deployment diagram}{Example nodes: user device, application server, database server, and external notification service.}
+
+\section{Data Design and Management}
+\label{sec:data-design}
+
+\subsection{Database, Schema, and Persistence Design \applicability{Development, Hybrid, Game, if applicable}}
+\begin{guidance}
+Describe persistent entities, identifiers, relationships, integrity constraints,
+and important indexing or retention decisions. Use an ER diagram, schema, or other
+notation appropriate to the selected database model.
+\end{guidance}
+\diagramplaceholder{Data model or schema}{Example entities: User, AvailabilitySlot, Appointment, and NotificationLog.}
+
+\subsection{Research Data Management \applicability{Research, Hybrid}}
+\begin{guidance}
+Explain how research data will be collected or acquired, named, stored, protected,
+anonymized or pseudonymized, versioned, retained, shared, and disposed of. Identify
+access controls and responsible team members.
+\end{guidance}
+
+\begin{table}[H]
+\centering
+\caption{Research data management plan}
+\label{tab:data-management}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}X X@{}}
+\toprule
+\textbf{Data category} & \textbf{Management method} & \textbf{Protection, retention, or access rule} \\
+\midrule
+\placeholder{Raw/processed data, code, consent records, model artifacts} & \placeholder{Format, location, naming, and versioning} & \placeholder{Access, retention, sharing, and disposal} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Algorithm or Model Design \applicability{Research, Hybrid; Development or Game if a core algorithm or AI model is used}}
+\begin{table}[H]
+\centering
+\caption{Core algorithm or model}
+\label{tab:algorithm-model}
+\begin{tabularx}{\textwidth}{@{}p{0.18\textwidth}X@{}}
+\toprule
+\textbf{Item} & \textbf{Description} \\
+\midrule
+Name and purpose & CLIP, YOLO, condition engine, consistency checker, and XGBoost price model for listing verification. \\
+Inputs and outputs & Representative listing photographs, description, quantity, location, and reference price; material, defects, condition, consistency result, and estimated surplus price. \\
+Processing steps & Classify material; detect visible defects; aggregate photo results into a lot grade; compare description and image signals; estimate price; publish or flag using decision thresholds. \\
+Assumptions and limits & Assessment covers representative photos and only defect classes present and validated in available datasets. \\
+Related requirements & FR-02--FR-04, NFR-02 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{User Interface and Accessibility Design \applicability{User-facing Development, Hybrid, and Game projects; Research prototypes if applicable}}
+\begin{guidance}
+Present the navigation structure and key wireframes or prototypes. Explain how the
+design supports usability, accessibility, responsive layout, error prevention,
+feedback, and consistency. Do not include every minor screen.
+\end{guidance}
+\diagramplaceholder{Navigation structure or user flow}{Example: Sign In, Dashboard, Available Slots, Appointment Details, and Notifications.}
+\diagramplaceholder{Key wireframe or prototype}{Annotate important controls, content, validation, feedback, and accessibility decisions.}
+
+\section{Security, Privacy, and Safety Design \applicability{If applicable}}
+\begin{guidance}
+Explain the design controls used to satisfy the corresponding requirements in
+Chapter~\ref{chap:requirements}. Address relevant threats, authentication,
+authorization, data protection, logging, secure failure, privacy, and safety. Do
+not make general claims such as ``the system is secure'' without specific controls.
+\end{guidance}
+
+\begin{table}[H]
+\centering
+\caption{Security, privacy, and safety controls}
+\label{tab:security-controls}
+\begin{tabularx}{\textwidth}{@{}p{0.16\textwidth}X X p{0.19\textwidth}@{}}
+\toprule
+\textbf{Design ID} & \textbf{Risk or requirement} & \textbf{Design control} & \textbf{Related requirement(s)} \\
+\midrule
+SEC-01 & Unauthorized access to appointment records & Role-based authorization is checked at the service layer before records are returned or modified. & FR-XX, NFR-XX \\
+SEC-02 & \placeholder{Threat, privacy concern, or safety hazard} & \placeholder{Specific design control} & \placeholder{Requirement IDs} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Design Decisions and Rationale}
+\begin{guidance}
+Record significant choices, alternatives considered, and reasons for selection.
+Focus on decisions that materially affect quality, cost, risk, maintainability, or
+project feasibility. Do not repeat the tools list from Section~\ref{sec:tools}.
+\end{guidance}
+
+\begin{table}[H]
+\centering
+\caption{Design decisions}
+\label{tab:design-decisions}
+\begin{tabularx}{\textwidth}{@{}p{0.14\textwidth}X X X@{}}
+\toprule
+\textbf{ID} & \textbf{Decision} & \textbf{Alternatives considered} & \textbf{Rationale and trade-off} \\
+\midrule
+DD-01 & \placeholder{Selected design decision} & \placeholder{Feasible alternatives} & \placeholder{Evidence-based reason and accepted limitation} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =============================================================================

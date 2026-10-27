@@ -1,0 +1,92 @@
+% This file is included by uet_thesis.tex.
+% Replace blue placeholders and remove example text before submission.
+
+\chapter{Requirements Specification}
+\label{chap:requirements}
+% =============================================================================
+
+\section{Assumptions, Constraints, and Dependencies}
+\begin{table}[H]
+\centering
+\caption{Assumptions, constraints, and dependencies}
+\label{tab:acd}
+\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth}p{0.18\textwidth}X X@{}}
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Statement} & \textbf{Implication} \\
+\midrule
+ACD-01 & Assumption & Users have access to a modern web browser. & A separate desktop application is not required. \\
+ACD-02 & Constraint & AI assessment covers only four material categories and validated visible defect classes. & The system must disclose its limits and avoid claiming exhaustive inspection. \\
+ACD-03 & Dependency & Public defect datasets, published new-material prices, and a small interview/validation sample. & Model coverage and price depreciation estimates depend on data availability and quality. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
+\begin{table}[H]
+\centering
+\caption{Functional requirements}
+\label{tab:functional-requirements}
+\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}X p{0.15\textwidth}p{0.20\textwidth}@{}}
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Source} \\
+\midrule
+FR-01 & The system shall allow a seller to create a lot listing with quantity, description, price, and 3--5 representative photographs. & Must & Contractor/Seller \\
+FR-02 & The system shall classify submitted listing photos into Bricks, Steel/Rebar, Tiles/Marble, or Wood. & Must & AI pipeline \\
+FR-03 & The system shall detect configured visible defects and derive a Good, Minor, Major, Mixed, or Not Assessed condition grade. & Must & AI pipeline \\
+FR-04 & The system shall route uncertain, inconsistent, or Mixed-condition listings to the Admin review queue. & Must & Admin \\
+FR-05 & The system shall allow Admins to approve, reject, request edits, or override an AI listing decision. & Must & Admin \\
+FR-06 & The system shall allow users to search listings by location, price, and category. & Must & Customer/Contractor \\
+FR-07 & The system shall support real-time chat, negotiation, and lot reservation. & Must & Customer/Contractor \\
+FR-08 & The system shall answer buyer questions using only the listing's structured data and return an explicit unavailable response when information is missing. & Should & Customer/Buyer \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Non-Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
+\begin{table}[H]
+\centering
+\caption{Non-functional requirements}
+\label{tab:nonfunctional-requirements}
+\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.18\textwidth}X p{0.15\textwidth}@{}}
+\toprule
+\textbf{ID} & \textbf{Attribute} & \textbf{Measurable requirement} & \textbf{Priority} \\
+\midrule
+NFR-01 & Reliability & AI components shall be decoupled so that a temporarily unavailable AI service does not prevent a submitted listing from remaining valid and purchasable. & Must \\
+NFR-02 & Transparency & The system shall disclose that AI assessment applies to representative samples and does not guarantee every unphotographed item. & Must \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Data and External Interface Requirements \applicability{If applicable}}
+\begin{table}[H]
+\centering
+\caption{Data and external interface requirements}
+\label{tab:data-interface-requirements}
+\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.19\textwidth}X X@{}}
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Requirement} & \textbf{Source or system} \\
+\midrule
+DIR-01 & Data & The system shall store each lot with quantity, material, photographs, condition, detected defects, price, location, and status. & Listing process \\
+EIR-01 & External API & The core API shall communicate asynchronously with the Python/FastAPI AI service for classification, defect detection, consistency, and price results. & AI service \\
+EIR-02 & Real-time service & The system shall exchange chat and negotiation messages through the SignalR service. & SignalR \\
+EIR-03 & Object storage & The system shall store listing photographs in AWS S3 and associate them with their lot listing. & AWS S3 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Legal, Ethical, Privacy, and Safety Requirements \applicability{If applicable}}
+\begin{table}[H]
+\centering
+\caption{Legal, ethical, privacy, and safety requirements}
+\label{tab:leps-requirements}
+\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.18\textwidth}X X@{}}
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement or obligation} & \textbf{Applicable authority or source} \\
+\midrule
+PR-01 & Privacy & Personal data shall be collected only for stated project purposes and accessed only by authorized roles. & Project privacy requirement \\
+ER-01 & Ethics & Interview and questionnaire participants shall provide informed consent, and collected responses shall be used only for requirements and evaluation. & Supervisor/institutional guidance \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =============================================================================

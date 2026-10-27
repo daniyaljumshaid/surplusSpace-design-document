@@ -1,0 +1,161 @@
+% This file is included by uet_thesis.tex.
+% Replace blue placeholders and remove example text before submission.
+
+\chapter{Planning, Risk, and Traceability}
+\label{chap:planning}
+% =============================================================================
+
+\section{Design Traceability Matrix}
+{\footnotesize
+\begin{longtable}{@{}p{0.12\textwidth}p{0.11\textwidth}p{0.16\textwidth}p{0.23\textwidth}p{0.24\textwidth}@{}}
+\caption{Design traceability matrix}\label{tab:traceability}\\
+\toprule
+\textbf{Objective} & \textbf{Scope} & \textbf{Requirement} & \textbf{Design element} & \textbf{Testing-document reference} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Objective} & \textbf{Scope} & \textbf{Requirement} & \textbf{Design element} & \textbf{Testing-document reference} \\
+\midrule
+\endhead
+OBJ-01 & SCP-01 & FR-01 & UC-01; Lot Listing; Listing model & Testing document: listing creation \\
+OBJ-01 & SCP-05 & FR-06--FR-07 & UC-02; search and chat components; reservation model & Testing document: discovery and reservation \\
+OBJ-02 & SCP-03 & FR-02--FR-03 & AI pipeline; condition engine; AI model design & Testing document: classification and defect evaluation \\
+OBJ-03 & SCP-04 & FR-04--FR-05 & Admin review queue; decision engine & Testing document: decision agreement and override \\
+\bottomrule
+\end{longtable}
+}
+
+\section{Verification and Validation Strategy}
+\begin{table}[H]
+\centering
+\caption{Verification and validation strategy}
+\label{tab:vv-strategy}
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}X X p{0.20\textwidth}@{}}
+\toprule
+\textbf{Target} & \textbf{Method} & \textbf{Evidence} & \textbf{Responsible role} \\
+\midrule
+Functional requirements & Functional and integration testing & Approved test results in the testing document & Whole team \\
+Stakeholder needs & Demonstration and structured interviews/questionnaire & Feedback and validation record & Whole team and Admin \\
+Research findings & Accuracy, precision/recall, decision agreement, MAE/RMSE evaluation & Model and evaluation outputs & AI/ML lead \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Testing-Document Reference}
+\begin{guidance}
+Identify the separate testing document that contains the detailed acceptance
+criteria, test cases, datasets, procedures, results, and defect records. Keep its
+version consistent with this design document.
+\end{guidance}
+
+\begin{table}[H]
+\centering
+\caption{Software testing document reference}
+\label{tab:testing-reference}
+\begin{tabularx}{\textwidth}{@{}p{0.25\textwidth}X@{}}
+\toprule
+\textbf{Item} & \textbf{Reference} \\
+\midrule
+Document title & \placeholder{Project Software Testing Document} \\
+Version and date & \placeholder{Version; Day Month Year} \\
+Repository or submission location & \placeholder{Controlled path, repository location, or submission reference} \\
+Responsible team member(s) & \placeholder{Name(s) and role(s)} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Risk Assessment}
+\begin{table}[H]
+\centering
+\caption{Risk register}
+\label{tab:risk-register}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.11\textwidth}X p{0.14\textwidth}p{0.11\textwidth}X p{0.14\textwidth}@{}}
+\toprule
+\textbf{ID} & \textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Response} & \textbf{Owner} \\
+\midrule
+RSK-01 & AI service becomes unavailable. & Medium & High & Keep AI services decoupled so a listing remains valid and purchasable without a price suggestion. & Backend team \\
+RSK-02 & Public defect datasets differ from marketplace phone photos. & Medium & High & Validate on a small team-collected real-photo set before relying on model results. & AI/ML lead \\
+RSK-03 & Surplus-price depreciation lacks published data. & Medium & Medium & Ground assumptions in interviews with 5--10 Lahore dealers and contractors and refine them during evaluation. & AI/ML lead \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Project Management Approach and Schedule}
+\begin{table}[H]
+\centering
+\caption{Milestones and schedule}
+\label{tab:schedule}
+\begin{tabularx}{\textwidth}{@{}p{0.14\textwidth}X p{0.20\textwidth}p{0.19\textwidth}p{0.16\textwidth}@{}}
+\toprule
+\textbf{ID} & \textbf{Milestone or deliverable} & \textbf{Target date} & \textbf{Dependency} & \textbf{Owner} \\
+\midrule
+MS-01 & Core platform and listing infrastructure & Month 1--4 & None & Backend/frontend teams \\
+MS-02 & AI classification and defect pipeline & Month 3--7 & MS-01 & AI/ML team \\
+MS-03 & Admin, chat, chatbot, and full integration & Month 6--9 & MS-01; MS-02 & Whole team \\
+MS-04 & Testing, evaluation, and final release & Month 10--12 & MS-03 & Whole team \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Team Roles and Responsibilities}
+\begin{table}[H]
+\centering
+\caption{Team roles and responsibilities}
+\label{tab:team-roles}
+\begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}p{0.24\textwidth}X@{}}
+\toprule
+\textbf{Member} & \textbf{Role} & \textbf{Principal responsibilities} \\
+\midrule
+Hafsa Shahid (2023-CS-708) & Frontend developer & Flutter listing, search, chat, and Admin dashboard interfaces \\
+Fatima Irfan (2023-CS-715) & Backend developer & REST API, PostgreSQL/PostGIS, RBAC, listings, search, reservations, and trust layer \\
+Daniyal Jumshaid (2023-CS-734) & Real-time and AI integration developer & SignalR chat, FastAPI integration, decision engine, and Admin review backend \\
+Noor Fatima Malik (2023-CS-739) & AI/ML lead & YOLO, CLIP, XGBoost, chatbot context, and system evaluation \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Source-Code, Data, and Artifact Management}
+\begin{guidance}
+State how code, documents, datasets, models, diagrams, builds, and other artifacts
+will be named, versioned, reviewed, backed up, licensed, and accessed. Identify how
+sensitive data and credentials will be kept out of the source repository.
+\end{guidance}
+
+\begin{table}[H]
+\centering
+\caption{Artifact management}
+\label{tab:artifact-management}
+\begin{tabularx}{\textwidth}{@{}p{0.21\textwidth}X X X@{}}
+\toprule
+\textbf{Artifact} & \textbf{Storage and versioning} & \textbf{Access or protection} & \textbf{Backup or retention} \\
+\midrule
+Source code & \placeholder{Repository and branching/review approach} & \placeholder{Access control and secret handling} & \placeholder{Backup or release policy} \\
+\placeholder{Data, models, and documents} & \placeholder{Location and versioning} & \placeholder{Access rule} & \placeholder{Retention rule} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Tools and Technologies}
+\label{sec:tools}
+\begin{table}[H]
+\centering
+\caption{Tools and technologies}
+\label{tab:tools-technologies}
+\begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}p{0.20\textwidth}X X@{}}
+\toprule
+\textbf{Tool or technology} & \textbf{Version} & \textbf{Purpose} & \textbf{Project use} \\
+\midrule
+Flutter (Dart) & 3.x & Cross-platform UI & Web and Android marketplace client \\
+ASP.NET Core (C\#) & 8 & Backend API framework & Core marketplace services \\
+PostgreSQL/PostGIS & Current project version & Relational and geospatial database & Listings, users, locations, and search \\
+SignalR and Redis & Current project versions & Real-time communication and presence/cache & Chat, negotiation, and presence \\
+Python/FastAPI & Current project versions & AI service API & Asynchronous AI pipeline integration \\
+PyTorch, OpenCV, CLIP, YOLO & Current project versions & Computer vision and classification & Material classification and defect detection \\
+XGBoost and scikit-learn & Current project versions & Tabular regression and evaluation & Surplus-price estimation \\
+AWS S3 & Current service version & Object storage & Listing photographs \\
+Swagger, Postman, k6/JMeter & Current versions & API and load testing & Functional, API, concurrency, and load testing \\
+Git and GitHub & Current versions & Version control & Source and artifact management \\
+\bottomrule
+\end{tabularx}
+\end{table}

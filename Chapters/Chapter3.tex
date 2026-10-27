@@ -1,0 +1,88 @@
+% This file is included by uet_thesis.tex.
+% Replace blue placeholders and remove example text before submission.
+
+\chapter{Literature Review and Related Work}
+\label{chap:literature}
+% =============================================================================
+
+\section{Review Method}
+\begin{guidance}
+Briefly state how related work was identified and selected. Report the sources
+searched, key search terms, publication period, and principal inclusion and
+exclusion criteria. Follow departmental requirements for the minimum number and
+type of sources.
+\end{guidance}
+
+\begin{table}[H]
+\centering
+\caption{Review method summary}
+\label{tab:review-method}
+\begin{tabularx}{\textwidth}{@{}p{0.27\textwidth}X@{}}
+\toprule
+\textbf{Item} & \textbf{Description} \\
+\midrule
+Sources searched & \placeholder{e.g., IEEE Xplore, ACM Digital Library, Scopus, official product sources} \\
+Search terms & \placeholder{Main keywords and combinations} \\
+Coverage period & \placeholder{Years covered and search date} \\
+Selection criteria & \placeholder{Principal inclusion and exclusion criteria} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Related Systems and Solutions \applicability{Development, Hybrid, Game}}
+\begin{table}[H]
+\centering
+\caption{Related systems and solutions}
+\label{tab:related-systems}
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}X X X@{}}
+\toprule
+\textbf{System and citation} & \textbf{Relevant features} & \textbf{Strengths} & \textbf{Limitations} \\
+\midrule
+OLX Pakistan & General classifieds and communication & Familiar marketplace workflow and chat & No automated condition, price, or description verification \\
+Facebook Marketplace & General listings and discovery & Large user base and simple listing flow & No structured construction-material categories or photo-based assessment \\
+OfferUp & Consumer resale marketplace & Supports peer-to-peer resale & Not specialized for construction material and lacks domain verification \\
+Zarea.pk & Construction-material marketplace & Focuses on construction-material discovery & Primarily new materials from dealers rather than verified peer-to-peer surplus \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Literature Synthesis \applicability{Research, Hybrid; other projects where applicable}}
+\begin{guidance}
+Organize scholarly literature by themes, methods, findings, or disagreements.
+Compare and connect studies instead of presenting an isolated summary of each
+paper. Identify limitations that directly inform the project.
+\end{guidance}
+
+The proposed technical foundation combines three established themes: CLIP
+zero-shot image--text matching for material classification, YOLO-based object
+detection for visible defects, and XGBoost gradient-boosted regression for
+structured price estimation. Public defect datasets support model development,
+but their inspection imagery may differ from marketplace phone photographs.
+Therefore, the project uses a separate real-photo validation set and limits its
+claims to defect classes that are present and validated in the selected datasets.
+
+\section{Comparative Analysis}
+\begin{table}[H]
+\centering
+\caption{Comparative analysis}
+\label{tab:comparative-analysis}
+\begin{tabularx}{\textwidth}{@{}p{0.26\textwidth}X X X@{}}
+\toprule
+\textbf{System or study} & \textbf{Criterion 1} & \textbf{Criterion 2} & \textbf{Criterion 3} \\
+\midrule
+OLX Pakistan & Manual moderation & General listings & No condition or price verification \\
+Facebook Marketplace & User-reported information & General categories & No domain-specific defect assessment \\
+\textbf{Proposed project} & \textbf{AI-gated plus Admin review} & \textbf{Four construction-material categories} & \textbf{Condition, description, and price checks} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Gap Analysis and Proposed Contribution}
+Existing marketplaces provide discovery and communication but do not verify
+construction-material condition, description accuracy, or surplus-price fairness
+before publication. surplusSpace contributes a bounded, human-in-the-loop
+marketplace that combines material classification, visible-defect detection,
+condition grading, description--image consistency, and price estimation, while
+retaining Admin authority for uncertain cases.
+
+% =============================================================================
