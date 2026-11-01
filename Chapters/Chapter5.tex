@@ -82,18 +82,29 @@ RSK-03 & Surplus-price depreciation lacks published data. & Medium & Medium & Gr
 \end{table}
 
 \section{Project Management Approach and Schedule}
+\tref{tab:schedule} condenses the proposal's 12-month timeline into six months, so work
+runs in parallel tracks and the stretch monetization layer is left out. Month numbers
+convert to calendar dates from the project start date: \placeholder{TODO: actual start date}.
+MS-01 to MS-04, half of the milestones, finish by the end of Month 4. The team reviews progress at a
+15-minute checkpoint twice a week and cross-reviews each member's work.
+
 \begin{table}[H]
 \centering
 \caption{Milestones and schedule}
 \label{tab:schedule}
-\begin{tabularx}{\textwidth}{@{}p{0.14\textwidth}X p{0.20\textwidth}p{0.19\textwidth}p{0.16\textwidth}@{}}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.08\textwidth}X p{0.13\textwidth}p{0.13\textwidth}p{0.23\textwidth}@{}}
 \toprule
 \textbf{ID} & \textbf{Milestone or deliverable} & \textbf{Target date} & \textbf{Dependency} & \textbf{Owner} \\
 \midrule
-MS-01 & Core platform and listing infrastructure & Month 1--4 & None & Backend/frontend teams \\
-MS-02 & AI classification and defect pipeline & Month 3--7 & MS-01 & AI/ML team \\
-MS-03 & Admin, chat, chatbot, and full integration & Month 6--9 & MS-01; MS-02 & Whole team \\
-MS-04 & Testing, evaluation, and final release & Month 10--12 & MS-03 & Whole team \\
+MS-01 & Requirements, architecture, and design document & Month 1 & None & Whole team \\
+MS-02 & Core platform: authentication, database, lot system, and photo upload & Month 1--2 & MS-01 & Backend and frontend developers \\
+MS-03 & Location search, price data, and dealer interviews & Month 2--3 & MS-02 & Backend developer; AI/ML lead \\
+MS-04 & AI vision: CLIP, YOLO, and Condition Engine & Month 2--4 & MS-01 & AI/ML lead \\
+MS-05 & Consistency check and price model & Month 3--4 & MS-03; MS-04 & AI/ML lead \\
+MS-06 & Decision Engine, Admin review queue, chat, trust layer, and lot expiry & Month 3--5 & MS-02 & Real-time and AI integration developer; backend developer \\
+MS-07 & AI Listing Assistant and full system integration & Month 4--5 & MS-05; MS-06 & Whole team \\
+MS-08 & Testing, evaluation, write-up, and final demo & Month 5--6 & MS-07 & Whole team \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -107,13 +118,17 @@ MS-04 & Testing, evaluation, and final release & Month 10--12 & MS-03 & Whole te
 \toprule
 \textbf{Member} & \textbf{Role} & \textbf{Principal responsibilities} \\
 \midrule
-Hafsa Shahid (2023-CS-708) & Frontend developer & Flutter listing, search, chat, and Admin dashboard interfaces \\
-Fatima Irfan (2023-CS-715) & Backend developer & REST API, PostgreSQL/PostGIS, RBAC, listings, search, reservations, and trust layer \\
-Daniyal Jumshaid (2023-CS-734) & Real-time and AI integration developer & SignalR chat, FastAPI integration, decision engine, and Admin review backend \\
-Noor Fatima Malik (2023-CS-739) & AI/ML lead & YOLO, CLIP, XGBoost, chatbot context, and system evaluation \\
+Hafsa Shahid (2023-CS-708) & Backend developer & REST API, PostgreSQL/PostGIS, RBAC, listings, search, reservations, and trust layer \\
+Fatima Irfan (2023-CS-715) & AI/ML lead & YOLO, CLIP, XGBoost, chatbot context, and system evaluation \\
+Daniyal Jumshaid (2023-CS-734) & Frontend developer & Flutter listing, search, chat, and Admin dashboard interfaces \\
+Noor Fatima Malik (2023-CS-739) & Real-time and AI integration developer & SignalR chat, FastAPI integration, decision engine, and Admin review backend \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+Members also cross-review in a ring: Hafsa Shahid reviews Fatima Irfan, Fatima Irfan reviews
+Daniyal Jumshaid, Daniyal Jumshaid reviews Noor Fatima Malik, and Noor Fatima Malik reviews
+Hafsa Shahid.
 
 \section{Source-Code, Data, and Artifact Management}
 \begin{guidance}
