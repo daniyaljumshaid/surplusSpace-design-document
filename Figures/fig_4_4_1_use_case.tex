@@ -1,0 +1,62 @@
+% Source for fig_4_4_1_use_case.pdf. Build: pdflatex fig_4_4_1_use_case.tex
+\documentclass[tikz,border=3pt]{standalone}
+\usepackage[T1]{fontenc}
+\usetikzlibrary{arrows.meta,shapes.geometric,positioning}
+\renewcommand{\familydefault}{\sfdefault}
+\tikzset{
+  uc/.style={ellipse,draw,thick,minimum width=4.5cm,minimum height=.78cm,inner sep=0pt,font=\scriptsize,align=center,fill=white},
+  link/.style={semithick},
+  rel/.style={dashed,semithick,-{Stealth[length=2mm]}},
+  gen/.style={semithick,-{Triangle[open,length=3mm,width=2.6mm]}},
+  rl/.style={font=\tiny,fill=white,inner sep=1pt}}
+% actor: \actor{name}{x,y}{label}
+\newcommand{\actor}[3]{%
+  \begin{scope}[shift={(#2)},thick]
+    \draw (0,.42) circle (.14);
+    \draw (0,.28) -- (0,-.12);
+    \draw (-.24,.14) -- (.24,.14);
+    \draw (0,-.12) -- (-.2,-.42);
+    \draw (0,-.12) -- (.2,-.42);
+    \coordinate (#1) at (0,0);
+    \coordinate (#1e) at (.3,0);
+    \coordinate (#1w) at (-.3,0);
+    \coordinate (#1n) at (0,.58);
+    \coordinate (#1s) at (0,-.45);
+  \end{scope}
+  \node[font=\scriptsize\bfseries,align=center,anchor=north] at ($(#2)+(0,-.46)$) {#3};}
+\usetikzlibrary{calc}
+\newcommand{\row}[1]{-.98*#1}
+\begin{document}
+\begin{tikzpicture}
+% system boundary
+\draw[thick] (1.75,0) rectangle (13.75,{\row{15.75}});
+\node[anchor=north west,font=\footnotesize\bfseries] at (1.85,-.05) {surplusSpace};
+% left column
+\foreach \n/\r/\t in {7/1/UC-07 Register and Sign In,8/2/UC-08 Switch Profile,9/3/UC-09 Apply for Contractor Approval,
+ 2/4/UC-02 Search Lots,13/5/UC-13 View Lot Details,3/6/UC-03 Reserve Lot,15/7/UC-15 Cancel Reservation,14/8/UC-14 Chat With Seller,16/9/UC-16 Rate Seller,17/10/UC-17 Save Search,5/11/UC-05 Ask Listing Assistant,
+ 1/12/UC-01 Create Lot,10/13/UC-10 Resubmit Lot After Edits,11/14/UC-11 Manage My Lots,12/15/UC-12 Mark Lot Sold}{
+  \node[uc] (u\n) at (4.6,{\row{\r}}) {\t};}
+% right column
+\foreach \n/\r/\t in {4/1.5/UC-04 Review Flagged Lot,19/3/UC-19 Override AI Decision,18/4.5/UC-18 Approve Contractor,20/5.5/UC-20 Tune Thresholds,21/6.5/UC-21 Manage Catalog and Zones,22/7.5/UC-22 Suspend User,23/8.5/UC-23 Review Reported Content,24/9.5/UC-24 View AI Performance Dashboard,6/13/UC-06 Screen Lot}{
+  \node[uc] (u\n) at (10.9,{\row{\r}}) {\t};}
+% actors
+\actor{ru}{0.2,{\row{2}}}{Registered\\User}
+\actor{cu}{0.2,{\row{7.5}}}{Customer}
+\actor{co}{0.2,{\row{13.5}}}{Contractor}
+\actor{ad}{15.3,{\row{5.5}}}{Admin}
+\actor{ai}{15.3,{\row{12}}}{AI Service}
+% generalisation
+\draw[gen] (cow) -- ++(-.45,0) |- (ruw);
+\draw[semithick] (cuw) -- ++(-.45,0);
+% associations
+\foreach \n in {7,8,9}{\draw[link] (rue) -- (u\n.west);}
+\foreach \n in {2,13,3,15,14,16,17,5}{\draw[link] (cue) -- (u\n.west);}
+\foreach \n in {1,10,11,12}{\draw[link] (coe) -- (u\n.west);}
+\foreach \n in {4,18,20,21,22,23,24,19}{\draw[link] (adw) -- (u\n.east);}
+\draw[link] (u5.east) -- (aiw);
+\draw[link] (u6.east) -- (aiw);
+% include and extend
+\draw[rel] (u1.east) -- node[rl,above,sloped]{\guillemotleft include\guillemotright} (u6.west);
+\draw[rel] (u19.north) -- node[rl,right]{\guillemotleft extend\guillemotright} (u4.south);
+\end{tikzpicture}
+\end{document}
