@@ -8,12 +8,12 @@
 \section{Executive Summary}
 surplusSpace is an AI-gated marketplace for surplus construction materials. It
 addresses the lack of a trustworthy channel through which sellers and buyers can
-exchange surplus bricks, steel/rebar, tiles/marble, and wood. A seller creates a
+exchange surplus bricks, steel, tiles/marble, and wood. A seller creates a
 lot with its quantity, description, price, and 3--5 representative photographs.
 Before publication, the system classifies the material, detects selected visible
 defects, derives a condition grade, checks description--image consistency, and
-estimates a fair surplus price against a new-material reference price. A decision
-engine automatically publishes listings that pass the checks and routes uncertain
+estimates a fair surplus price against a new-material reference price. A Decision
+Engine automatically publishes listings that pass the checks and routes uncertain
 or risky listings to an Admin, who has final authority to override the AI.
 Customers and Contractors use a switchable account to search by location, price,
 and category, negotiate through real-time chat, and reserve lots. An AI Listing
@@ -23,31 +23,25 @@ detection, price estimation, and agreement between automated decisions and Admin
 judgement.
 
 \section{Background and Motivation}
-Surplus bricks, steel/rebar, tiles/marble, and wood are often wasted because
-sellers and buyers lack a trustworthy exchange channel. Existing classifieds
-platforms do not automatically check listing condition, price fairness, or
-description accuracy, while manual moderation is difficult to scale. The project
+Surplus bricks, steel, tiles/marble, and wood are often wasted because
+sellers and buyers lack a trustworthy exchange channel. Reviewed classifieds
+platforms document no automatic check of listing condition, price fairness, or
+description accuracy, and manual moderation is difficult to scale. The project
 therefore combines a construction-material marketplace with an AI verification
 step and a human Admin fallback. The scope is deliberately limited to four
 material categories and documented defect classes so that the system can be
-developed and evaluated within the 12-month project.
+developed and evaluated within the six-month schedule.
 
 \section{Problem Statement}
 Contractors and sellers listing surplus construction material have no automated
 way to verify, before a listing reaches buyers, that its condition, price, and
-description are consistent and honest. Existing marketplace platforms rely mainly
-on manual or after-the-fact moderation, which does not scale and leaves buyers
+description are consistent and honest. Without such a check, moderation depends on
+people reviewing listings by hand, which does not scale and leaves buyers
 exposed to misrepresented listings. A marketplace is therefore needed that
-screens each listing before publication while retaining a human Admin as the
-final authority.
+screens each listing for material type, visible condition, description accuracy, and
+price fairness before publication while retaining a human Admin as the final authority.
 
 \section{Research Questions and Hypotheses \applicability{Research, Hybrid; hypotheses if applicable}}
-\begin{guidance}
-State focused questions derived from the problem statement. Include hypotheses
-only when the study tests predicted relationships or differences. Exploratory or
-qualitative studies may not require hypotheses.
-\end{guidance}
-
 \begin{table}[H]
 \centering
 \caption{Research questions and hypotheses}
@@ -56,8 +50,8 @@ qualitative studies may not require hypotheses.
 \toprule
 \textbf{ID} & \textbf{Research question} & \textbf{Hypothesis, if applicable} \\
 \midrule
-RQ-01 & \placeholder{Focused and answerable research question} & \placeholder{H1 or Not applicable} \\
-RQ-02 & \placeholder{Additional research question, if required} & \placeholder{H2 or Not applicable} \\
+RQ-01 & How accurately can existing models classify the four scoped materials, detect visible defects, and estimate a fair surplus price on marketplace-style phone photos? & Not applicable \\
+RQ-02 & How often do automated publish-or-review decisions agree with Admin decisions, and how often are assistant answers supported by listing data? & Not applicable \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -71,9 +65,9 @@ RQ-02 & \placeholder{Additional research question, if required} & \placeholder{H
 \toprule
 \textbf{ID} & \textbf{Objective} \\
 \midrule
-OBJ-01 & Enable Customers and Contractors to create, discover, negotiate, reserve, and track lot-based surplus-material listings through a single marketplace. \\
-OBJ-02 & Classify the four scoped material categories, detect selected visible defects, assess condition, check description--image consistency, and estimate a fair surplus price. \\
-OBJ-03 & Provide human-in-the-loop review for uncertain listings and a contextual assistant that answers buyers using only available listing information. \\
+OBJ-01 & Enable Customers and Contractors to create, discover, negotiate, reserve, and track lot-based surplus-material listings through a single location-aware marketplace in which a lot can never be reserved by two buyers at the same time. \\
+OBJ-02 & Classify the four scoped material categories, detect selected visible defects, assess condition, check description--image consistency, and estimate a fair surplus price, and report accuracy, precision, recall, and price error on held-out data. \\
+OBJ-03 & Provide human-in-the-loop Admin oversight of uncertain listings, accounts, and AI settings, and a contextual assistant that answers buyers using only available listing information, and measure how often automated decisions agree with Admin decisions and how often assistant answers are supported by listing data. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -100,9 +94,9 @@ tracking.
 \textbf{Scope ID} & \textbf{Included item} & \textbf{Objective(s)} \\
 \midrule
 SCP-01 & Lot-based listings with quantity, description, price, and 3--5 representative photographs. & OBJ-01 \\
-SCP-02 & Customer/Contractor search, negotiation, reservation, and pickup-status tracking. & OBJ-01 \\
+SCP-02 & Registered accounts with switchable Customer and Contractor profiles, and Customer/Contractor search, negotiation, reservation, and pickup-status tracking. & OBJ-01 \\
 SCP-03 & AI classification, defect detection, condition grading, consistency checking, and price estimation for the four scoped categories. & OBJ-02 \\
-SCP-04 & Admin review queue with approval, rejection, edit requests, threshold tuning, and AI override. & OBJ-03 \\
+SCP-04 & Admin review queue with approval, rejection, edit requests, threshold tuning, and AI override; Contractor approval; catalog, zone, user, and report management; an AI performance dashboard; and the AI Listing Assistant. & OBJ-03 \\
 SCP-05 & Location, price, and category search; real-time chat and negotiation; ratings, saved-search alerts, reservation, and pickup tracking. & OBJ-01 \\
 \bottomrule
 \end{tabularx}
@@ -117,7 +111,7 @@ SCP-05 & Location, price, and category search; real-time chat and negotiation; r
 \toprule
 \textbf{ID} & \textbf{Excluded item} & \textbf{Reason} \\
 \midrule
-EXC-01 & Integration with the university's central timetable system. & The external interface is unavailable during the FYP period. \\
+EXC-01 & Construction materials and sub-types beyond the four scoped categories. & The scope is limited so that the system can be built and evaluated within the schedule. \\
 EXC-02 & Hidden or internal defects and engineering-grade structural inspection. & The project targets only visible defects supported by validated datasets. \\
 EXC-03 & Real payment processing and contractor/business financial verification. & Payment compliance and financial verification are outside the project goals. \\
 EXC-04 & Guaranteeing the condition of every item in a large lot. & AI assessment applies only to uploaded representative samples. \\

@@ -1,0 +1,11 @@
+% Member 1 rows for the Design Decisions table in Chapter 4.
+% Member 3 pastes these into that table in ID order. Columns: ID, Decision, Alternatives considered, Rationale and trade-off.
+DD-01 & Build the Android and web clients from a single Flutter codebase. & Separate native Android and web clients. & One codebase avoids building each screen twice. Layouts must still be tested on both platforms (NFR-68). \\
+DD-02 & Use one account that switches between Customer and Contractor profiles. & Separate accounts for buying and selling. & Users keep one sign-in and one history. Screens must make the active profile clear, and Contractor mode still needs Admin approval. \\
+DD-03 & Compress lot photos on the device before upload (FR-62). & Upload original photos; compress them on the server. & Smaller uploads suit weak mobile data. Compression could hide fine defects, so the NFR-67 limit needs AI validation. \\
+DD-04 & Show the disclosure sentence on every lot details screen (FR-60). & Show it only when reserving; show it only in the terms of use. & It sets correct buyer expectations and avoids a claim the system cannot support (EXC-04). It adds text to a small screen. \\
+DD-05 & Show condition grades as an icon and text (FR-67). & Colour-coded badges alone. & Colour must not be the only means of conveying information~\citep{wcag22}. Icon and text take more space on each card. \\
+DD-06 & Condense the proposal's 12-month timeline into six months (\tref{tab:schedule}). & Keep the 12-month timeline; shorten it to seven months. & Half of the work must be complete by the end of the semester in December. Parallel tracks leave no schedule buffer. \placeholder{TODO: supervisor approval} \\
+DD-07 & Leave out the monetization layer. & Keep it as a stretch goal in the final month. & It was the proposal's lowest priority, and the six-month schedule has no time for it. The system has no commission or featured-listing fees. \\
+DD-08 & Reassign team roles from the proposal's work division (\tref{tab:team-roles}). & Keep the proposal's role assignment. & \placeholder{TODO: reason for the change and accepted limitation} \\
+DD-09 & Compare four related systems, leaving out OfferUp. & Compare the proposal's five systems. & \placeholder{TODO: reason for the change and accepted limitation} \\
