@@ -1,0 +1,36 @@
+% Source for fig_4_8_navigation.pdf. Build: pdflatex fig_4_8_navigation.tex
+\documentclass[tikz,border=2pt]{standalone}
+\usetikzlibrary{positioning,arrows.meta,fit}
+\renewcommand{\familydefault}{\sfdefault}
+\begin{document}
+\begin{tikzpicture}[
+  font=\footnotesize,
+  >={Stealth[length=2mm]},
+  scr/.style={draw,rounded corners=1.5pt,minimum width=3.9cm,minimum height=.62cm,align=center,inner sep=2pt},
+  mode/.style={scr,fill=black!12,font=\footnotesize\bfseries},
+  link/.style={->,semithick}]
+\node[scr,fill=black!12,font=\footnotesize\bfseries,minimum width=4.6cm] (signin) at (5.2,0) {Sign In};
+\node[mode] (cus) at (0,-2.0) {Customer mode};
+\node[mode] (con) at (5.2,-2.0) {Contractor mode};
+\node[mode] (adm) at (10.4,-2.0) {Admin};
+\draw[link] (signin.south) -- ++(0,-.45) -| (cus.north);
+\draw[link] (signin.south) -- (con.north);
+\draw[link] (signin.south) -- ++(0,-.45) -| (adm.north);
+\draw[<->,very thick] (cus.east) -- node[above=1pt,font=\scriptsize,align=center]{Profile\\switch} (con.west);
+\foreach \name/\x/\items in {
+  c/0/{Search,Lot Details,Chats,Reservations,Saved Searches,Profile},
+  s/5.2/{My Lots,Create Lot,Lot Status and AI Result,Chats,Profile},
+  a/10.4/{Review Queue,Contractor Approvals,Thresholds,Catalog and Zones,Users and Reports,AI Dashboard}}{
+  \foreach \t [count=\i] in \items {
+    \node[scr] (\name\i) at (\x,-2.25-.82*\i) {\t};
+  }
+}
+\node[draw,dashed,inner sep=4pt,fit=(c1)(c6)] (cg) {};
+\node[draw,dashed,inner sep=4pt,fit=(s1)(s5)] (sg) {};
+\node[draw,dashed,inner sep=4pt,fit=(a1)(a6)] (ag) {};
+\draw[link] (cus.south) -- (cg.north);
+\draw[link] (con.south) -- (sg.north);
+\draw[link] (adm.south) -- (ag.north);
+\node[font=\scriptsize,align=center] at (5.2,-7.45) {The profile switch sits on the Profile screen\\of both Customer and Contractor modes.};
+\end{tikzpicture}
+\end{document}

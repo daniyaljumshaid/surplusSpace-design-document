@@ -390,13 +390,58 @@ Related requirements & FR-02--FR-04, NFR-02 \\
 \end{table}
 
 \section{User Interface and Accessibility Design \applicability{User-facing Development, Hybrid, and Game projects; Research prototypes if applicable}}
-\begin{guidance}
-Present the navigation structure and key wireframes or prototypes. Explain how the
-design supports usability, accessibility, responsive layout, error prevention,
-feedback, and consistency. Do not include every minor screen.
-\end{guidance}
-\diagramplaceholder{Navigation structure or user flow}{Example: Sign In, Dashboard, Available Slots, Appointment Details, and Notifications.}
-\diagramplaceholder{Key wireframe or prototype}{Annotate important controls, content, validation, feedback, and accessibility decisions.}
+The client is built with Flutter~\citep{flutterdocs} for Android and the web.
+\fref{fig:navigation-structure} shows the navigation structure. After Sign In, the
+account's role opens Customer mode, Contractor mode, or the Admin area. One registered
+user moves between Customer and Contractor modes with the profile switch on the Profile
+screen, so the switch stays in one predictable place in both modes.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_4_8_navigation.pdf}
+\caption{Navigation structure}
+\label{fig:navigation-structure}
+\end{figure}
+
+\fref{fig:key-wireframes} shows the six key wireframes, and \tref{tab:wireframe-annotations}
+explains the validation (V), feedback (F), and accessibility (A) markers on each one.
+The legend under the wireframes gives the five condition grades and nine lot statuses.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_8_wireframes.pdf}
+\caption{Key wireframes}
+\label{fig:key-wireframes}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Wireframe annotations}
+\label{tab:wireframe-annotations}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.15\textwidth}XXX@{}}
+\toprule
+\textbf{Wireframe} & \textbf{Validation (V)} & \textbf{Feedback (F)} & \textbf{Accessibility (A)} \\
+\midrule
+1. Create Lot & Submit Lot stays disabled until 3--5 photos are attached (FR-61). & The message states how many photos to add, and the screen states that photos are compressed (FR-62, FR-73). & Each photo slot has a screen-reader label (NFR-63). \\
+2. Lot Status and AI Result & The Admin message states what to correct before resubmission (FR-66). & The status chip shows the lot's current status (FR-63). & The grade appears as an icon and text (NFR-64). \\
+3. Search Lots & Radius and price fields accept numbers only. & The result count and hint state how to widen the search (FR-73). & Every result card shows its grade as an icon and text (NFR-64). \\
+4. Lot Details & Reserve is checked against the lot's status and version (UC-03). & The disclosure sentence is always visible (FR-60). & The grade appears as an icon and text, and the defects are listed as text (FR-67, FR-68). \\
+5. Ask Assistant & Send stays disabled while the question is empty. & A missing answer is stated plainly and offers Chat With Seller (FR-08). & The source of the answers is stated in text, and each message has a screen-reader label (NFR-63). \\
+6. Admin Review Queue & Request Edits requires a message (UC-04). & The screen confirms that the decision is recorded (UC-04). & Claims and AI signals sit side by side as labelled text (NFR-63, NFR-64). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The design supports the quality goals as follows.
+\begin{itemize}
+\item \textbf{Usability:} Create Lot fits within 3 screens (NFR-65), and all three roles share the same field, button, status-chip, and grade patterns.
+\item \textbf{Accessibility:} Text contrast and scaling follow WCAG 2.2 Level AA~\citep{wcag22} (NFR-60, NFR-62). Grades, statuses, and flags are never shown by colour alone (NFR-64). Touch targets and screen-reader labels follow NFR-61 and NFR-63.
+\item \textbf{Responsive layout:} Screens adapt to widths from 320 to 1920 logical pixels on Android and Flutter web (NFR-68).
+\item \textbf{Error prevention:} Controls stay disabled until their input is valid (FR-61), and photos are compressed on the device for weak mobile data (FR-62, NFR-67).
+\item \textbf{Feedback:} Each screen has a visible state for loading, AI pending, flagged, rejected, and error (FR-72), every tap gets a visible response (NFR-66), and messages say how to fix a problem (FR-73).
+\item \textbf{Consistency:} The grade icons and status chips in \fref{fig:key-wireframes} appear unchanged on every screen and in every role.
+\end{itemize}
 
 \section{Security, Privacy, and Safety Design \applicability{If applicable}}
 \begin{guidance}
