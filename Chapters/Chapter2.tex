@@ -22,40 +22,69 @@ ACD-03 & Dependency & Public defect datasets, published new-material prices, and
 \end{table}
 
 \section{Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
-\begin{table}[H]
-\centering
-\caption{Functional requirements}
-\label{tab:functional-requirements}
-\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}X p{0.15\textwidth}p{0.20\textwidth}@{}}
+{\footnotesize
+\begin{longtable}{@{}p{0.09\textwidth}p{0.52\textwidth}p{0.08\textwidth}p{0.18\textwidth}@{}}
+\caption{Functional requirements}\label{tab:functional-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Source} \\
 \midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Source} \\
+\midrule
+\endhead
 FR-01 & The system shall allow a seller to create a lot listing with quantity, description, price, and 3--5 representative photographs. & Must & Contractor/Seller \\
-FR-02 & The system shall classify submitted listing photos into Bricks, Steel/Rebar, Tiles/Marble, or Wood. & Must & AI pipeline \\
+FR-02 & The system shall classify submitted listing photos into Bricks, Steel, Tiles/Marble, or Wood. & Must & AI pipeline \\
 FR-03 & The system shall detect configured visible defects and derive a Good, Minor, Major, Mixed, or Not Assessed condition grade. & Must & AI pipeline \\
 FR-04 & The system shall route uncertain, inconsistent, or Mixed-condition listings to the Admin review queue. & Must & Admin \\
 FR-05 & The system shall allow Admins to approve, reject, request edits, or override an AI listing decision. & Must & Admin \\
-FR-06 & The system shall allow users to search listings by location, price, and category. & Must & Customer/Contractor \\
-FR-07 & The system shall support real-time chat, negotiation, and lot reservation. & Must & Customer/Contractor \\
+FR-06 & The system shall allow users to search listings by location, price, and category. & Must & Customer/Buyer \\
+FR-07 & The system shall support real-time chat, negotiation, and lot reservation. & Must & Customer/Buyer; Contractor/Seller \\
 FR-08 & The system shall answer buyer questions using only the listing's structured data and return an explicit unavailable response when information is missing. & Should & Customer/Buyer \\
+FR-60 & The system shall display the sentence ``AI assessment applies to the uploaded representative samples and does not guarantee the condition of every unphotographed item.'' on every lot details screen shown to a Customer. & Must & Customer/Buyer \\
+FR-61 & The system shall prevent a lot from being submitted from the Create Lot screen while fewer than 3 or more than 5 photos are attached. & Must & Contractor/Seller \\
+FR-62 & The system shall compress each lot photo on the device before upload. & Should & Contractor/Seller \\
+FR-63 & The system shall display the current status of each lot to its Contractor, using the values Draft, Screening, Pending Review, Changes Requested, Published, Reserved, Sold, Expired, and Rejected. & Must & Contractor/Seller \\
+FR-64 & The system shall display the condition grade of a screened lot to its Contractor. & Must & Contractor/Seller \\
+FR-65 & The system shall display each flag reason of a Pending Review lot to its Contractor. & Should & Contractor/Seller \\
+FR-66 & The system shall display the Admin's message to the Contractor on a Changes Requested lot. & Must & Contractor/Seller \\
+FR-67 & The system shall display the condition grade of a lot on the lot details screen as both an icon and a text label. & Must & Customer/Buyer \\
+FR-68 & The system shall list the detected defects of a lot on the lot details screen. & Should & Customer/Buyer \\
+FR-69 & The system shall display an alert to a Customer when a newly Published lot matches one of their saved searches. & Should & Customer/Buyer \\
+FR-70 & The system shall display the status of each reservation to its Customer, using the values Active, Completed, Cancelled, and No-Show. & Must & Customer/Buyer \\
+FR-71 & The system shall provide a control for switching between the Customer and Contractor profiles of a single account. & Must & Customer/Buyer \\
+FR-72 & The system shall display a distinct screen state for each of loading, AI pending, flagged, rejected, and error. & Should & Contractor/Seller \\
+FR-73 & The system shall state the action needed to correct the problem in every validation message. & Should & Contractor/Seller \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \section{Non-Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
-\begin{table}[H]
-\centering
-\caption{Non-functional requirements}
-\label{tab:nonfunctional-requirements}
-\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.18\textwidth}X p{0.15\textwidth}@{}}
+{\footnotesize
+\begin{longtable}{@{}p{0.09\textwidth}p{0.14\textwidth}p{0.55\textwidth}p{0.08\textwidth}@{}}
+\caption{Non-functional requirements}\label{tab:nonfunctional-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Attribute} & \textbf{Measurable requirement} & \textbf{Priority} \\
 \midrule
-NFR-01 & Reliability & AI components shall be decoupled so that a temporarily unavailable AI service does not prevent a submitted listing from remaining valid and purchasable. & Must \\
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Attribute} & \textbf{Measurable requirement} & \textbf{Priority} \\
+\midrule
+\endhead
+NFR-01 & Reliability & AI components shall be decoupled so that a temporarily unavailable AI service does not invalidate a submitted lot, which instead waits in Pending Review. & Must \\
 NFR-02 & Transparency & The system shall disclose that AI assessment applies to representative samples and does not guarantee every unphotographed item. & Must \\
+NFR-60 & Accessibility & Text on every screen shall have a contrast ratio of at least 4.5:1, or at least 3:1 for large-scale text, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
+NFR-61 & Accessibility & Every interactive control shall have a touch target of at least 48 by 48 logical pixels on Android and Flutter web. & Should \\
+NFR-62 & Accessibility & At a text scale of 200\%, every screen shall keep all of its content and functions, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
+NFR-63 & Accessibility & 100\% of interactive controls and condition-grade icons shall expose a screen-reader label. & Must \\
+NFR-64 & Accessibility & On 100\% of screens, no condition grade, lot status, or flag reason shall be conveyed by colour alone~\citep{wcag22}. & Must \\
+NFR-65 & Usability & A Contractor shall be able to submit a lot within 3 screens of opening Create Lot. & Should \\
+NFR-66 & Usability & In 95\% of interactions on the test device, the system shall show visible feedback within 500 ms of a tap. & Should \\
+NFR-67 & Usability & Each lot photo shall be at most 1 MB after on-device compression. & Should \\
+NFR-68 & Portability & Screens shall need no horizontal scrolling at widths from 320 to 1920 logical pixels on Android and Flutter web. & Must \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \section{Data and External Interface Requirements \applicability{If applicable}}
 \begin{table}[H]
