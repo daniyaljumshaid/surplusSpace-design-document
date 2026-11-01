@@ -83,9 +83,55 @@ brief explanation of important flows, alternatives, or design decisions.
 \end{guidance}
 
 \subsection{Use-Case Model}
-The principal use cases are Create Lot Listing, Search Listings, Chat and
-Negotiate, Reserve Lot, Review Flagged Listing, Override AI Decision, and Ask the
-AI Listing Assistant.
+The human actors are Admin, Customer, and Contractor. Customer and Contractor
+generalise to Registered User, because one account switches between the two
+profiles, and the AI Service is a secondary actor.
+\tref{tab:use-case-list} lists each use case as a user goal, traced to the
+objective and scope item it supports.
+
+{\footnotesize
+\begin{longtable}{@{}p{0.07\textwidth}p{0.28\textwidth}p{0.15\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.11\textwidth}@{}}
+\caption{Use-case list}\label{tab:use-case-list}\\
+\toprule
+\textbf{ID} & \textbf{Use case} & \textbf{Primary actor} & \textbf{Secondary actor} & \textbf{Objective} & \textbf{Scope} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Use case} & \textbf{Primary actor} & \textbf{Secondary actor} & \textbf{Objective} & \textbf{Scope} \\
+\midrule
+\endhead
+% TODO: <TODO> scope cells have no matching SCP in Chapter 1; <TODO> objective cells have no matching OBJ.
+UC-01 & Create Lot & Contractor & None & OBJ-01 & SCP-01 \\
+UC-02 & Search Lots & Customer & None & OBJ-01 & SCP-02, SCP-05 \\
+UC-03 & Reserve Lot & Customer & None & OBJ-01 & SCP-02, SCP-05 \\
+UC-04 & Review Flagged Lot & Admin & None & OBJ-03 & SCP-04 \\
+UC-05 & Ask Listing Assistant & Customer & AI Service & OBJ-03 & \placeholder{TODO} \\
+UC-06 & Screen Lot & Contractor & AI Service & OBJ-02 & SCP-03 \\
+UC-07 & Register and Sign In & Registered User & None & OBJ-01 & \placeholder{TODO} \\
+UC-08 & Switch Profile & Registered User & None & OBJ-01 & \placeholder{TODO} \\
+UC-09 & Apply for Contractor Approval & Registered User & None & OBJ-01 & \placeholder{TODO} \\
+UC-10 & Resubmit Lot After Edits & Contractor & \placeholder{TODO} & OBJ-01, OBJ-03 & SCP-01, SCP-04 \\
+UC-11 & Manage My Lots & Contractor & None & OBJ-01 & SCP-01 \\
+UC-12 & Mark Lot Sold & Contractor & None & OBJ-01 & SCP-02 \\
+UC-13 & View Lot Details & Customer & None & OBJ-01 & SCP-02 \\
+UC-14 & Chat With Seller & Customer & None & OBJ-01 & SCP-05 \\
+UC-15 & Cancel Reservation & Customer & None & OBJ-01 & SCP-02, SCP-05 \\
+UC-16 & Rate Seller & Customer & None & OBJ-01 & SCP-05 \\
+UC-17 & Save Search & Customer & None & OBJ-01 & SCP-05 \\
+UC-18 & Approve Contractor & Admin & None & \placeholder{TODO} & \placeholder{TODO} \\
+UC-19 & Override AI Decision & Admin & None & OBJ-03 & SCP-04 \\
+UC-20 & Tune Thresholds & Admin & None & OBJ-03 & SCP-04 \\
+UC-21 & Manage Catalog and Zones & Admin & None & \placeholder{TODO} & \placeholder{TODO} \\
+UC-22 & Suspend User & Admin & None & \placeholder{TODO} & \placeholder{TODO} \\
+UC-23 & Review Reported Content & Admin & None & \placeholder{TODO} & \placeholder{TODO} \\
+UC-24 & View AI Performance Dashboard & Admin & None & OBJ-03 & \placeholder{TODO} \\
+\bottomrule
+\end{longtable}
+}
+
+Create Lot includes Screen Lot because every submitted lot must pass AI screening
+before it can be published. Override AI Decision extends Review Flagged Lot because
+an Admin overrides the AI only in some reviews and only while reviewing a flagged lot.
 
 \begin{table}[H]
 \centering
