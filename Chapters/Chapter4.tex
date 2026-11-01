@@ -133,22 +133,150 @@ Create Lot includes Screen Lot because every submitted lot must pass AI screenin
 before it can be published. Override AI Decision extends Review Flagged Lot because
 an Admin overrides the AI only in some reviews and only while reviewing a flagged lot.
 
+\tref{tab:uc-create-lot} to \tref{tab:uc-ask-assistant} specify the five core use cases.
+
 \begin{table}[H]
 \centering
-\caption{Use-case specification}
-\label{tab:use-case-specification}
-\begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}X@{}}
+\caption{Use-case specification: Create Lot}
+\label{tab:uc-create-lot}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.2\textwidth}X@{}}
 \toprule
 \textbf{Field} & \textbf{Description} \\
 \midrule
-Use-case ID and name & UC-01: Create and verify lot listing \\
-Primary actor & Contractor/Seller \\
-Preconditions & Authenticated account and lot details with 3--5 photographs \\
-Trigger & Seller submits a listing \\
-Main flow & Store lot; run AI pipeline; publish if checks pass or queue for Admin review \\
-Alternative or exception flows & Low confidence, disagreement, or Mixed condition routes to Admin \\
-Postconditions & Listing is published, rejected, or awaiting review \\
-Related requirements & FR-01--FR-05, NFR-01--NFR-02 \\
+Use-case ID and name & UC-01: Create Lot \\
+Primary actor & Contractor \\
+Preconditions & The Contractor is signed in and approved by the Admin. \\
+Trigger & The Contractor opens Create Lot. \\
+Main flow & 1.~The Contractor enters quantity, description, and price.\newline
+2.~The Contractor attaches 3--5 representative photos.\newline
+3.~The Contractor submits the lot.\newline
+4.~The system validates the photo count.\newline
+5.~The system compresses and uploads the photos.\newline
+6.~The system sets the lot status to Screening.\newline
+7.~The system performs UC-06 Screen Lot with the AI Service.\newline
+8.~The Decision Engine returns Auto-Publish.\newline
+9.~The system sets the lot status to Published.\newline
+10.~The system shows the status and condition grade to the Contractor. \\
+Alternative or exception flows & A1, fewer than 3 photos (step 4): the system blocks submission, states how many photos to add, and returns to step 2.\newline
+A2, AI Service unavailable (step 7): the lot receives grade Not Assessed, no price suggestion, and flag reason AI Unavailable, and its status becomes Pending Review.\newline
+A3, flagged to review (step 8): the Decision Engine returns Send to Review, the status becomes Pending Review, the system shows each flag reason, and UC-04 follows.\newline
+A4, rejected (after A2 or A3): the Admin rejects the lot in UC-04, and the status becomes Rejected. \\
+Postconditions & The lot is Published, Pending Review, or Rejected. \\
+Related requirements & FR-01--FR-05, FR-61--FR-65, FR-72, FR-73; NFR-01, NFR-65, NFR-67 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Use-case specification: Search Lots}
+\label{tab:uc-search-lots}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.2\textwidth}X@{}}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+Use-case ID and name & UC-02: Search Lots \\
+Primary actor & Customer \\
+Preconditions & The Customer is signed in with the Customer profile active. \\
+Trigger & The Customer opens search. \\
+Main flow & 1.~The Customer sets a location and search radius.\newline
+2.~The Customer sets price and material filters.\newline
+3.~The Customer runs the search.\newline
+4.~The system finds Published lots within the radius using the Haversine distance~\citep{sinnott1984haversine}.\newline
+5.~The system applies the price and material filters.\newline
+6.~The system shows the matching lots.\newline
+7.~The Customer selects a lot, and UC-13 View Lot Details follows. \\
+Alternative or exception flows & A1, no matching lot (step 6): the system states that no lot matched and suggests widening the radius or filters, and the flow returns to step 1.\newline
+A2, location unavailable (step 1): \placeholder{TODO: depends on the location input and map decision}.\newline
+A3, search saved (step 6): the Customer saves the search through UC-17 Save Search. \\
+Postconditions & Matching lots are shown, and no lot data has changed. \\
+Related requirements & FR-06, FR-72, FR-73; NFR-60--NFR-64, NFR-66, NFR-68 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Use-case specification: Reserve Lot}
+\label{tab:uc-reserve-lot}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.2\textwidth}X@{}}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+Use-case ID and name & UC-03: Reserve Lot \\
+Primary actor & Customer \\
+Preconditions & The Customer is signed in, and the lot details screen is open. \\
+Trigger & The Customer presses Reserve. \\
+Main flow & 1.~The system starts a database transaction~\citep{postgresqlisolation}.\newline
+2.~The system confirms that the lot status is Published and that its version is unchanged.\newline
+3.~The system creates a reservation with status Active.\newline
+4.~The system sets the lot status to Reserved.\newline
+5.~The system commits the transaction.\newline
+6.~The system shows the Active reservation to the Customer.\newline
+7.~The system shows the Reserved status to the Contractor. \\
+Alternative or exception flows & A1, already reserved (step 2): the version or status check fails, no reservation is created, and the system states that another buyer has reserved the lot.\newline
+A2, expired (step 2): the lot status is Expired, no reservation is created, and the system states that the lot has expired. \\
+Postconditions & On success, the lot is Reserved and has exactly one Active reservation. Otherwise, the lot is unchanged. \\
+Related requirements & FR-07, FR-63, FR-70, FR-73; NFR-66 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Use-case specification: Review Flagged Lot}
+\label{tab:uc-review-flagged-lot}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.2\textwidth}X@{}}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+Use-case ID and name & UC-04: Review Flagged Lot \\
+Primary actor & Admin \\
+Preconditions & The Admin is signed in, and at least one lot is Pending Review. \\
+Trigger & The Admin opens the review queue. \\
+Main flow & 1.~The system lists the Pending Review lots.\newline
+2.~The Admin selects a lot.\newline
+3.~The system shows the photos and the seller's claims next to the AI signals.\newline
+4.~The system shows each flag reason.\newline
+5.~The Admin chooses Approve.\newline
+6.~The system records the decision for the AI performance dashboard.\newline
+7.~The system sets the lot status to Published.\newline
+8.~The system shows the new status to the Contractor. \\
+Alternative or exception flows & A1, Reject (step 5): the status becomes Rejected, and the flow continues from step 6 with that status.\newline
+A2, Request Edits (step 5): the Admin writes a message, the status becomes Changes Requested, the Contractor sees the message, and UC-10 follows.\newline
+A3, Override (step 5): UC-19 Override AI Decision extends this use case, the Admin overrules the AI in either direction, and the status becomes Published or Rejected. \\
+Postconditions & The lot is Published, Rejected, or Changes Requested, and the decision is recorded. \\
+Related requirements & FR-04, FR-05, FR-63, FR-65, FR-66; NFR-60--NFR-64 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Use-case specification: Ask Listing Assistant}
+\label{tab:uc-ask-assistant}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.2\textwidth}X@{}}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+Use-case ID and name & UC-05: Ask Listing Assistant \\
+Primary actor & Customer; secondary actor: AI Service \\
+Preconditions & The Customer is signed in, and the lot details screen is open. \\
+Trigger & The Customer presses Ask Assistant. \\
+Main flow & 1.~The Customer types a question about the lot.\newline
+2.~The system sends the question and the lot's structured data to the AI Service.\newline
+3.~The AI Service produces an answer from that data only.\newline
+4.~The system shows the answer.\newline
+5.~The Customer may ask another question, and the flow returns to step 1. \\
+Alternative or exception flows & A1, information missing (step 3): the assistant replies ``not available, contact the seller'', and the Customer may start UC-14 Chat With Seller.\newline
+A2, AI Service unavailable (step 2): the system states that the assistant is unavailable, and the Customer may start UC-14 Chat With Seller. \\
+Postconditions & The Customer has an answer or a reason why none is available, and no lot data has changed. \\
+Related requirements & FR-08, FR-72; NFR-60, NFR-63, NFR-66 \\
 \bottomrule
 \end{tabularx}
 \end{table}
