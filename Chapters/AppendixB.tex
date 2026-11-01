@@ -9,4 +9,114 @@ pseudocode, questionnaires, or supplementary diagrams. Refer to every included
 item from the main document.
 \end{guidance}
 
-\placeholder{Insert supporting specification or remove this appendix.}
+\section{Data Dictionary}
+\placeholder{Member 2: insert the data dictionary.}
+
+\section{REST API Contract}
+\placeholder{Member 2: insert the REST API contract.}
+
+\section{AI Service Interface}
+\label{sec:ai-service-interface}
+The ASP.NET Core backend calls the AI Service over INT-02 using HTTPS, as shown in
+Figure~\ref{fig:sd-01} and Figure~\ref{fig:sd-05}. The AI Service requires a secret
+API key and accepts traffic only from the API server (SEC-22). It stays stateless,
+stores nothing, and returns signals only; the Decision Engine in the API makes the
+publish or review decision. Routes, timeouts, retries, and link expiry are
+provisional. \placeholder{Field lists follow the work plan and await Member 4's
+changes.}
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.74\textwidth}@{}}
+\caption{AI-01: Lot screening}\label{tab:ai-screening}\\
+\toprule
+\textbf{Field} & \textbf{Specification} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Specification} \\
+\midrule
+\endhead
+Purpose & Classify the material, detect visible defects, grade the condition, check description--image consistency, and estimate a surplus price for one lot (FR-02, FR-03). \\
+Caller & Background worker in the ASP.NET Core backend. The lot's status in PostgreSQL acts as the queue, and the worker takes one lot at a time. It starts only once GET /health confirms the models are loaded, and after a restart it resumes any lots still in Screening. \\
+Endpoint & POST /v1/screenings \\
+Request fields & Lot identifier; one time-limited, read-only pre-signed URL for each of the 3--5 photographs (DD-20); description; quantity; location; reference price. URLs are created just before each call and expire after 15 minutes. \placeholder{Field names and types} \\
+Response fields & Material; confidence; defects; grade (Good, Minor, Major, Mixed, or Not Assessed); price estimate; flags (Low Classification Confidence, Mixed Condition, Material Mismatch, Condition-Claim Conflict, or Price Above Estimate). \placeholder{Field names and types} \\
+Result return & In the HTTPS response, with no callback or polling. The worker saves the results, the decision, and the status in one database transaction. \\
+Timeout & 120 seconds. \\
+Retries & One, from the worker only, after a wait of a few seconds with jitter. Saving results is safe to repeat for the same lot. \\
+Error behaviour & Partial results count as a failed attempt, so no lot is auto-published without all checks. A 4xx error is not retried, and the lot goes to Pending Review with flag reason \placeholder{to be agreed}. \\
+Fallback & If the retry fails, the lot receives the grade Not Assessed with no price suggestion and the flag reason AI Unavailable, and moves to Pending Review (FR-28). The API sets this flag itself, so it is not an AI Service response value. \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.74\textwidth}@{}}
+\caption{AI-02: Listing Assistant}\label{tab:ai-assistant}\\
+\toprule
+\textbf{Field} & \textbf{Specification} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Specification} \\
+\midrule
+\endhead
+Purpose & Answer a buyer's question using only the lot's own structured data (FR-08, FR-30). \\
+Caller & ASP.NET Core REST API. \\
+Endpoint & POST /v1/assistant/answers \\
+Request fields & Lot identifier; question; lot data (material, quantity, condition, detected defects, price, location, seller description, and AI confidence). \placeholder{Field names and types} \\
+Response fields & Answer text, or the fallback reply. \placeholder{Field names and types} \\
+Result return & In the HTTPS response. \\
+Timeout & 30 seconds. \\
+Retries & None, because only the background worker retries. \\
+Error behaviour & \placeholder{Agreed error responses} \\
+Fallback & If the information is missing, the reply is ``not available, contact the seller''. A fallback reply is also returned if the LLM provider is unavailable (FR-30). \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.74\textwidth}@{}}
+\caption{AI-03: Health check}\label{tab:ai-health}\\
+\toprule
+\textbf{Field} & \textbf{Specification} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Specification} \\
+\midrule
+\endhead
+Purpose & Confirm that the models are loaded. \\
+Caller & Background worker, before it starts. \\
+Endpoint & GET /health \\
+Request fields & None. \\
+Response fields & \placeholder{Field names and types} \\
+Error behaviour & The worker does not start until this check confirms the models are loaded. \\
+\bottomrule
+\end{longtable}
+}
+
+\section{Chat Hub Events}
+\label{sec:chat-hub-events}
+Events travel over INT-03, as shown in Figure~\ref{fig:sd-04}. The hub rejects
+unauthenticated connections (SEC-20) and checks that the user is a thread participant
+on every join and send (SEC-21). Negotiation uses the same messages as chat
+(FR-23), so it has no separate events. For hub-to-client events, the last column
+shows who receives the event. \placeholder{Payload field names and types}
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
+\caption{Chat hub events}\label{tab:chat-hub-events}\\
+\toprule
+\textbf{ID} & \textbf{Event name} & \textbf{Direction} & \textbf{Payload} & \textbf{Who may use it} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Event name} & \textbf{Direction} & \textbf{Payload} & \textbf{Who may use it} \\
+\midrule
+\endhead
+CHAT-01 & SendMessage & Client to hub & Thread and message text (FR-20) & Thread participants \\
+CHAT-02 & ReceiveMessage & Hub to client & Thread, sender, and message text; also used for undelivered messages on reconnecting (FR-20, FR-21) & The recipient \\
+CHAT-03 & MarkRead & Client to hub & Thread and the message read (FR-31) & The recipient \\
+CHAT-04 & MessageRead & Hub to client & Thread and the message read (FR-31) & The message's sender \\
+CHAT-05 & PresenceChanged & Hub to client & Participant and online or offline state (FR-22) & Thread participants \\
+CHAT-06 & LotStatusChanged & Hub to client & Lot and its new status (FR-29) & The lot's seller \\
+\bottomrule
+\end{longtable}
+}

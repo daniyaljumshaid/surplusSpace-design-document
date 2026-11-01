@@ -8,25 +8,63 @@
 \section{System Context, Architecture, and Interfaces \applicability{Development, Hybrid, Game; Research Software Prototype}}
 The system boundary contains the Flutter web/Android client, the ASP.NET Core
 marketplace API, the PostgreSQL/PostGIS database, Redis, SignalR, and the
-asynchronous Python/FastAPI AI service. Customers and Contractors submit and
-discover lots, communicate, negotiate, and reserve them. Admins manage users,
+asynchronous Python/FastAPI AI service. Customers use the client for lot
+discovery, communication, negotiation, and reservation. Admins manage users,
 categories, thresholds, flagged listings, and AI overrides. AWS S3 stores listing
 photographs. The AI service returns classification, defect, condition,
 consistency, and price signals to the decision engine.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,0) rectangle (146.6,58);
+  % System under design
+  \node[draw,fill=gray!12,line width=0.8pt,minimum width=42mm,minimum height=58mm,
+        text width=38mm,align=center] (system) at (71,29) {%
+    {\footnotesize\bfseries surplusSpace\\Marketplace System}\\[3mm]
+    Marketplace client and API\\[1.5mm]
+    Listing workflow and\\AI-gated verification\\[1.5mm]
+    Chat, reservations, Admin review,\\and listing assistant};
+
+  % Actors
+  \node[diagram box=16mm,text width=22mm] (customer) at (12,44) {\diagramstereotype{actor}\\[0.5mm]{\footnotesize Customer / Contractor}};
+  \node[diagram box=16mm,text width=22mm] (admin) at (12,14) {\diagramstereotype{actor}\\[0.5mm]{\footnotesize Admin}};
+
+  % External systems
+  \node[diagram box=16mm,external,text width=25mm] (s3) at (133,44) {\diagramstereotype{external system}\\[0.5mm]{\footnotesize AWS S3\\object storage}};
+  \node[diagram box=16mm,external,text width=25mm] (llm) at (133,14) {\diagramstereotype{external system}\\[0.5mm]{\footnotesize External LLM provider}};
+
+  % Exchanges
+  \draw[->] ([yshift=2mm]customer.east) -- node[above,flow label] {listings, search,\\reservations, chat} ([yshift=2mm]customer.east -| system.west);
+  \draw[<-] ([yshift=-2mm]customer.east) -- node[below,flow label] {search results,\\chat messages} ([yshift=-2mm]customer.east -| system.west);
+  \draw[->] ([yshift=2mm]admin.east) -- node[above,flow label] {review decisions,\\AI overrides,\\thresholds} ([yshift=2mm]admin.east -| system.west);
+  \draw[<-] ([yshift=-2mm]admin.east) -- node[below,flow label] {flagged listings,\\moderation results} ([yshift=-2mm]admin.east -| system.west);
+  \draw[->] ([yshift=2mm]s3.west -| system.east) -- node[above,flow label] {photo upload\\(INT-05)} ([yshift=2mm]s3.west);
+  \draw[<-] ([yshift=-2mm]s3.west -| system.east) -- node[below,flow label] {photo retrieval} ([yshift=-2mm]s3.west);
+  \draw[->] ([yshift=2mm]llm.west -| system.east) -- node[above,flow label] {assistant prompts\\and context\\(INT-06)} ([yshift=2mm]llm.west);
+  \draw[<-] ([yshift=-2mm]llm.west -| system.east) -- node[below,flow label] {responses} ([yshift=-2mm]llm.west);
+\end{tikzpicture}
+\caption{System Context Diagram}
+\label{fig:system-context}
+\end{figure}
 
 \begin{table}[H]
 \centering
 \caption{Major interfaces}
 \label{tab:major-interfaces}
-\begin{tabularx}{\textwidth}{@{}p{0.16\textwidth}p{0.22\textwidth}X X@{}}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.155\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
 \toprule
-\textbf{ID} & \textbf{Interface} & \textbf{Purpose and exchanged information} & \textbf{Protocol or format} \\
+\textbf{ID} & \textbf{Interface} & \textbf{Purpose and exchanged information} & \textbf{Protocol or format} & \textbf{Requirements} \\
 \midrule
-INT-01 & Flutter client--ASP.NET Core API & Authentication, listings, search, reservations, and Admin operations & REST/JSON \\
-INT-02 & ASP.NET Core--FastAPI AI service & Listing photos and metadata exchanged for AI assessment results & Asynchronous API \\
-INT-03 & ASP.NET Core--SignalR & Real-time chat and negotiation messages & SignalR \\
-INT-04 & Platform--PostgreSQL/PostGIS and Redis & Persistent marketplace data, geospatial queries, cache, and presence & Database/cache protocols \\
-INT-05 & Platform--AWS S3 & Listing-photo upload and retrieval & Object storage API \\
+INT-01 & Flutter client -- ASP.NET Core REST API & Authentication, listings, search, reservations, assistant questions, and Admin operations & HTTPS with JSON & FR-01, \mbox{FR-05--FR-08} \\
+INT-02 & ASP.NET Core backend -- FastAPI AI service & Pre-signed photo URLs and metadata sent; classification, defect, condition, consistency, and price results returned in the HTTPS response; assistant questions and answers & HTTPS & FR-02, FR-03, FR-08, EIR-01 \\
+INT-03 & Flutter client -- SignalR hub & Real-time chat, negotiation, presence, read status, and lot status changes & WebSocket (SignalR) & FR-07, FR-29, EIR-02 \\
+INT-04 & ASP.NET Core backend -- PostgreSQL/\allowbreak PostGIS and Redis & Persistent marketplace data, geospatial queries, cache, and presence & Database and cache protocols & DIR-01, FR-06 \\
+INT-05 & ASP.NET Core backend -- AWS S3 & Listing-photo upload and retrieval & Object storage API & FR-01, EIR-03 \\
+INT-06 & AI service -- External LLM provider & Assistant prompts with listing context, and generated responses & To be confirmed & FR-08 \\
+INT-07 & AI service -- AWS S3 & Listing photos downloaded directly for assessment & Time-limited, read-only pre-signed URL per photo & FR-02, FR-03, EIR-03 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -128,7 +166,314 @@ Show how an important scenario is realized through time-ordered messages among
 actors, system components, and external services. Use activation bars and combined
 fragments such as \texttt{alt}, \texttt{opt}, or \texttt{loop} where appropriate.
 \end{guidance}
-\diagramplaceholder{Sequence diagram}{Example scenario: a student submits an appointment request and receives confirmation.}
+Figures~\ref{fig:sd-01} to~\ref{fig:sd-05} show the five main scenarios in time
+order. Arrows with a filled head are synchronous calls, arrows with an open head
+are asynchronous messages, and dashed arrows are returns. Lot statuses use the
+values in the state-machine model, and message labels give the interface from
+Table~\ref{tab:major-interfaces} where it helps. \placeholder{Replace each remaining
+REST message name with its endpoint once Appendix B.2 is agreed.}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,8) rectangle (146.6,-196);
+  \seqlifeline{8.5}{-196}{Contractor: Flutter client}
+  \seqlifeline{26}{-196}{REST API}
+  \seqlifeline{43.5}{-196}{AWS S3}
+  \seqlifeline{61}{-196}{PostgreSQL}
+  \seqlifeline{79}{-196}{Decision Engine}
+  \seqlifeline{98.5}{-196}{Background worker}
+  \seqlifeline{116}{-196}{AI Service (FastAPI)}
+  \seqlifeline{138}{-196}{AI pipeline stages}
+
+  \seqfrag{1}{-35}{146.5}{-193}{loop}{13}{each lot in Screening, one at a time}
+  \seqfrag{35}{-50}{146}{-120.5}{loop(1,2)}{49}{until complete results or 4xx}
+  \seqfrag{35}{-123}{146}{-185}{alt}{42}{complete, AI confident, no flags}
+  \seqelse{35}{146}{-142}{42}{complete, flagged or grade Mixed}
+  \seqelse{35}{146}{-161}{42}{retry failed}
+  \seqelse{35}{146}{-173}{42}{4xx error}
+
+  \seqbar{8.5}{-7}{-31}
+  \seqbar{8.5}{-189}{-191}
+  \seqbar{26}{-7}{-31}
+  \seqbar{43.5}{-11.5}{-17.5}
+  \seqbar{43.5}{-69}{-75}
+  \seqbar{61}{-20}{-26}
+  \seqbar{61}{-42}{-48}
+  \seqbar{61}{-138}{-140}
+  \seqbar{61}{-157}{-159}
+  \seqbar{61}{-169}{-171}
+  \seqbar{61}{-181}{-183}
+  \seqbar{79}{-129}{-135}
+  \seqbar{79}{-148}{-154}
+  \seqbar{98.5}{-42}{-191.5}
+  \seqbar{116}{-64}{-119}
+  \foreach \y in {-78,-86,-94,-102,-110} {\seqbar{138}{\y+0.5}{\y-4.5}}
+
+  \seqmsg{seq call}{8.5}{26}{-8}{submit lot}
+  \seqmsg{seq call}{26}{43.5}{-12.5}{store photos}
+  \seqmsg{seq return}{43.5}{26}{-16.5}{stored}
+  \seqmsg{seq call}{26}{61}{-21}{save lot, Screening}
+  \seqmsg{seq return}{61}{26}{-25}{saved}
+  \seqmsg{seq return}{26}{8.5}{-30}{Screening}
+
+  \seqmsg{seq call}{98.5}{61}{-43}{take next lot}
+  \seqmsg{seq return}{61}{98.5}{-47}{lot data}
+
+  \seqselfleft{98.5}{-54.5}{create pre-signed URLs}
+  \seqmsg{seq call}{98.5}{116}{-65}{POST /v1/\\screenings}
+  \seqmsg{seq call}{116}{43.5}{-70}{download photos (INT-07)}
+  \seqmsg{seq return}{43.5}{116}{-74}{photos}
+  \seqmsg{seq call}{116}{138}{-78}{classify material}
+  \seqmsg{seq return}{138}{116}{-82}{classification}
+  \seqmsg{seq call}{116}{138}{-86}{detect defects}
+  \seqmsg{seq return}{138}{116}{-90}{defects}
+  \seqmsg{seq call}{116}{138}{-94}{grade condition}
+  \seqmsg{seq return}{138}{116}{-98}{condition grade}
+  \seqmsg{seq call}{116}{138}{-102}{check consistency}
+  \seqmsg{seq return}{138}{116}{-106}{consistency}
+  \seqmsg{seq call}{116}{138}{-110}{estimate price}
+  \seqmsg{seq return}{138}{116}{-114}{price estimate}
+  \seqmsg{seq return}{116}{98.5}{-118.5}{results}
+
+  \seqmsg{seq call}{98.5}{79}{-130}{evaluate}
+  \seqmsg{seq return}{79}{98.5}{-134}{Auto-Publish}
+  \seqmsg{seq call}{98.5}{61}{-139}{save all: Published}
+  \seqmsg{seq call}{98.5}{79}{-149}{evaluate}
+  \seqmsg{seq return}{79}{98.5}{-153}{Send to Review}
+  \seqmsg{seq call}{98.5}{61}{-158}{save all: Pending Review}
+  \seqmsg{seq call}{98.5}{61}{-170}{Not Assessed, AI Unavailable,\\Pending Review}
+  \seqmsg{seq call}{98.5}{61}{-182}{Pending Review,\\flag \placeholder{to be agreed}}
+
+  \seqmsg{seq async}{98.5}{8.5}{-190}{LotStatusChanged (INT-03)}
+\end{tikzpicture}
+\caption{Sequence Diagram SD-01: Lot submission, screening, and decision}
+\label{fig:sd-01}
+\end{figure}
+
+The API accepts the lot and replies at once with status Screening, and the lot's
+status in PostgreSQL acts as the queue. A background worker takes one lot at a time.
+It creates the pre-signed URLs just before each call, calls the AI Service over
+HTTPS, and receives the results in that response, so the AI Service stays stateless
+and stores nothing. The AI Service downloads the photos directly from AWS S3. Partial
+results count as a failed attempt, so no lot is auto-published without all checks.
+After a failed attempt the worker waits a few seconds, with jitter, and retries once;
+a 4xx error is not retried. The Decision Engine chooses Auto-Publish or Send to Review,
+and every Mixed-condition lot goes to review. The worker saves the results, the
+decision, and the status in one database transaction. If the retry fails, the lot
+receives the grade Not Assessed with no price suggestion and moves to Pending Review.
+After a restart, the worker resumes any lots still in Screening.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,8) rectangle (146.6,-101);
+  \seqlifeline{15}{-101}{Admin: Flutter client}
+  \seqlifeline{58}{-101}{REST API}
+  \seqlifeline{100}{-101}{PostgreSQL}
+  \seqlifeline{132}{-101}{Contractor: Flutter client}
+
+  \seqfrag{46}{-40}{120}{-86}{alt}{60}{Approve}
+  \seqelse{46}{120}{-51}{60}{Reject}
+  \seqelse{46}{120}{-62}{60}{Request Edits}
+  \seqelse{46}{120}{-73}{60}{Override}
+
+  \seqbar{15}{-7}{-23}
+  \seqbar{15}{-27}{-29}
+  \seqbar{15}{-90}{-92}
+  \seqbar{58}{-7}{-97}
+  \seqbar{100}{-12.5}{-17.5}
+  \seqbar{100}{-32.5}{-37.5}
+  \seqbar{100}{-46.5}{-48.5}
+  \seqbar{100}{-57.5}{-59.5}
+  \seqbar{100}{-68.5}{-70.5}
+  \seqbar{100}{-79.5}{-84.5}
+  \seqbar{132}{-95}{-97}
+
+  \seqmsg{seq call}{15}{58}{-8}{open review queue (INT-01)}
+  \seqmsg{seq call}{58}{100}{-13}{read Pending Review lots}
+  \seqmsg{seq return}{100}{58}{-17}{lots and AI signals}
+  \seqmsg{seq return}{58}{15}{-22}{queue with AI signals}
+  \seqmsg{seq call}{15}{58}{-28}{submit review action}
+  \seqmsg{seq call}{58}{100}{-33}{save review decision}
+  \seqmsg{seq return}{100}{58}{-37}{saved}
+  \seqmsg{seq call}{58}{100}{-47.5}{status Published}
+  \seqmsg{seq call}{58}{100}{-58.5}{status Rejected}
+  \seqmsg{seq call}{58}{100}{-69.5}{status Changes Requested}
+  \seqmsg{seq call}{58}{100}{-80}{record override}
+  \seqmsg{seq call}{58}{100}{-84}{status set by Admin}
+  \seqmsg{seq return}{58}{15}{-91}{review result}
+  \seqmsg{seq async}{58}{132}{-96}{LotStatusChanged (INT-03)}
+\end{tikzpicture}
+\caption{Sequence Diagram SD-02: Admin review}
+\label{fig:sd-02}
+\end{figure}
+
+The Admin sees each Pending Review lot with its AI signals before acting. Approve
+publishes the lot, Reject closes it, and Request Edits returns it to the Contractor
+as Changes Requested. Override applies the Admin's decision in either direction
+and records it, so that overrides remain available for evaluation.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,8) rectangle (146.6,-112);
+  \seqlifeline{15}{-112}{Customer: Flutter client}
+  \seqlifeline{70}{-112}{REST API}
+  \seqlifeline{125}{-112}{PostgreSQL}
+
+  \seqfrag{3}{-25}{143}{-108}{alt}{17}{status is Reserved}
+  \seqelse{3}{143}{-40}{17}{status is Expired}
+  \seqelse{3}{143}{-55}{17}{status is Published}
+  \seqfrag{5}{-71}{141}{-106}{alt}{17}{version unchanged}
+  \seqelse{5}{141}{-90}{17}{version changed}
+
+  \seqbar{15}{-7}{-103}
+  \seqbar{70}{-7}{-103}
+  \seqbar{125}{-12.5}{-14.5}
+  \seqbar{125}{-17.5}{-22.5}
+  \seqbar{125}{-31.5}{-33.5}
+  \seqbar{125}{-46.5}{-48.5}
+  \seqbar{125}{-62.5}{-67.5}
+  \seqbar{125}{-77.5}{-79.5}
+  \seqbar{125}{-81.5}{-83.5}
+  \seqbar{125}{-96.5}{-98.5}
+
+  \seqmsg{seq call}{15}{70}{-8}{reserve lot (INT-01)}
+  \seqmsg{seq call}{70}{125}{-13}{begin transaction}
+  \seqmsg{seq call}{70}{125}{-18}{read lot status and version}
+  \seqmsg{seq return}{125}{70}{-22}{status, version}
+  \seqmsg{seq call}{70}{125}{-32.5}{roll back}
+  \seqmsg{seq return}{70}{15}{-37}{already reserved}
+  \seqmsg{seq call}{70}{125}{-47.5}{roll back}
+  \seqmsg{seq return}{70}{15}{-52}{lot expired}
+  \seqmsg{seq call}{70}{125}{-63}{update lot if version unchanged}
+  \seqmsg{seq return}{125}{70}{-67}{update result}
+  \seqmsg{seq call}{70}{125}{-78.5}{create Active reservation}
+  \seqmsg{seq call}{70}{125}{-82.5}{commit: lot status Reserved}
+  \seqmsg{seq return}{70}{15}{-87}{reservation Active}
+  \seqmsg{seq call}{70}{125}{-97.5}{roll back}
+  \seqmsg{seq return}{70}{15}{-102}{version conflict, not reserved}
+\end{tikzpicture}
+\caption{Sequence Diagram SD-03: Reserve Lot}
+\label{fig:sd-03}
+\end{figure}
+
+The API works inside one transaction and reads the lot's status and version first.
+A lot that is already Reserved or Expired is refused at once. For a Published lot,
+the update succeeds only if the version is unchanged since it was read, so when two
+buyers reserve at the same moment the second receives a version conflict. A lot can
+therefore never hold two Active reservations.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,8) rectangle (146.6,-124);
+  \seqlifeline{12}{-124}{Buyer: Flutter client}
+  \seqlifeline{50}{-124}{SignalR hub}
+  \seqlifeline{78}{-124}{Redis}
+  \seqlifeline{104}{-124}{PostgreSQL}
+  \seqlifeline{135}{-124}{Seller: Flutter client}
+
+  \seqfrag{42}{-57}{146}{-67}{opt}{52}{recipient online}
+  \seqfrag{4}{-70}{146}{-104}{opt}{52}{recipient offline}
+
+  \seqbar{12}{-7}{-19}
+  \seqbar{12}{-23}{-46}
+  \seqbar{12}{-86}{-88}
+  \seqbar{12}{-119}{-121}
+  \seqbar{50}{-7}{-19}
+  \seqbar{50}{-23}{-65}
+  \seqbar{50}{-76}{-102}
+  \seqbar{50}{-109}{-121}
+  \seqbar{78}{-12.5}{-14.5}
+  \seqbar{78}{-49.5}{-54.5}
+  \seqbar{78}{-81.5}{-83.5}
+  \seqbar{104}{-35.5}{-40.5}
+  \seqbar{104}{-91.5}{-96.5}
+  \seqbar{104}{-114}{-116}
+  \seqbar{135}{-63}{-65}
+  \seqbar{135}{-76}{-78}
+  \seqbar{135}{-100}{-102}
+  \seqbar{135}{-109}{-111}
+
+  \seqmsg{seq call}{12}{50}{-8}{connect (INT-03)}
+  \seqmsg{seq call}{50}{78}{-13.5}{set presence}
+  \seqmsg{seq return}{50}{12}{-18}{connected}
+  \seqmsg{seq call}{12}{50}{-24}{SendMessage}
+  \seqself{50}{-28}{check thread participant}
+  \seqmsg{seq call}{50}{104}{-36}{persist message}
+  \seqmsg{seq return}{104}{50}{-40}{saved}
+  \seqmsg{seq return}{50}{12}{-45}{message sent}
+  \seqmsg{seq call}{50}{78}{-50}{read presence}
+  \seqmsg{seq return}{78}{50}{-54}{online or offline}
+  \seqmsg{seq async}{50}{135}{-64}{ReceiveMessage}
+  \seqmsg{seq call}{135}{50}{-77}{connect when back online}
+  \seqmsg{seq call}{50}{78}{-82.5}{set presence}
+  \seqmsg{seq async}{50}{12}{-87}{PresenceChanged}
+  \seqmsg{seq call}{50}{104}{-92}{read undelivered messages}
+  \seqmsg{seq return}{104}{50}{-96}{messages}
+  \seqmsg{seq async}{50}{135}{-101}{ReceiveMessage}
+  \seqmsg{seq call}{135}{50}{-110}{MarkRead}
+  \seqmsg{seq call}{50}{104}{-115}{save read status}
+  \seqmsg{seq async}{50}{12}{-120}{MessageRead}
+\end{tikzpicture}
+\caption{Sequence Diagram SD-04: Buyer and seller chat}
+\label{fig:sd-04}
+\end{figure}
+
+Each user connects to the SignalR hub, which records presence in Redis. The hub
+checks that the sender belongs to the thread and persists the message before
+delivery, so no message depends on the recipient being connected. An online seller
+receives the message immediately. An offline seller receives it on reconnecting,
+when the hub reads the undelivered messages from PostgreSQL. When the seller reads
+the message, the hub saves the read status and tells the buyer.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,8) rectangle (146.6,-91);
+  \seqlifeline{12}{-91}{Customer: Flutter client}
+  \seqlifeline{48}{-91}{REST API}
+  \seqlifeline{78}{-91}{PostgreSQL}
+  \seqlifeline{106}{-91}{AI Service: Listing Assistant}
+  \seqlifeline{135}{-91}{External LLM provider}
+
+  \seqfrag{40}{-34}{146}{-82}{alt}{51}{information available}
+  \seqelse{40}{146}{-53}{51}{information missing}
+  \seqelse{40}{146}{-64}{51}{LLM unavailable}
+
+  \seqbar{12}{-7}{-88}
+  \seqbar{48}{-7}{-88}
+  \seqbar{78}{-12.5}{-17.5}
+  \seqbar{106}{-21}{-81}
+  \seqbar{135}{-40.5}{-45.5}
+  \seqbar{135}{-70.5}{-75.5}
+
+  \seqmsg{seq call}{12}{48}{-8}{ask question (INT-01)}
+  \seqmsg{seq call}{48}{78}{-13}{read lot data}
+  \seqmsg{seq return}{78}{48}{-17}{lot data}
+  \seqmsg{seq call}{48}{106}{-22}{POST /v1/assistant/answers (INT-02)}
+  \seqselfleft{106}{-26}{build context from lot data only}
+  \seqmsg{seq call}{106}{135}{-41}{lot context}
+  \seqmsg{seq return}{135}{106}{-45}{answer}
+  \seqmsg{seq return}{106}{48}{-50}{answer}
+  \seqmsg{seq return}{106}{48}{-61}{``not available, contact the seller''}
+  \seqmsg{seq call}{106}{135}{-71}{lot context}
+  \seqmsg{seq return}{135}{106}{-75}{no answer}
+  \seqmsg{seq return}{106}{48}{-80}{fallback reply}
+  \seqmsg{seq return}{48}{12}{-87}{answer or fallback reply}
+\end{tikzpicture}
+\caption{Sequence Diagram SD-05: Ask Listing Assistant}
+\label{fig:sd-05}
+\end{figure}
+
+The Listing Assistant builds its context only from the lot's own structured data,
+and the LLM provider receives nothing else. When the data does not contain the
+answer, the Customer receives the reply ``not available, contact the seller''. A
+fallback reply is also returned when the LLM provider is unavailable, so the
+question always receives a response. The API waits for the answer in the HTTPS
+response, with no retry.
 
 \section{Structural Design \applicability{Development, Hybrid, Game; Research if applicable}}
 \begin{guidance}
@@ -149,7 +494,154 @@ operations, relationships, multiplicities, and inheritance where justified.
 Show deployable or replaceable software components, their provided and required
 interfaces, and dependencies.
 \end{guidance}
-\diagramplaceholder{Component diagram}{Example components: Web Client, Appointment Service, Authentication Service, and Data Store.}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,-6) rectangle (146.6,156);
+  % Client layer
+  \draw[layer] (0,135) rectangle (147,156);
+  \node[layer title] at (73.5,151.5) {Client Layer};
+  \node[diagram box=10mm,minimum width=62mm] at (36,142) {Flutter client\\web and Android};
+  \node[diagram box=10mm,minimum width=62mm] at (111,142) {Customer/Contractor and Admin\\role-based interfaces};
+
+  % Backend / API layer
+  \draw[layer] (0,83) rectangle (147,122);
+  \node[layer title] at (73.5,118) {Backend / API Layer (ASP.NET Core 8)};
+  \node[diagram box=12mm,text width=22mm] at (15,107) {REST API};
+  \node[diagram box=12mm,text width=26mm] at (44,107) {Authentication\\and RBAC};
+  \node[diagram box=12mm,text width=42mm] at (83,107) {Marketplace operations\\listings, search, reservations};
+  \node[diagram box=12mm,text width=34mm] at (126,107) {SignalR hub\\chat and negotiation};
+  \node[diagram box=11mm,text width=38mm] at (28,92) {AI Verification\\background worker};
+  \node[diagram box=11mm,text width=38mm] at (73.5,92) {Decision Engine\\publish or Admin review};
+  \node[diagram box=11mm,text width=38mm] at (119,92) {Admin Review Queue};
+
+  % Data and storage layer
+  \draw[layer] (0,0) rectangle (43,70);
+  \node[layer title] at (21.5,64.5) {Data and Storage\\Layer};
+  \node[diagram box=13mm,text width=33mm] at (21.5,50) {PostgreSQL and PostGIS\\marketplace data};
+  \node[diagram box=13mm,text width=33mm] at (21.5,32) {Redis\\cache and presence};
+  \node[diagram box=13mm,external,text width=33mm] at (21.5,14) {AWS S3\\listing photos};
+
+  % AI service layer
+  \draw[layer] (51,26) rectangle (147,70);
+  \node[layer title] at (99,65) {AI Service Layer (Python/FastAPI)};
+  \node[diagram box=13mm,text width=26mm] at (67,53) {CLIP\\classification};
+  \node[diagram box=13mm,text width=26mm] at (99,53) {YOLO\\defect detection};
+  \node[diagram box=13mm,text width=26mm] at (131,53) {Condition\\engine};
+  \node[diagram box=13mm,text width=26mm] at (67,36) {Consistency\\checker};
+  \node[diagram box=13mm,text width=26mm] at (99,36) {XGBoost\\price model};
+  \node[diagram box=13mm,text width=26mm] at (131,36) {AI Listing\\Assistant};
+
+  % External service
+  \draw[layer] (51,0) rectangle (147,16);
+  \node[layer title] at (70,8) {External Service};
+  \node[diagram box=10mm,external,text width=52mm] at (117,8) {External LLM provider (to confirm)};
+
+  % Connections between layers
+  \draw[<->] (15,135) -- node[right,flow label] {HTTPS with JSON (INT-01)} (15,122);
+  \draw[<->] (126,135) -- node[left,flow label] {WebSocket: chat and negotiation (INT-03)} (126,122);
+  \draw[<->] (21.5,83) -- node[right,flow label] {database and cache (INT-04);\\photo access (INT-05)} (21.5,70);
+  \draw[<->] (99,83) -- node[right,flow label] {AI requests and results (INT-02)} (99,70);
+  \draw[<->] (131,26) -- node[left,flow label] {LLM I/O (INT-06)} (131,16);
+  \draw[<->] (39,14) -- (47,14) -- (47,40) -- (51,40);
+  \node[flow label,fill=white,rotate=90] at (47,27) {photos (INT-07)};
+
+  \node[anchor=north west,inner sep=0pt] at (0,-2) {Dashed outline: service outside the system boundary. INT identifiers refer to Table~\ref{tab:major-interfaces}.};
+\end{tikzpicture}
+\caption{System Architecture Diagram}
+\label{fig:system-architecture}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,0) rectangle (146.6,158);
+  % Client
+  \umlcomponent{client}{55}{153}{104}{10}{Flutter client (web and Android)}
+
+  % ASP.NET Core backend
+  \draw[layer] (0,87) rectangle (147,134);
+  \node[layer title] at (55,130) {Backend / API Components};
+  \umlcomponent{signalr}{18}{120}{30}{12}{SignalR hub\\real-time chat}
+  \umlcomponent{auth}{55}{120}{30}{12}{Authentication\\and RBAC}
+  \umlcomponent{rest}{92}{120}{30}{12}{ASP.NET Core 8\\REST API}
+  \umlcomponent{market}{129}{120}{30}{12}{Marketplace and\\Listing Management}
+  \umlcomponent{queue}{55}{97}{30}{12}{Admin Review\\Queue}
+  \umlcomponent{decision}{92}{97}{30}{12}{Decision Engine\\publish or flag}
+  \umlcomponent{verify}{129}{97}{30}{12}{AI Verification\\background worker}
+
+  \draw[uses] (rest.west) -- (auth.east);
+  \draw[uses] (rest.east) -- (market.west);
+  \draw[uses] (136,114) -- (136,103);
+  \draw[uses] (verify.west) -- (decision.east);
+  \draw[uses] (decision.west) -- (queue.east);
+  \draw[uses] (84,114) -- (84,108.5) -- (55,108.5) -- (55,103);
+  \draw[uses] (100,103) -- (100,108.5) -- (122,108.5) -- (122,114);
+  \node[flow label,anchor=south] at (69.5,108.5) {Admin operations};
+  \node[flow label,anchor=south] at (111,108.5) {publish};
+
+  % AI service
+  \draw[layer] (68,21) rectangle (147,73);
+  \node[layer title] at (107.5,69.5) {AI Service};
+  \umlcomponent{fastapi}{108}{62}{70}{8}{Python/FastAPI service}
+  \umlcomponent{clip}{83}{46.5}{20}{11}{CLIP\\classification}
+  \umlcomponent{yolo}{108}{46.5}{20}{11}{YOLO defect\\detection}
+  \umlcomponent{condition}{133}{46.5}{20}{11}{Condition\\engine}
+  \umlcomponent{assistant}{83}{29.5}{20}{11}{AI Listing\\Assistant}
+  \umlcomponent{xgboost}{108}{29.5}{20}{11}{XGBoost\\price model}
+  \umlcomponent{consistency}{133}{29.5}{20}{11}{Consistency\\checker}
+
+  \draw[uses] (83,58) -- (clip.north);
+  \draw[uses] (clip.east) -- (yolo.west);
+  \draw[uses] (yolo.east) -- (condition.west);
+  \draw[uses] (condition.south) -- (consistency.north);
+  \draw[uses] (consistency.west) -- (xgboost.east);
+  \draw[uses] (fastapi.west) -- (70.5,62) -- (70.5,29.5) -- (assistant.west);
+
+  % Supporting dependencies
+  \draw[layer] (0,47) rectangle (60,73);
+  \node[layer title] at (30,51) {Supporting Dependencies};
+  \umlcomponent{postgres}{11}{63}{18}{14}{PostgreSQL\\and PostGIS}
+  \umlcomponent{redis}{30}{63}{18}{14}{Redis\\cache and\\presence}
+  \node[diagram box=14mm,external,text width=16mm] at (49,63) {AWS S3\\listing\\photos};
+
+  % External LLM provider
+  \node[diagram box=10mm,external,text width=34mm] at (92,5) {External LLM provider};
+
+  % Provided and required interfaces, numbered as in the major-interfaces table
+  \umlassembly{92,148}{92,126}
+  \node[flow label,anchor=west] at (94,137) {INT-01 HTTPS with JSON};
+  \umlassembly{18,148}{18,126}
+  \node[flow label,anchor=west] at (20,137) {INT-03 WebSocket (SignalR)};
+  \umlassembly{11,87}{11,70}
+  \node[flow label,anchor=west] at (13,78.5) {INT-04};
+  \umlassembly{30,87}{30,70}
+  \node[flow label,anchor=west] at (32,78.5) {INT-04};
+  \umlassembly{49,87}{49,70}
+  \node[flow label,anchor=west] at (51,78.5) {INT-05};
+  \umlassembly{73,64.5}{58,64.5}
+  \node[flow label] at (64,75.5) {INT-07};
+  \umlassembly{129,91}{129,66}
+  \node[flow label,anchor=east] at (127,78.5) {INT-02 HTTPS};
+  \umlassembly{83,24}{83,10}
+  \node[flow label,anchor=west] at (85,16) {INT-06};
+
+  % Notation key
+  \draw (0,6) rectangle (62,39);
+  \node[flow label,anchor=west,font=\diagramfont\bfseries] at (2,35.5) {Notation};
+  \umlicon{7,31.2}
+  \node[flow label,anchor=west] at (9,30) {Component};
+  \umlassembly{2,24.5}{8,24.5}
+  \node[flow label,anchor=west] at (9,24.5) {Required and provided interface};
+  \draw[uses] (2,19.5) -- (8,19.5);
+  \node[flow label,anchor=west] at (9,19.5) {Dependency};
+  \draw[external] (2,13) rectangle (8,16);
+  \node[flow label,anchor=west] at (9,14.5) {Service outside the system boundary};
+  \node[flow label,anchor=west] at (2,9.5) {INT identifiers refer to Table~\ref{tab:major-interfaces}.};
+\end{tikzpicture}
+\caption{Component Diagram (CMP-01)}
+\label{fig:component-diagram}
+\end{figure}
 
 \subsection{Package Model \applicability{If required}}
 \begin{guidance}
@@ -164,7 +656,67 @@ the structure adequately.
 Show execution nodes, devices, environments, deployed artifacts, and communication
 paths. Distinguish physical or virtual nodes from software components.
 \end{guidance}
-\diagramplaceholder{Deployment diagram}{Example nodes: user device, application server, database server, and external notification service.}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,0) rectangle (146.6,132.5);
+  % Client devices
+  \umlnode{6}{108}{68}{130}{device}{Web browser device}
+  \node[diagram box=11mm,text width=44mm] at (37,115) {\diagramstereotype{artifact}\\Flutter web client};
+  \umlnode{78}{108}{140}{130}{device}{Android device}
+  \node[diagram box=11mm,text width=44mm] at (109,115) {\diagramstereotype{artifact}\\Flutter Android client};
+
+  % Application server
+  \umlnode{0}{69}{144}{97}{cloud server}{Application server (AWS)}
+  \node[diagram box=13mm,text width=22mm] (hub) at (15,81.5) {\diagramstereotype{artifact}\\SignalR hub};
+  \node[diagram box=13mm,text width=60mm] (api) at (60,81.5) {\diagramstereotype{artifact}\\ASP.NET Core 8 REST API and other\\backend components of Figure~\ref{fig:component-diagram}};
+  \node[diagram box=13mm,text width=21mm] (database) at (106,81.5) {\diagramstereotype{artifact}\\PostgreSQL\\with PostGIS};
+  \node[diagram box=13mm,text width=13mm] (redis) at (131,81.5) {\diagramstereotype{artifact}\\Redis};
+  \draw (15,75) -- (15,71.5) -- (131,71.5) -- (131,75);
+  \draw (60,75) -- (60,71.5);
+  \draw (106,75) -- (106,71.5);
+  \node[flow label,fill=gray!12] at (83,71.5) {INT-04 database and cache};
+
+  % External object storage
+  \umlnode[external]{20}{22}{48}{56}{external service}{AWS S3\\object storage}
+  \node[diagram box=13mm,text width=19mm] at (34,30) {\diagramstereotype{artifact}\\Listing\\photographs};
+
+  % AI Service node
+  \umlnode{88}{22}{144}{56}{cloud server}{AI Service node (AWS)}
+  \node at (116,45.5) {Inference: CPU only};
+  \node[diagram box=11mm,text width=50mm] at (116,37.5) {\diagramstereotype{artifact}\\Python and FastAPI service with the\\AI Service components of Figure~\ref{fig:component-diagram}};
+  \node[diagram box=8mm,text width=50mm] at (116,27) {\diagramstereotype{artifact}\\Model files: CLIP, YOLO, XGBoost};
+
+  % External LLM provider
+  \umlnode[external]{88}{0}{144}{12}{external service}{External LLM provider (to confirm)}
+
+  % Communication paths, numbered as in the major-interfaces table
+  \draw (22,108) -- node[right,flow label,align=left] {INT-01 HTTPS with JSON;\\INT-03 WebSocket (SignalR)} (22,99.5);
+  \draw (124,108) -- node[left,flow label,align=right] {INT-01 HTTPS with JSON;\\INT-03 WebSocket (SignalR)} (124,99.5);
+  \draw (34,69) -- node[right,flow label,align=left] {INT-05\\object storage API} (34,58.5);
+  \draw (116,69) -- node[right,flow label,align=left] {INT-02\\HTTPS} (116,58.5);
+  \draw (50.5,39) -- node[above,flow label] {INT-07 pre-signed URLs} (88,39);
+  \draw (116,22) -- node[right,flow label] {INT-06 LLM API} (116,14.5);
+
+  \node[anchor=south west,inner sep=0pt,align=left] at (0,0) {Cube: node. Solid line: communication path.\\Dashed outline: service outside the system boundary.\\INT identifiers refer to Table~\ref{tab:major-interfaces}.};
+\end{tikzpicture}
+\caption{Deployment Diagram (DEP-01)}
+\label{fig:deployment-diagram}
+\end{figure}
+
+The system runs on two AWS machines. The application server hosts the API, the
+SignalR hub, PostgreSQL with PostGIS, and Redis, and the AI Service node hosts
+Python, FastAPI, and the model files. AWS S3 and the LLM provider are external
+services. The AI Service reaches AWS S3 directly, using the time-limited, read-only
+pre-signed URLs it receives from the API, and stays in the same AWS region as S3
+(DD-20).
+
+In the deployed system, CLIP, YOLO, and XGBoost all run on CPU on the AI Service
+node. A cloud GPU would cost about \$384 a month, far beyond the project budget, and
+because screening runs in the background, a few seconds per lot is acceptable.
+Training, fine-tuning, and large test runs use a GPU on Google Colab, as the proposal
+budgets. Colab is not part of the deployed system, so it does not appear in
+Figure~\ref{fig:deployment-diagram}.
 
 \section{Data Design and Management}
 \label{sec:data-design}
@@ -242,6 +794,12 @@ not make general claims such as ``the system is secure'' without specific contro
 \midrule
 SEC-01 & Unauthorized access to appointment records & Role-based authorization is checked at the service layer before records are returned or modified. & FR-XX, NFR-XX \\
 SEC-02 & \placeholder{Threat, privacy concern, or safety hazard} & \placeholder{Specific design control} & \placeholder{Requirement IDs} \\
+SEC-20 & Unauthenticated connection to the chat hub & The hub rejects any connection without a valid authenticated user. & FR-20 \\
+SEC-21 & Reading or sending messages in another user's thread & The hub checks that the user is a participant of the thread on every join and send. & FR-20, FR-21, PR-01 \\
+SEC-22 & Direct access to the AI Service & The AI Service is not publicly reachable: it requires a secret API key and accepts traffic only from the API server. & EIR-01 \\
+SEC-23 & Interception of data in transit & Client traffic to the API and chat hub uses encrypted transport (HTTPS and secure WebSocket), and all calls between the API and the AI Service use HTTPS. & PR-01 \\
+SEC-24 & Abusive chat messages & A chat participant can report a message, and the report goes to an Admin. & FR-20 \\
+SEC-25 & Unsafe behaviour when a dependency fails & Failures never publish a lot or grant access: an AI failure sends the lot to Pending Review, and a failed authorization check denies the action. & FR-28, NFR-01 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -262,6 +820,7 @@ project feasibility. Do not repeat the tools list from Section~\ref{sec:tools}.
 \textbf{ID} & \textbf{Decision} & \textbf{Alternatives considered} & \textbf{Rationale and trade-off} \\
 \midrule
 DD-01 & \placeholder{Selected design decision} & \placeholder{Feasible alternatives} & \placeholder{Evidence-based reason and accepted limitation} \\
+DD-20 & Photos reach the AI Service through time-limited, read-only pre-signed S3 URLs, one per photo. The API sends the URLs, and the AI Service downloads the photos directly. The bucket stays private, and S3 and the AI Service stay in the same AWS region. & The API forwards the photo bytes to the AI Service. & Photo traffic does not load the application server, which also runs chat and search. Accepted limitation: a link can expire, so links are created just before each call and last 15 minutes (provisional). \\
 \bottomrule
 \end{tabularx}
 \end{table}

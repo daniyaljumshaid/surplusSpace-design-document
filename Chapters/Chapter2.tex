@@ -22,14 +22,16 @@ ACD-03 & Dependency & Public defect datasets, published new-material prices, and
 \end{table}
 
 \section{Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
-\begin{table}[H]
-\centering
-\caption{Functional requirements}
-\label{tab:functional-requirements}
-\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}X p{0.15\textwidth}p{0.20\textwidth}@{}}
+\begin{longtable}{@{}p{0.11\textwidth}p{0.41\textwidth}p{0.12\textwidth}p{0.27\textwidth}@{}}
+\caption{Functional requirements}\label{tab:functional-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Source} \\
 \midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Source} \\
+\midrule
+\endhead
 FR-01 & The system shall allow a seller to create a lot listing with quantity, description, price, and 3--5 representative photographs. & Must & Contractor/Seller \\
 FR-02 & The system shall classify submitted listing photos into Bricks, Steel/Rebar, Tiles/Marble, or Wood. & Must & AI pipeline \\
 FR-03 & The system shall detect configured visible defects and derive a Good, Minor, Major, Mixed, or Not Assessed condition grade. & Must & AI pipeline \\
@@ -38,9 +40,20 @@ FR-05 & The system shall allow Admins to approve, reject, request edits, or over
 FR-06 & The system shall allow users to search listings by location, price, and category. & Must & Customer/Contractor \\
 FR-07 & The system shall support real-time chat, negotiation, and lot reservation. & Must & Customer/Contractor \\
 FR-08 & The system shall answer buyer questions using only the listing's structured data and return an explicit unavailable response when information is missing. & Should & Customer/Buyer \\
+FR-20 & The system shall let the buyer and seller of a lot exchange messages in real time in a chat thread. & Must & Customer/Contractor \\
+FR-21 & The system shall persist every chat message so that an offline recipient receives it and the thread history remains available. & Must & Customer/Contractor \\
+FR-22 & The system shall show the presence of chat participants. & Should & Customer/Contractor \\
+FR-23 & The system shall provide the chat thread as the negotiation channel between buyer and seller. & Must & Customer/Contractor \\
+FR-24 & The system shall show Admins each Pending Review lot in the review queue with its AI signals: material, confidence, defects, condition grade, price estimate, and flag reasons. & Must & Admin \\
+FR-25 & The system shall apply the Admin review actions Approve, Reject, Request Edits, and Override to a queued lot and record each Override. & Must & Admin \\
+FR-26 & The system shall apply the outcome Auto-Publish when the AI is confident and no flags are raised, and Send to Review otherwise. & Must & AI pipeline \\
+FR-27 & The system shall send every lot with a Mixed condition grade to review. & Must & Admin \\
+FR-28 & When the AI Service is unavailable, the system shall give the lot the grade Not Assessed with no price suggestion, raise the flag reason AI Unavailable, and move the lot to Pending Review. & Must & AI pipeline \\
+FR-29 & The system shall deliver screening status updates to the seller. & Must & Contractor/Seller \\
+FR-30 & The system shall deliver Listing Assistant answers to the buyer, and a fallback reply when the information is missing or the LLM provider is unavailable. & Should & Customer/Buyer \\
+FR-31 & The system shall show the sender when a chat message has been read. & Should & Customer/Contractor \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
 
 \section{Non-Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
 \begin{table}[H]
@@ -53,6 +66,10 @@ FR-08 & The system shall answer buyer questions using only the listing's structu
 \midrule
 NFR-01 & Reliability & AI components shall be decoupled so that a temporarily unavailable AI service does not prevent a submitted listing from remaining valid and purchasable. & Must \\
 NFR-02 & Transparency & The system shall disclose that AI assessment applies to representative samples and does not guarantee every unphotographed item. & Must \\
+NFR-40 & Chat performance & A chat message shall reach an online recipient within \placeholder{target time} with \placeholder{number} concurrent users. & Must \\
+NFR-41 & AI turnaround & AI screening of one lot shall complete within \placeholder{target time}. & Must \\
+NFR-42 & Availability & Search, chat, and reservation shall remain usable while the AI Service is down. & Must \\
+NFR-43 & Load and concurrency & The REST API and chat hub shall support \placeholder{number} concurrent users at \placeholder{request or message rate}, checked with k6 or JMeter. & Must \\
 \bottomrule
 \end{tabularx}
 \end{table}

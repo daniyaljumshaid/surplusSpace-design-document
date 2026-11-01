@@ -65,21 +65,37 @@ Responsible team member(s) & \placeholder{Name(s) and role(s)} \\
 \end{table}
 
 \section{Risk Assessment}
-\begin{table}[H]
-\centering
-\caption{Risk register}
-\label{tab:risk-register}
-\small
-\begin{tabularx}{\textwidth}{@{}p{0.11\textwidth}X p{0.14\textwidth}p{0.11\textwidth}X p{0.14\textwidth}@{}}
+Likelihood and impact use one scale: Low, Medium, or High. Each response is labelled
+avoid, reduce, transfer, or accept.
+
+{\small
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.225\textwidth}>{\raggedright\arraybackslash}p{0.125\textwidth}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.245\textwidth}>{\raggedright\arraybackslash}p{0.125\textwidth}@{}}
+\caption{Risk register}\label{tab:risk-register}\\
 \toprule
 \textbf{ID} & \textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Response} & \textbf{Owner} \\
 \midrule
-RSK-01 & AI service becomes unavailable. & Medium & High & Keep AI services decoupled so a listing remains valid and purchasable without a price suggestion. & Backend team \\
-RSK-02 & Public defect datasets differ from marketplace phone photos. & Medium & High & Validate on a small team-collected real-photo set before relying on model results. & AI/ML lead \\
-RSK-03 & Surplus-price depreciation lacks published data. & Medium & Medium & Ground assumptions in interviews with 5--10 Lahore dealers and contractors and refine them during evaluation. & AI/ML lead \\
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Response} & \textbf{Owner} \\
+\midrule
+\endhead
+RSK-01 & AI Service becomes unavailable. & Medium & High & Reduce: keep AI services decoupled, so a lot goes to Pending Review as Not Assessed with no price suggestion (FR-28). & Real-time and AI integration developer \\
+RSK-02 & Domain gap: public defect datasets differ from marketplace phone photos, and the prototype gave no detections on a close-up rusty steel photo. & High & High & Reduce: validate on a small team-collected real-photo set before relying on model results. & AI/ML lead \\
+RSK-03 & Surplus pricing rests on interviews, because depreciation has no published data. & Medium & Medium & Reduce: ground assumptions in interviews with 5--10 Lahore dealers and contractors, and refine them during evaluation. & AI/ML lead \\
+RSK-04 & Public datasets have weak quality or unclear licences: the Hugging Face dataset used in the prototype has no dataset card, so no licence is stated, and NEU's terms still need checking. MBDD2025 and SDNET2018 are CC BY 4.0. & High & Medium & Reduce: check the quality and licence of each dataset before training, and use another public dataset if one fails. & AI/ML lead \\
+RSK-05 & LLM cost rises, or the LLM provider is unavailable. & Medium & Medium & Reduce: use free tiers where possible and return a fallback reply when the LLM provider is unavailable (FR-30). & AI/ML lead \\
+RSK-06 & Compute limits slow YOLO fine-tuning. & Medium & Medium & Reduce: use the free Google Colab tier for early work and the budgeted Colab Pro for fine-tuning, and save checkpoints regularly, as Colab limits are not guaranteed. & AI/ML lead \\
+RSK-07 & A reservation concurrency fault lets two buyers reserve one lot. & Medium & High & Avoid: use a version-checked update inside a transaction (Figure~\ref{fig:sd-03}) and test it under concurrent load. & Backend developer \\
+RSK-08 & AI work starts before the core platform (MS-02) can supply real uploaded photos. & Medium & Medium & Reduce: start AI work in parallel in Month 2 using sample photos; defect detection is already prototyped. & AI/ML lead \\
+RSK-09 & Dealers are hard to reach for interviews. & Medium & Medium & Reduce: approach dealers and contractors early, so that 5--10 interviews finish before price assumptions are needed. & AI/ML lead \\
+RSK-10 & A team member becomes unavailable. & Medium & High & Reduce: keep all work in the shared Git repository, so another member can continue it. & Real-time and AI integration developer \\
+RSK-11 & The 6-month schedule has no buffer. & High & High & Reduce: run tracks in parallel, and scale back material models first if late. & Real-time and AI integration developer \\
+RSK-12 & Models do not fit a 4 GB CPU machine. & Medium & High & Reduce: test early and use OpenVINO or ONNX, then move to a larger machine if needed. & AI/ML lead \\
+RSK-13 & AWS credit runs out before the demo. & Medium & Low & Reduce: stop idle machines and set a billing alert, then upgrade to the AWS Paid plan and pay from the hosting budget, staying on AWS. & Real-time and AI integration developer \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \section{Project Management Approach and Schedule}
 \begin{table}[H]
