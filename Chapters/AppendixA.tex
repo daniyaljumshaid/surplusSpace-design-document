@@ -46,6 +46,16 @@ MAE & Mean absolute error: the average size of the price error. \\
 RMSE & Root mean squared error: a price-error measure that weighs large errors more heavily. \\
 Baseline & A simple method that a model is compared against, to show whether the model helps. \\
 ONNX, OpenVINO & Formats and runtimes for running trained models efficiently on a CPU. \\
+M-01 to M-07 & The seven parts of the AI pipeline: M-01 material classifier (CLIP), M-02 defect detectors (YOLOv8n), M-03 condition engine, M-04 consistency checker, M-05 price model (XGBoost), M-06 Decision Engine, and M-07 Listing Assistant (Section~\ref{sec:algorithm-design}). \\
+Prompt ensembling & Averaging a model's scores over several wordings of the same text label, so that the result depends less on one wording. \\
+Hedonic pricing & Treating the price of an item as the sum of the values of its attributes, such as material, quantity, and condition~\citep{rosen1974hedonic}. \\
+Tuning split, test split & The tuning split is used to choose settings such as thresholds. The test split is locked and used once, at the end, to report results. \\
+Data leakage & Information from the test split reaching training or tuning, which makes results look better than they are (Section~\ref{sec:leakage-controls}). \\
+Blind audit & A manual check of a random sample of lots by a person who does not see the AI's result first. \\
+Wilson interval & A confidence interval for a proportion that stays reliable for small samples~\citep{wilson1927interval}. \\
+Cohen's kappa & A measure of agreement between two raters that removes the agreement expected by chance~\citep{cohen1960kappa}. \\
+Prompt injection & Text that tries to make a language model follow instructions hidden in its input, such as in a seller's description. \\
+Structured output & A model reply in a fixed set of named fields, here \texttt{answer}, \texttt{supported}, and \texttt{fieldsUsed}. \\
 \multicolumn{2}{@{}l}{\textbf{Technical acronyms}} \\
 AI & Artificial intelligence. \\
 ML & Machine learning. \\
@@ -71,6 +81,11 @@ WCAG & Web Content Accessibility Guidelines~\citep{wcag22}. \\
 CSS pixel & A size unit used by web browsers, independent of the screen's physical pixels. \\
 JPEG, PNG, WebP & Image file formats accepted for lot photos. \\
 MB, MiB, GB & Megabyte, mebibyte, and gigabyte: units of data size. \\
+Activity diagram & A UML diagram that shows the steps of a process, its decisions, and the order in which they happen~\citep{omguml251}. \\
+Swimlane & A column of an activity diagram that holds the actions of one participant, such as the Contractor or the Admin. \\
+JWT & JSON Web Token: a signed token that proves who the user is, used as the short-lived access token. \\
+TOTP & Time-based one-time password: a six-digit code from an authenticator app, used as the Admin's second sign-in factor. \\
+OpenCV & An open-source computer-vision library, used to check photos for blur and darkness. \\
 \multicolumn{2}{@{}l}{\textbf{Identifier prefixes used in this document}} \\
 OBJ, SCP, EXC & Objective, in-scope item, and out-of-scope item (Chapter~\ref{chap:overview}). \\
 RQ & Research question. \\
@@ -82,6 +97,8 @@ INT & Interface between two parts of the system. \\
 VAR & Variable measured in the research evaluation. \\
 UC & Use case. \\
 SD, CMP, DEP & Sequence diagram, component diagram, and deployment diagram. \\
+AD & Activity diagram. \\
+M & Part of the AI pipeline (M-01 to M-07). \\
 AI-, CHAT- & AI Service endpoint and chat hub event (Appendix~\ref{app:specs}). \\
 SEC & Security, privacy, or safety control. \\
 DD & Design decision. \\
