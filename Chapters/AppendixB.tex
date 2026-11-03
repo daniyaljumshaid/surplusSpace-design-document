@@ -6,10 +6,283 @@
 
 \section{Data Dictionary}
 \label{sec:data-dictionary}
-\placeholder{Member 2: insert the data dictionary.}
+Every table of ERD-01 (\sref{sec:database-design}) with its columns. Types are PostgreSQL
+types; enumerated types use the locked values in \fref{fig:class-screening}. All foreign
+keys reject deletes, and all times are stored in UTC.
+
+{\footnotesize
+\begin{longtable}{@{}p{0.27\textwidth}p{0.18\textwidth}p{0.24\textwidth}p{0.25\textwidth}@{}}
+\caption{Data dictionary}\label{tab:data-dictionary}\\
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraint} & \textbf{Meaning} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraint} & \textbf{Meaning} \\
+\midrule
+\endhead
+\multicolumn{4}{@{}l}{\textbf{users}} \\
+id & uuid & PK & User identifier \\
+name & text & not null & Full name \\
+email & text & not null, unique & Sign-in email \\
+phone & text & not null & Contact phone \\
+password\_\allowbreak{}hash & text & not null & Argon2id hash (NFR-23) \\
+is\_\allowbreak{}admin & boolean & not null, default false & True only for the fixed Admin account \\
+active\_\allowbreak{}profile & profile & not null & Customer or Contractor \\
+is\_\allowbreak{}suspended & boolean & not null, default false & Blocks sign-in (FR-19) \\
+no\_\allowbreak{}show\_\allowbreak{}count & integer & not null, $\geq 0$ & Buyer No-Shows shown to sellers \\
+email\_\allowbreak{}verified\_\allowbreak{}at & timestamptz & null & Set when the email is verified (FR-09) \\
+created\_\allowbreak{}at & timestamptz & not null & Registration time \\
+\multicolumn{4}{@{}l}{\textbf{contractor\_applications}} \\
+id & uuid & PK &  \\
+user\_\allowbreak{}id & uuid & FK users, unique & Applicant \\
+seller\_\allowbreak{}type & seller\_\allowbreak{}type & not null & Contractor, Builder, Material dealer, Individual \\
+business\_\allowbreak{}name & text & null if Individual &  \\
+business\_\allowbreak{}address & text & not null & Admin-only (PR-06) \\
+yard\_\allowbreak{}location & geography(Point) & not null & Map pin of the address \\
+years\_\allowbreak{}in\_\allowbreak{}business & integer & null, $\geq 0$ &  \\
+shop\_\allowbreak{}photo\_\allowbreak{}key & text & null & Object-storage key \\
+link & text & null & Website or social page \\
+status & application\_\allowbreak{}status & not null & Waiting, Approved, Rejected \\
+rejection\_\allowbreak{}reason & text & required if Rejected & Shown to the applicant \\
+verification\_\allowbreak{}note & text & required when decided & Admin-only \\
+decided\_\allowbreak{}by & uuid & FK users, null & Admin \\
+decided\_\allowbreak{}at & timestamptz & null &  \\
+\multicolumn{4}{@{}l}{\textbf{notifications}} \\
+id & uuid & PK &  \\
+user\_\allowbreak{}id & uuid & FK users & Recipient \\
+type & text & not null & e.g. screening result, reservation change \\
+text & text & not null & Message shown (FR-76) \\
+created\_\allowbreak{}at & timestamptz & not null &  \\
+read\_\allowbreak{}at & timestamptz & null &  \\
+\multicolumn{4}{@{}l}{\textbf{refresh\_tokens}} \\
+id & uuid & PK &  \\
+user\_\allowbreak{}id & uuid & FK users &  \\
+token\_\allowbreak{}hash & text & not null, unique & Hash only, never the token (NFR-25) \\
+family\_\allowbreak{}id & uuid & not null & Sign-in session; reuse revokes the family \\
+expires\_\allowbreak{}at & timestamptz & not null & 7 days after issue \\
+revoked\_\allowbreak{}at & timestamptz & null & Sign-out, rotation, suspension \\
+\multicolumn{4}{@{}l}{\textbf{saved\_searches}} \\
+id & uuid & PK &  \\
+user\_\allowbreak{}id & uuid & FK users & Customer \\
+centre & geography(Point) & not null &  \\
+radius\_\allowbreak{}km & integer & not null, one of the zone's options &  \\
+max\_\allowbreak{}price & numeric(12,2) & null, $>0$ & Rs \\
+materials & material[] & null & Empty means all \\
+\multicolumn{4}{@{}l}{\textbf{zones}} \\
+id & uuid & PK &  \\
+name & text & not null, unique & e.g. Lahore \\
+centre & geography(Point) & not null &  \\
+radius\_\allowbreak{}km & integer & not null, $>0$ &  \\
+is\_\allowbreak{}active & boolean & not null & Lots only inside active zones (FR-82) \\
+\multicolumn{4}{@{}l}{\textbf{categories}} \\
+id & uuid & PK &  \\
+material & material & not null, unique &  \\
+unit & unit & not null & Fixed unit (FR-74) \\
+is\_\allowbreak{}active & boolean & not null &  \\
+\multicolumn{4}{@{}l}{\textbf{lots}} \\
+id & uuid & PK &  \\
+seller\_\allowbreak{}id & uuid & FK users & Approved Contractor \\
+zone\_\allowbreak{}id & uuid & FK zones &  \\
+category\_\allowbreak{}id & uuid & FK categories & Material and unit \\
+quantity & numeric(12,2) & not null, $>0$ & In the category's unit \\
+description & text & not null, max 800 chars &  \\
+total\_\allowbreak{}price & numeric(12,2) & not null, $>0$ & Rs \\
+age\_\allowbreak{}band & age\_\allowbreak{}band & not null &  \\
+pickup\_\allowbreak{}location & geography(Point) & not null, GiST index & Shown exactly only after reserving (FR-75) \\
+status & lot\_\allowbreak{}status & not null & Nine locked statuses \\
+version & integer & not null & Checked on reserve and edit \\
+published\_\allowbreak{}at & timestamptz & null & Starts the 30-day expiry \\
+changes\_\allowbreak{}requested\_\allowbreak{}at & timestamptz & null & Starts the 14-day expiry \\
+removed\_\allowbreak{}at & timestamptz & null & Soft remove (FR-77) \\
+final\_\allowbreak{}sale\_\allowbreak{}price & numeric(12,2) & null, $>0$ & Optional (FR-83) \\
+created\_\allowbreak{}at & timestamptz & not null &  \\
+\multicolumn{4}{@{}l}{\textbf{lot\_photos}} \\
+id & uuid & PK &  \\
+lot\_\allowbreak{}id & uuid & FK lots &  \\
+storage\_\allowbreak{}key & text & not null, unique & Private bucket key (DIR-02) \\
+position & smallint & 1--5, unique per lot & Display order \\
+size\_\allowbreak{}bytes & integer & $\leq$ 2 MB (NFR-28) &  \\
+uploaded\_\allowbreak{}at & timestamptz & not null &  \\
+\multicolumn{4}{@{}l}{\textbf{reservations}} \\
+id & uuid & PK &  \\
+lot\_\allowbreak{}id & uuid & FK lots; partial unique where Active & One Active per lot (NFR-21) \\
+buyer\_\allowbreak{}id & uuid & FK users & Customer, not the seller (FR-18) \\
+status & reservation\_\allowbreak{}status & not null & Active, Completed, Cancelled, No-Show \\
+created\_\allowbreak{}at & timestamptz & not null &  \\
+pickup\_\allowbreak{}deadline & timestamptz & not null & created\_at + 48 h \\
+ended\_\allowbreak{}at & timestamptz & null &  \\
+\multicolumn{4}{@{}l}{\textbf{ratings}} \\
+id & uuid & PK &  \\
+reservation\_\allowbreak{}id & uuid & FK reservations & Completed only \\
+rater\_\allowbreak{}id & uuid & FK users; unique with reservation\_id & One rating per side \\
+rated\_\allowbreak{}id & uuid & FK users &  \\
+stars & smallint & 1--5 &  \\
+comment & text & null &  \\
+visible\_\allowbreak{}at & timestamptz & not null & When both rated or 14 days passed (FR-80) \\
+\multicolumn{4}{@{}l}{\textbf{chat\_threads}} \\
+id & uuid & PK &  \\
+lot\_\allowbreak{}id & uuid & FK lots &  \\
+buyer\_\allowbreak{}id & uuid & FK users; unique with lot\_id & One thread per buyer and lot \\
+created\_\allowbreak{}at & timestamptz & not null &  \\
+\multicolumn{4}{@{}l}{\textbf{messages}} \\
+id & uuid & PK &  \\
+thread\_\allowbreak{}id & uuid & FK chat\_threads &  \\
+sender\_\allowbreak{}id & uuid & FK users & Thread participant (SEC-21) \\
+text & text & not null, max 2,000 chars &  \\
+sent\_\allowbreak{}at & timestamptz & not null &  \\
+read\_\allowbreak{}at & timestamptz & null & Read tick (FR-31) \\
+\multicolumn{4}{@{}l}{\textbf{reports}} \\
+id & uuid & PK &  \\
+reporter\_\allowbreak{}id & uuid & FK users &  \\
+lot\_\allowbreak{}id & uuid & FK lots, null & Exactly one of lot\_id and message\_id \\
+message\_\allowbreak{}id & uuid & FK messages, null &  \\
+reason & report\_\allowbreak{}reason & not null &  \\
+explanation & text & null &  \\
+status & report\_\allowbreak{}status & not null & Open, Resolved \\
+resolution\_\allowbreak{}note & text & required if Resolved &  \\
+resolved\_\allowbreak{}by & uuid & FK users, null & Admin \\
+\multicolumn{4}{@{}l}{\textbf{ai\_assessments}} \\
+id & uuid & PK &  \\
+lot\_\allowbreak{}id & uuid & FK lots & One row per screening (history kept) \\
+material & material & null & Classified material \\
+material\_\allowbreak{}confidence & numeric(4,3) & 0--1, null &  \\
+grade & condition\_\allowbreak{}grade & not null &  \\
+claimed\_\allowbreak{}condition & text & null & Phrase found in the description \\
+condition\_\allowbreak{}conflict & boolean & not null &  \\
+price\_\allowbreak{}low\_\allowbreak{}per\_\allowbreak{}unit & numeric(12,2) & null & Rs per unit \\
+price\_\allowbreak{}mid\_\allowbreak{}per\_\allowbreak{}unit & numeric(12,2) & null &  \\
+price\_\allowbreak{}high\_\allowbreak{}per\_\allowbreak{}unit & numeric(12,2) & null &  \\
+flags & flag\_\allowbreak{}reason[] & not null, may be empty & Every flag raised (FR-58) \\
+outcome & decision\_\allowbreak{}outcome & not null & Auto-Publish or Send to Review \\
+model\_\allowbreak{}versions & jsonb & not null & Versions used (FR-53) \\
+created\_\allowbreak{}at & timestamptz & not null &  \\
+\multicolumn{4}{@{}l}{\textbf{photo\_assessments}} \\
+id & uuid & PK &  \\
+assessment\_\allowbreak{}id & uuid & FK ai\_assessments &  \\
+photo\_\allowbreak{}id & uuid & FK lot\_photos &  \\
+quality & photo\_\allowbreak{}quality & not null & ok, blurry, dark \\
+material & material & null &  \\
+confidence & numeric(4,3) & 0--1, null &  \\
+grade & condition\_\allowbreak{}grade & null if not usable &  \\
+\multicolumn{4}{@{}l}{\textbf{detected\_defects}} \\
+id & uuid & PK &  \\
+photo\_\allowbreak{}assessment\_\allowbreak{}id & uuid & FK photo\_assessments &  \\
+defect\_\allowbreak{}class & text & not null & Class name of the material's detector \\
+confidence & numeric(4,3) & 0--1 &  \\
+box\_\allowbreak{}x, box\_\allowbreak{}y, box\_\allowbreak{}w, box\_\allowbreak{}h & numeric(5,4) & 0--1 & Normalised bounding box \\
+\multicolumn{4}{@{}l}{\textbf{review\_decisions}} \\
+id & uuid & PK &  \\
+lot\_\allowbreak{}id & uuid & FK lots &  \\
+assessment\_\allowbreak{}id & uuid & FK ai\_assessments & AI result being reviewed \\
+admin\_\allowbreak{}id & uuid & FK users & Admin \\
+action & review\_\allowbreak{}action & not null & Approve, Reject, Request Edits, Override \\
+message & text & required for Request Edits & Shown to the seller \\
+override\_\allowbreak{}reason & text & required for Override &  \\
+ai\_\allowbreak{}outcome & decision\_\allowbreak{}outcome & not null & For agreement measures \\
+decided\_\allowbreak{}at & timestamptz & not null &  \\
+\multicolumn{4}{@{}l}{\textbf{threshold\_configs}} \\
+id & uuid & PK & Newest row is current \\
+min\_\allowbreak{}classification\_\allowbreak{}confidence & numeric(3,2) & 0.10--0.95 & Default 0.60 \\
+price\_\allowbreak{}margin\_\allowbreak{}percent & numeric(5,2) & 0--100 & Default 25 \\
+defect\_\allowbreak{}confidence & numeric(3,2) & 0.10--0.95 & Default 0.40 \\
+changed\_\allowbreak{}by & uuid & FK users & Admin \\
+changed\_\allowbreak{}at & timestamptz & not null &  \\
+\multicolumn{4}{@{}l}{\textbf{reference\_prices}} \\
+id & uuid & PK & Newest row per category is current \\
+category\_\allowbreak{}id & uuid & FK categories &  \\
+price\_\allowbreak{}per\_\allowbreak{}unit & numeric(12,2) & not null, $>0$ & New-material price, Rs \\
+source & text & not null & e.g. icons.com.pk \\
+price\_\allowbreak{}date & date & not null &  \\
+changed\_\allowbreak{}by & uuid & FK users & Admin \\
+changed\_\allowbreak{}at & timestamptz & not null &  \\
+\bottomrule
+\end{longtable}
+}
 
 \section{REST API Contract}
-\placeholder{Member 2: insert the REST API contract.}
+\label{sec:rest-api}
+All endpoints live under \texttt{/api/v1/} and use HTTPS only. Requests and responses are
+JSON with camelCase field names, and status, grade, and flag values are spelled exactly as
+locked. Every request except sign-up, sign-in, and password reset carries a bearer access
+token; the server checks the role and, for owner-only actions, that the user owns the
+resource (SEC-01). Lists are paged with \texttt{page} and \texttt{pageSize}. Every error
+uses one format, Problem Details for HTTP APIs~\citep{rfc9457}: \texttt{type},
+\texttt{title}, \texttt{status}, \texttt{detail}, and a project \texttt{code} such as
+\texttt{LOT\_ALREADY\_RESERVED}. Common errors are not repeated per row: 401 (no or expired
+token), 403 (wrong role), 404 (not found or not visible), 429 (rate limit), and 500.
+The last column maps each endpoint to the sequence-diagram message it implements.
+
+{\footnotesize
+\begin{longtable}{@{}p{0.27\textwidth}p{0.12\textwidth}p{0.19\textwidth}p{0.27\textwidth}p{0.08\textwidth}@{}}
+\caption{REST API contract}\label{tab:rest-api}\\
+\toprule
+\textbf{Method and path} & \textbf{Roles} & \textbf{Request} & \textbf{Response; specific errors} & \textbf{SD} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method and path} & \textbf{Roles} & \textbf{Request} & \textbf{Response; specific errors} & \textbf{SD} \\
+\midrule
+\endhead
+\multicolumn{5}{@{}l}{\textbf{Account and sign-in}} \\
+\texttt{POST}\newline\nolinkurl{/auth/registrations} & Anyone & name, email, phone, password & 201 userId; verification email sent; 400 password rule, 409 email in use &  \\
+\texttt{POST}\newline\nolinkurl{/auth/email-verifications} & Anyone & token & 204; 400 invalid or expired &  \\
+\texttt{POST}\newline\nolinkurl{/auth/sessions} & Anyone & email, password & 200 accessToken, expiresIn, refresh token; Admin: twoFactorRequired, challengeId; 401 wrong details, 403 suspended, 423 locked &  \\
+\texttt{POST}\newline\nolinkurl{/auth/two-factor} & Admin (challenge) & challengeId, code & 200 accessToken, expiresIn, refresh token; 401 wrong code &  \\
+\texttt{POST}\newline\nolinkurl{/auth/refreshes} & Signed in & refresh token & 200 new access and refresh tokens (rotated); 401 expired or reused (family revoked) &  \\
+\texttt{DELETE}\newline\nolinkurl{/auth/sessions/current} & Signed in & none & 204 refresh token revoked &  \\
+\texttt{DELETE}\newline\nolinkurl{/auth/sessions} & Signed in & none & 204 all sessions revoked &  \\
+\texttt{POST}\newline\nolinkurl{/auth/password-reset-requests} & Anyone & email & 202 (same reply whether or not the email exists) &  \\
+\texttt{POST}\newline\nolinkurl{/auth/password-resets} & Anyone & token, newPassword & 204 all sessions revoked; 400 invalid token or password rule &  \\
+\texttt{GET}\newline\nolinkurl{/me} & Signed in & none & 200 profile, activeProfile, rating, noShowCount, application status &  \\
+\texttt{PATCH}\newline\nolinkurl{/me} & Signed in & activeProfile & 200 updated profile; 403 Contractor not approved &  \\
+\texttt{POST}\newline\nolinkurl{/contractor-applications} & Customer & application fields & 201 application (Waiting); 409 already waiting or approved, 422 outside zone &  \\
+\texttt{GET}\newline\nolinkurl{/me/notifications} & Signed in & page & 200 notifications, unread count &  \\
+\texttt{PATCH}\newline\nolinkurl{/me/notifications/{id}} & Owner & read: true & 204; 404 &  \\
+\multicolumn{5}{@{}l}{\textbf{Lots (Contractor)}} \\
+\texttt{POST}\newline\nolinkurl{/lots} & Approved Contractor & categoryId, quantity, description, totalPrice, ageBand, pickupLocation & 201 lot (Draft), version; 403 not approved, 422 outside zone & SD-01: submit lot \\
+\texttt{POST}\newline\nolinkurl{/lots/{id}/photos} & Owner & image (multipart) & 201 photoId, position; 400 type or size, 409 five photos already & SD-01: store photos \\
+\texttt{DELETE}\newline\nolinkurl{/lots/{id}/photos/{photoId}} & Owner & none & 204; 409 lot not editable &  \\
+\texttt{POST}\newline\nolinkurl{/lots/{id}/submissions} & Owner & version & 202 status Screening; 409 version, 422 photo count or zone & SD-01: submit lot \\
+\texttt{PATCH}\newline\nolinkurl{/lots/{id}} & Owner & changed fields, version & 200 lot; Published or Changes Requested lots return to Screening; 409 version or status &  \\
+\texttt{POST}\newline\nolinkurl{/lots/{id}/relistings} & Owner & none & 202 status Screening; 409 not Expired &  \\
+\texttt{DELETE}\newline\nolinkurl{/lots/{id}} & Owner & none & 204 lot removed (soft); 409 status does not allow Remove &  \\
+\texttt{GET}\newline\nolinkurl{/me/lots} & Contractor & status, page & 200 own lots with status &  \\
+\texttt{GET}\newline\nolinkurl{/lots/{id}/assessment} & Owner, Admin & none & 200 latest AI result: material, grades, defects, price range, flags, Admin message; 404 &  \\
+\multicolumn{5}{@{}l}{\textbf{Search, lot details, and assistant (Customer)}} \\
+\texttt{GET}\newline\nolinkurl{/lots} & Customer & lat, lng, radiusKm, maxPrice, material, sort, page & 200 Published lots: grade, price per unit, area, distance (no exact location); 400 bad filter &  \\
+\texttt{GET}\newline\nolinkurl{/lots/{id}} & Signed in & none & 200 lot details, defects, disclosure; exact pickup location only for its Active buyer; 404 &  \\
+\texttt{POST}\newline\nolinkurl{/saved-searches} & Customer & centre, radiusKm, maxPrice, materials & 201 savedSearchId; 400 &  \\
+\texttt{GET, DELETE}\newline\nolinkurl{/saved-searches[/{id}]} & Owner & none & 200 list / 204; 404 &  \\
+\texttt{POST}\newline\nolinkurl{/lots/{id}/assistant-questions} & Customer & question & 200 answer, supported, fieldsUsed; 400 empty or too long, 429 hourly limit & SD-05 \\
+\multicolumn{5}{@{}l}{\textbf{Reservations and ratings}} \\
+\texttt{POST}\newline\nolinkurl{/reservations} & Customer & lotId, lotVersion & 201 reservationId, pickupDeadline, pickupLocation; 403 own lot, 409 already reserved or version conflict, 409 expired, 422 three Active & SD-03: reserve lot \\
+\texttt{GET}\newline\nolinkurl{/me/reservations} & Customer & status, page & 200 reservations &  \\
+\texttt{POST}\newline\nolinkurl{/reservations/{id}/cancellation} & Buyer, seller & none & 200 Cancelled; lot Published or Expired; 409 not Active &  \\
+\texttt{POST}\newline\nolinkurl{/reservations/{id}/completion} & Seller & finalSalePrice (optional) & 200 Completed; lot Sold; 409 not Active &  \\
+\texttt{POST}\newline\nolinkurl{/reservations/{id}/no-show} & Seller & none & 200 No-Show; 409 before deadline &  \\
+\texttt{POST}\newline\nolinkurl{/reservations/{id}/ratings} & Buyer, seller & stars, comment & 201 (hidden until both rate or 14 days); 409 already rated, 422 not Completed or window closed &  \\
+\multicolumn{5}{@{}l}{\textbf{Chat and reports (messages travel over the chat hub, Appendix~\ref{sec:chat-hub-events})}} \\
+\texttt{POST}\newline\nolinkurl{/chat-threads} & Customer & lotId & 201 thread, or 200 existing thread; 403 own lot & SD-04 \\
+\texttt{GET}\newline\nolinkurl{/chat-threads[/{id}/messages]} & Participant & before, page & 200 threads / messages; 403 not a participant & SD-04 \\
+\texttt{POST}\newline\nolinkurl{/reports} & Signed in & lotId or messageId, reason, explanation & 201 report (Open); 400 no or two targets &  \\
+\multicolumn{5}{@{}l}{\textbf{Administration (Admin only)}} \\
+\texttt{GET}\newline\nolinkurl{/admin/review-queue} & Admin & flag, page & 200 Pending Review lots oldest first, with AI signals & SD-02: open review queue \\
+\texttt{POST}\newline\nolinkurl{/admin/lots/{id}/review-decisions} & Admin & action, message, overrideTo, overrideReason, assessmentId & 201 decision; new lot status; 400 missing message or reason, 409 not Pending Review & SD-02: submit review action \\
+\texttt{GET}\newline\nolinkurl{/admin/contractor-applications} & Admin & status, page & 200 applications &  \\
+\texttt{POST}\newline\nolinkurl{/admin/contractor-applications/{id}/decision} & Admin & approve, verificationNote, rejectionReason & 200 Approved or Rejected; 400 missing note or reason, 409 already decided &  \\
+\texttt{GET}\newline\nolinkurl{/admin/users} & Admin & query, page & 200 users with rating, No-Show count, status &  \\
+\texttt{PUT, DELETE}\newline\nolinkurl{/admin/users/{id}/suspension} & Admin & none & 204 suspended / unsuspended; 404 &  \\
+\texttt{GET}\newline\nolinkurl{/admin/reports} & Admin & status, page & 200 reports with the reported lot or message &  \\
+\texttt{POST}\newline\nolinkurl{/admin/reports/{id}/resolution} & Admin & resolutionNote, hideLot, suspendUser & 200 Resolved; 400 missing note &  \\
+\texttt{GET, POST}\newline\nolinkurl{/admin/thresholds} & Admin & min\-Classification\-Confidence, price\-Margin\-Percent, defect\-Confidence & 200 current and history / 201 new values; 400 out of range &  \\
+\texttt{GET, POST}\newline\nolinkurl{/admin/reference-prices} & Admin & categoryId, pricePerUnit, source, priceDate & 200 current and history / 201; 400 missing source or date &  \\
+\texttt{GET, PATCH}\newline\nolinkurl{/admin/categories[/{id}]} & Admin & isActive & 200 &  \\
+\texttt{GET, POST, PATCH}\newline\nolinkurl{/admin/zones[/{id}]} & Admin & name, centre, radiusKm, isActive, radiusOptions & 200 / 201; 400 &  \\
+\texttt{GET}\newline\nolinkurl{/admin/dashboard} & Admin & from, to & 200 auto-publish, flagged, and overturn rates; flags by reason; decision table &  \\
+\bottomrule
+\end{longtable}
+}
 
 \section{AI Service Interface}
 \label{sec:ai-service-interface}
