@@ -44,7 +44,7 @@ consistency, and price signals to the decision engine.
   \draw[->] ([yshift=2mm]llm.west -| system.east) -- node[above,flow label] {assistant prompts\\and context\\(INT-06)} ([yshift=2mm]llm.west);
   \draw[<-] ([yshift=-2mm]llm.west -| system.east) -- node[below,flow label] {responses} ([yshift=-2mm]llm.west);
 \end{tikzpicture}
-\caption{System Context Diagram}
+\caption{surplusSpace system context diagram}
 \label{fig:system-context}
 \end{figure}
 
@@ -102,7 +102,7 @@ consistency, and price signals to the decision engine.
 
   \node[anchor=north west,inner sep=0pt] at (0,-2) {Dashed outline: service outside the system boundary. INT identifiers refer to Table~\ref{tab:major-interfaces}.};
 \end{tikzpicture}
-\caption{System Architecture Diagram}
+\caption{surplusSpace system architecture diagram}
 \label{fig:system-architecture}
 \end{figure}
 
@@ -242,7 +242,7 @@ UC-35 & Manage Zones & Admin & None & OBJ-02 & SCP-04 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{fig_4_4_1_use_case.pdf}
-\caption{Use-case diagram}
+\caption{surplusSpace use-case diagram}
 \label{fig:use-case-diagram}
 \end{figure}
 
@@ -489,7 +489,7 @@ diagrams show only the decisions.
   \draw[->] (rej) -- (f3);
   \draw[->] (cr2) -- (f4);
 \end{tikzpicture}
-\caption{Activity Diagram AD-01: Decision Engine flow}
+\caption{Decision Engine flow activity diagram}
 \label{fig:ad-01}
 \end{figure}
 
@@ -572,7 +572,7 @@ Override recorded (FR-05, FR-25).
   \draw[->] (m3) -- (ret);
   \draw[->] (ret) -- (f2);
 \end{tikzpicture}
-\caption{Activity Diagram AD-02: Condition grading across 3--5 photos}
+\caption{Condition grading activity diagram}
 \label{fig:ad-02}
 \end{figure}
 
@@ -601,7 +601,7 @@ labelled \emph{event [guard] / action}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig_4_4_3_st_lot.pdf}
-\caption{State-machine diagram ST-01: Lot lifecycle}
+\caption{Lot lifecycle state-machine diagram}
 \label{fig:st-01}
 \end{figure}
 
@@ -620,7 +620,7 @@ through Screening (FR-15). Rejected and Sold are final (FR-85).
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig_4_4_3_st_reservation.pdf}
-\caption{State-machine diagram ST-02: Reservation lifecycle}
+\caption{Reservation lifecycle state-machine diagram}
 \label{fig:st-02}
 \end{figure}
 
@@ -720,7 +720,7 @@ REST message name with its endpoint once Appendix B.2 is agreed.}
 
   \seqmsg{seq async}{98.5}{8.5}{-190}{LotStatusChanged (INT-03)}
 \end{tikzpicture}
-\caption{Sequence Diagram SD-01: Lot submission, screening, and decision}
+\caption{Lot submission and screening sequence diagram}
 \label{fig:sd-01}
 \end{figure}
 
@@ -778,7 +778,7 @@ After a restart, the worker resumes any lots still in Screening.
   \seqmsg{seq return}{58}{15}{-91}{review result}
   \seqmsg{seq async}{58}{132}{-96}{LotStatusChanged (INT-03)}
 \end{tikzpicture}
-\caption{Sequence Diagram SD-02: Admin review}
+\caption{Admin review sequence diagram}
 \label{fig:sd-02}
 \end{figure}
 
@@ -828,7 +828,7 @@ and records it, so that overrides remain available for evaluation.
   \seqmsg{seq call}{70}{125}{-97.5}{roll back}
   \seqmsg{seq return}{70}{15}{-102}{version conflict, not reserved}
 \end{tikzpicture}
-\caption{Sequence Diagram SD-03: Reserve Lot}
+\caption{Reserve Lot sequence diagram}
 \label{fig:sd-03}
 \end{figure}
 
@@ -891,7 +891,7 @@ therefore never hold two Active reservations.
   \seqmsg{seq call}{50}{104}{-115}{save read status}
   \seqmsg{seq async}{50}{12}{-120}{MessageRead}
 \end{tikzpicture}
-\caption{Sequence Diagram SD-04: Buyer and seller chat}
+\caption{Buyer--seller chat sequence diagram}
 \label{fig:sd-04}
 \end{figure}
 
@@ -937,7 +937,7 @@ the message, the hub saves the read status and tells the buyer.
   \seqmsg{seq return}{106}{48}{-80}{fallback reply}
   \seqmsg{seq return}{48}{12}{-87}{answer or fallback reply}
 \end{tikzpicture}
-\caption{Sequence Diagram SD-05: Ask Listing Assistant}
+\caption{Ask Listing Assistant sequence diagram}
 \label{fig:sd-05}
 \end{figure}
 
@@ -967,7 +967,7 @@ a design decision.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{fig_4_5_1_class_marketplace.pdf}
-\caption{Domain model, view 1: marketplace}
+\caption{Marketplace class diagram}
 \label{fig:class-marketplace}
 \end{figure}
 
@@ -984,7 +984,7 @@ reference to keep the diagram readable.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{fig_4_5_1_class_screening.pdf}
-\caption{Domain model, view 2: AI screening, review, and enumerations}
+\caption{AI screening and review class diagram}
 \label{fig:class-screening}
 \end{figure}
 
@@ -1091,7 +1091,7 @@ interfaces, and dependencies.
   \node[flow label,anchor=west] at (9,14.5) {Service outside the system boundary};
   \node[flow label,anchor=west] at (2,9.5) {INT identifiers refer to Table~\ref{tab:major-interfaces}.};
 \end{tikzpicture}
-\caption{Component Diagram (CMP-01)}
+\caption{surplusSpace component diagram}
 \label{fig:component-diagram}
 \end{figure}
 
@@ -1144,7 +1144,7 @@ paths. Distinguish physical or virtual nodes from software components.
 
   \node[anchor=south west,inner sep=0pt,align=left] at (0,0) {Cube: node. Solid line: communication path.\\Dashed outline: service outside the system boundary.\\INT identifiers refer to Table~\ref{tab:major-interfaces}.};
 \end{tikzpicture}
-\caption{Deployment Diagram (DEP-01)}
+\caption{surplusSpace AWS deployment diagram}
 \label{fig:deployment-diagram}
 \end{figure}
 
@@ -1178,14 +1178,14 @@ surrogate primary key (\textsc{pk}) and names its references as foreign keys
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_6_1_erd_marketplace.pdf}
-\caption{ERD-01, part 1: accounts, lots, and trading}
+\caption{Accounts, lots, and trading ER diagram}
 \label{fig:erd-marketplace}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_6_1_erd_screening.pdf}
-\caption{ERD-01, part 2: AI screening, review, and settings}
+\caption{AI screening, review, and settings ER diagram}
 \label{fig:erd-screening}
 \end{figure}
 
@@ -1291,7 +1291,7 @@ reached from the navigation bar, and the dashed screens open from the screen abo
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig_4_8_navigation.pdf}
-\caption{Navigation structure}
+\caption{Screen navigation diagram}
 \label{fig:navigation-structure}
 \end{figure}
 
@@ -1304,42 +1304,42 @@ small lettered markers, which \tref{tab:wireframe-annotations} explains.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_marketplace.pdf}
-\caption{Wireframe: Marketplace (Customer)}
+\caption{Customer Marketplace wireframe}
 \label{fig:wf-marketplace}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_create_lot.pdf}
-\caption{Wireframe: Create Lot (Contractor)}
+\caption{Contractor Create Lot wireframe}
 \label{fig:wf-create-lot}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_my_lots.pdf}
-\caption{Wireframe: My Lots (Contractor)}
+\caption{Contractor My Lots wireframe}
 \label{fig:wf-my-lots}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_review_queue.pdf}
-\caption{Wireframe: Review Queue (Admin)}
+\caption{Admin Review Queue wireframe}
 \label{fig:wf-review-queue}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_dashboard.pdf}
-\caption{Wireframe: Dashboard (Admin)}
+\caption{Admin Dashboard wireframe}
 \label{fig:wf-dashboard}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_contractor_approvals.pdf}
-\caption{Wireframe: Contractor Approvals (Admin)}
+\caption{Admin Contractor Approvals wireframe}
 \label{fig:wf-contractor-approvals}
 \end{figure}
 
