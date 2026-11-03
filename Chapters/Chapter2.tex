@@ -6,20 +6,31 @@
 % =============================================================================
 
 \section{Assumptions, Constraints, and Dependencies}
-\begin{table}[H]
-\centering
-\caption{Assumptions, constraints, and dependencies}
-\label{tab:acd}
-\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth}p{0.18\textwidth}X X@{}}
+{\footnotesize
+\begin{longtable}{@{}p{0.09\textwidth}p{0.13\textwidth}p{0.36\textwidth}p{0.34\textwidth}@{}}
+\caption{Assumptions, constraints, and dependencies}\label{tab:acd}\\
 \toprule
 \textbf{ID} & \textbf{Type} & \textbf{Statement} & \textbf{Implication} \\
 \midrule
-ACD-01 & Assumption & Users have access to a modern web browser. & A separate desktop application is not required. \\
-ACD-02 & Constraint & AI assessment covers only four material categories and validated visible defect classes. & The system must disclose its limits and avoid claiming exhaustive inspection. \\
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Statement} & \textbf{Implication} \\
+\midrule
+\endhead
+ACD-01 & Assumption & Users have an Android phone or a modern web browser with internet access. & No iOS or desktop application is built. \\
+ACD-02 & Constraint & AI assessment covers only four material categories and validated visible defect classes (EXC-01, EXC-02). & The system must disclose its limits and avoid claiming exhaustive inspection. \\
 ACD-03 & Dependency & Public defect datasets, published new-material prices, and a small interview/validation sample. & Model coverage and price depreciation estimates depend on data availability and quality. \\
+ACD-04 & Constraint & The service launches in one zone, Lahore. & Lots outside an active zone are refused, and the dealer interviews and team photos are collected in Lahore. \\
+ACD-05 & Constraint & AI inference runs on a CPU-only server with 4 GB of memory. & Models must be small, lots are screened one at a time, and screening takes seconds rather than milliseconds. \\
+ACD-06 & Constraint & The project runs on a six-month schedule (DD-06). & Work runs in parallel tracks with no schedule buffer. \\
+ACD-07 & Dependency & An external language-model provider answers Listing Assistant questions. & If it is unavailable, the assistant returns the fallback reply, and the rest of the marketplace works. \\
+ACD-08 & Dependency & An email-sending service delivers sign-up verification and password-reset messages. & If it is unavailable, new accounts cannot be verified and passwords cannot be reset. \\
+ACD-09 & Dependency & A public map-tile service displays maps for choosing a pickup location. & If it is unavailable, users choose an area from a list instead of a map. \\
+ACD-10 & Dependency & Cloud hosting and object storage run the servers and hold lot photos. & Hosting cost must stay within the project budget, and photo access depends on the storage service. \\
+ACD-11 & Assumption & Interviewed dealers and contractors will share recent surplus sale prices. & The price model's real-price test set depends on these interviews. \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \section{Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
 {\footnotesize
@@ -33,26 +44,37 @@ ACD-03 & Dependency & Public defect datasets, published new-material prices, and
 \textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Source} \\
 \midrule
 \endhead
-FR-01 & The system shall allow a seller to create a lot listing with quantity, description, price, and 3--5 representative photographs. & Must & Contractor/Seller \\
-FR-02 & The system shall classify submitted listing photos into Bricks, Steel, Tiles/Marble, or Wood. & Must & AI pipeline \\
-FR-03 & The system shall detect configured visible defects and derive a Good, Minor, Major, Mixed, or Not Assessed condition grade. & Must & AI pipeline \\
+FR-01 & The system shall allow a seller to create a lot listing with material, quantity in the material's unit, description, price, age, pickup location, and 3--5 representative photographs. & Must & Contractor/Seller \\
+FR-02 & The system shall classify submitted listing photos into Bricks, Steel, Tiles/Marble, or Wood. & Must & Customer/Buyer \\
+FR-03 & The system shall detect configured visible defects and derive a Good, Minor, Major, Mixed, or Not Assessed condition grade. & Must & Customer/Buyer \\
 FR-04 & The system shall route uncertain, inconsistent, or Mixed-condition listings to the Admin review queue. & Must & Admin \\
 FR-05 & The system shall allow Admins to approve, reject, request edits, or override an AI listing decision. & Must & Admin \\
-FR-06 & The system shall allow users to search listings by location, price, and category. & Must & Customer/Buyer \\
+FR-06 & The system shall allow users to search listings within a chosen radius of a location, and by price and category. & Must & Customer/Buyer \\
 FR-07 & The system shall support real-time chat, negotiation, and lot reservation. & Must & Customer/Buyer; Contractor/Seller \\
 FR-08 & The system shall answer buyer questions using only the listing's structured data and return an explicit unavailable response when information is missing. & Should & Customer/Buyer \\
-FR-20 & The system shall let the buyer and seller of a lot exchange messages in real time in a chat thread. & Must & Customer/Contractor \\
-FR-21 & The system shall persist every chat message so that an offline recipient receives it and the thread history remains available. & Must & Customer/Contractor \\
-FR-22 & The system shall show the presence of chat participants. & Should & Customer/Contractor \\
-FR-23 & The system shall provide the chat thread as the negotiation channel between buyer and seller. & Must & Customer/Contractor \\
+FR-09 & The system shall allow a user to register and sign in with an email address that the user has verified. & Must & Customer/Buyer; Contractor/Seller \\
+FR-10 & The system shall allow a user to reset a forgotten password through a single-use link that expires after 30 minutes. & Must & Customer/Buyer; Contractor/Seller \\
+FR-11 & The system shall restrict each function to the Admin, Customer, or Contractor role, with one fixed Admin account. & Must & Admin \\
+FR-12 & The system shall allow only Contractors approved by the Admin to create lots, and shall show a rejected applicant the Admin's reason. & Must & Admin \\
+FR-13 & The system shall return a Published or Changes Requested lot to Screening whenever its Contractor edits it. & Must & Customer/Buyer \\
+FR-14 & The system shall set a Changes Requested lot to Expired when its Contractor does not resubmit it within 14 days. & Should & Admin \\
+FR-15 & The system shall set a Published lot to Expired 30 days after publication, and shall send a relisted Expired lot to Screening. & Must & Contractor/Seller \\
+FR-16 & The system shall allow the Contractor to mark an Active reservation Completed or No-Show, allow either party to cancel it, and cancel it automatically when its 48-hour pickup deadline passes without an outcome. & Must & Contractor/Seller \\
+FR-17 & The system shall prevent a Customer from holding more than 3 Active reservations at the same time. & Should & Contractor/Seller \\
+FR-18 & The system shall prevent a user from reserving, rating, or chatting as a buyer on a lot that the same user listed. & Must & Customer/Buyer; Contractor/Seller \\
+FR-19 & The system shall allow the Admin to suspend a user, which blocks the user's sign-in, hides the user's lots, and cancels the user's Active reservations. & Must & Admin \\
+FR-20 & The system shall let the buyer and seller of a lot exchange messages in real time in a chat thread. & Must & Customer/Buyer; Contractor/Seller \\
+FR-21 & The system shall persist every chat message so that an offline recipient receives it and the thread history remains available. & Must & Customer/Buyer; Contractor/Seller \\
+FR-22 & The system shall show the presence of chat participants. & Should & Customer/Buyer; Contractor/Seller \\
+FR-23 & The system shall provide the chat thread as the negotiation channel between buyer and seller. & Must & Customer/Buyer; Contractor/Seller \\
 FR-24 & The system shall show Admins each Pending Review lot in the review queue with its AI signals: material, confidence, defects, condition grade, price estimate, and flag reasons. & Must & Admin \\
 FR-25 & The system shall apply the Admin review actions Approve, Reject, Request Edits, and Override to a queued lot and record each Override. & Must & Admin \\
-FR-26 & The system shall apply the outcome Auto-Publish when the AI is confident and no flags are raised, and Send to Review otherwise. & Must & AI pipeline \\
+FR-26 & The system shall apply the outcome Auto-Publish when the AI is confident and no flags are raised, and Send to Review otherwise. & Must & Admin \\
 FR-27 & The system shall send every lot with a Mixed condition grade to review. & Must & Admin \\
-FR-28 & When the AI Service is unavailable, the system shall give the lot the grade Not Assessed with no price suggestion, raise the flag reason AI Unavailable, and move the lot to Pending Review. & Must & AI pipeline \\
+FR-28 & When the AI Service is unavailable, the system shall give the lot the grade Not Assessed with no price suggestion, raise the flag reason AI Unavailable, and move the lot to Pending Review. & Must & Contractor/Seller \\
 FR-29 & The system shall deliver screening status updates to the seller. & Must & Contractor/Seller \\
 FR-30 & The system shall deliver Listing Assistant answers to the buyer, and a fallback reply when the information is missing or the LLM provider is unavailable. & Should & Customer/Buyer \\
-FR-31 & The system shall show the sender when a chat message has been read. & Should & Customer/Contractor \\
+FR-31 & The system shall show the sender when a chat message has been read. & Should & Customer/Buyer; Contractor/Seller \\
 FR-60 & The system shall display the sentence ``AI assessment applies to the uploaded representative samples and does not guarantee the condition of every unphotographed item.'' on every lot details screen shown to a Customer. & Must & Customer/Buyer \\
 FR-61 & The system shall prevent a lot from being submitted from the Create Lot screen while fewer than 3 or more than 5 photos are attached. & Must & Contractor/Seller \\
 FR-62 & The system shall compress each lot photo on the device before upload. & Should & Contractor/Seller \\
@@ -67,11 +89,24 @@ FR-70 & The system shall display the status of each reservation to its Customer,
 FR-71 & The system shall provide a control for switching between the Customer and Contractor profiles of a single account. & Must & Customer/Buyer \\
 FR-72 & The system shall display a distinct screen state for each of loading, AI pending, flagged, rejected, and error. & Should & Contractor/Seller \\
 FR-73 & The system shall state the action needed to correct the problem in every validation message. & Should & Contractor/Seller \\
+FR-74 & The system shall require the Contractor to choose one of the four materials on the Create Lot screen and shall show the quantity unit fixed for that material: pieces for Bricks, kilograms for Steel, square feet for Tiles/Marble, and cubic feet for Wood. & Must & Contractor/Seller \\
+FR-75 & The system shall show a Customer only a lot's area and distance until the Customer holds an Active reservation on it, and the exact pickup location after that. & Must & Contractor/Seller \\
+FR-76 & The system shall list each user's notifications for screening results, Admin decisions, new chat messages, reservation changes, and saved-search matches. & Should & Customer/Buyer; Contractor/Seller \\
+FR-77 & The system shall provide a Remove action for a lot in any status except Reserved, which hides the lot from all users. & Should & Contractor/Seller \\
+FR-80 & The system shall allow the Customer and Contractor of a Completed reservation to rate each other once, from 1 to 5 stars, within 14 days, and shall reveal each rating only after both have rated or the 14 days have ended. & Should & Customer/Buyer; Contractor/Seller \\
+FR-81 & The system shall allow a user to report a lot or a chat message with a reason, and allow the Admin to resolve the report with a note. & Should & Admin \\
+FR-82 & The system shall allow the Admin to manage categories, zones, and search-radius options, and shall accept a lot only when its pickup location lies inside an active zone. & Must & Admin \\
+FR-83 & The system shall allow the Contractor to record an optional final sale price when marking a lot Sold. & Could & Admin \\
+FR-84 & The system shall allow a Customer to save a search's location, radius, price, and material filters. & Should & Customer/Buyer \\
+FR-85 & The system shall not allow a Rejected lot to be resubmitted. & Must & Admin \\
 \bottomrule
 \end{longtable}
 }
 
 \section{Non-Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
+AI-quality values marked ``target'' are proposed targets that are still to be agreed with
+the supervisor; the proposal commits to reporting these metrics, not to specific values.
+
 {\footnotesize
 \begin{longtable}{@{}p{0.09\textwidth}p{0.14\textwidth}p{0.55\textwidth}p{0.08\textwidth}@{}}
 \caption{Non-functional requirements}\label{tab:nonfunctional-requirements}\\
@@ -83,14 +118,30 @@ FR-73 & The system shall state the action needed to correct the problem in every
 \textbf{ID} & \textbf{Attribute} & \textbf{Measurable requirement} & \textbf{Priority} \\
 \midrule
 \endhead
-NFR-01 & Reliability & AI components shall be decoupled so that a temporarily unavailable AI service does not invalidate a submitted lot, which instead waits in Pending Review. & Must \\
+NFR-01 & Reliability & While the AI Service is unavailable, 100\% of submitted lots shall reach Pending Review with the grade Not Assessed within 5 minutes of submission. & Must \\
 NFR-02 & Transparency & The system shall disclose that AI assessment applies to representative samples and does not guarantee every unphotographed item. & Must \\
+NFR-03 & AI accuracy & Material classification shall be correct for at least 90\% of lots in the locked team test set (target). & Must \\
+NFR-04 & AI accuracy & Each material's defect detector shall reach a mean average precision of at least 0.60 at an IoU threshold of 0.5 on the locked team test set (target). & Should \\
+NFR-05 & AI accuracy & The price estimate's mean absolute error on real sale prices shall be lower than that of the baseline depreciation formula (target). & Should \\
+NFR-06 & AI accuracy & At least 90\% of Listing Assistant answers on the 100-question test set shall be supported by the lot's data, and at least 95\% of unanswerable questions shall receive the fallback reply (target). & Should \\
+NFR-07 & AI accuracy & Automated publish-or-review decisions shall agree with Admin judgement on at least 80\% of audited lots (target). & Should \\
+NFR-20 & Performance & Under the load stated in NFR-43, 95\% of search requests shall return results within 2 seconds. & Must \\
+NFR-21 & Concurrency & When 50 reservation requests for one Published lot arrive at the same time, exactly one shall succeed. & Must \\
+NFR-22 & Security & Passwords shall be at least 15 characters long, shall be checked against a list of common and breached passwords, and shall not be subject to character-composition rules~\citep{nist80063b4}. & Must \\
+NFR-23 & Security & Stored passwords shall be hashed with Argon2id using at least 19 MiB of memory, 2 iterations, and a parallelism of 1~\citep{owasppasswordstorage}. & Must \\
+NFR-24 & Security & After 5 consecutive failed sign-in attempts, the account shall be locked for 15 minutes. & Must \\
+NFR-25 & Security & Access tokens shall expire after 15 minutes, and every refresh token shall be revoked within 1 minute of sign-out, password change, or suspension. & Must \\
+NFR-26 & Security & 100\% of Admin sign-ins shall require a time-based one-time code as a second factor. & Must \\
+NFR-27 & Security & 100\% of traffic between clients, the API, the chat hub, and the AI Service shall use TLS 1.2 or higher. & Must \\
+NFR-28 & Security & The server shall reject any lot photo that is not JPEG, PNG, or WebP or that is larger than 2 MB. & Must \\
+NFR-29 & Privacy & 100\% of stored lot photos shall have their location metadata removed. & Must \\
+NFR-30 & Maintainability & The backend shall run only on runtime versions that receive security updates for the whole project period. & Must \\
 NFR-40 & Chat performance & A chat message shall reach an online recipient within \placeholder{target time} with \placeholder{number} concurrent users. & Must \\
 NFR-41 & AI turnaround & AI screening of one lot shall complete within \placeholder{target time}. & Must \\
 NFR-42 & Availability & Search, chat, and reservation shall remain usable while the AI Service is down. & Must \\
 NFR-43 & Load and concurrency & The REST API and chat hub shall support \placeholder{number} concurrent users at \placeholder{request or message rate}, checked with k6 or JMeter. & Must \\
 NFR-60 & Accessibility & Text on every screen shall have a contrast ratio of at least 4.5:1, or at least 3:1 for large-scale text, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
-NFR-61 & Accessibility & Every interactive control shall have a touch target of at least 48 by 48 logical pixels on Android and Flutter web. & Should \\
+NFR-61 & Accessibility & Every interactive control shall have a touch target of at least 48 by 48 logical pixels on Android and Flutter web, exceeding the 24 by 24 CSS pixel minimum of WCAG 2.2 Level AA~\citep{wcag22}. & Should \\
 NFR-62 & Accessibility & At a text scale of 200\%, every screen shall keep all of its content and functions, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
 NFR-63 & Accessibility & 100\% of interactive controls and condition-grade icons shall expose a screen-reader label. & Must \\
 NFR-64 & Accessibility & On 100\% of screens, no condition grade, lot status, or flag reason shall be conveyed by colour alone~\citep{wcag22}. & Must \\
@@ -103,35 +154,61 @@ NFR-68 & Portability & Screens shall need no horizontal scrolling at widths from
 }
 
 \section{Data and External Interface Requirements \applicability{If applicable}}
-\begin{table}[H]
-\centering
-\caption{Data and external interface requirements}
-\label{tab:data-interface-requirements}
-\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.19\textwidth}X X@{}}
+{\footnotesize
+\begin{longtable}{@{}p{0.09\textwidth}p{0.14\textwidth}p{0.47\textwidth}p{0.22\textwidth}@{}}
+\caption{Data and external interface requirements}\label{tab:data-interface-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Type} & \textbf{Requirement} & \textbf{Source or system} \\
 \midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Requirement} & \textbf{Source or system} \\
+\midrule
+\endhead
 DIR-01 & Data & The system shall store each lot with quantity, material, photographs, condition, detected defects, price, location, and status. & Listing process \\
+DIR-02 & Data & The system shall store, for each lot photo, its storage key, order, file size, and upload time, and not the image itself in the database. & Listing process \\
+DIR-03 & Data & The system shall store each AI assessment with the material and confidence, the defects found in each photo, the condition grade, the consistency result, the price estimate, the flag reasons, and the model versions used. & AI screening \\
+DIR-04 & Data & The system shall store each reservation with its lot, Customer, status, creation time, pickup deadline, and outcome time. & Reservation process \\
+DIR-05 & Data & The system shall store each chat message with its thread, sender, text, sent time, and read time. & Chat \\
+DIR-06 & Data & The system shall store each Admin review decision with the lot, the action, any message, the AI's recommendation, and the time, and shall keep these records for evaluation. & Admin review \\
+DIR-07 & Data & The system shall store each threshold and new-material reference price with its value, source, date, and the Admin who changed it. & Admin settings \\
+DIR-08 & Data & The system shall store each Contractor application with its fields, the Admin's decision and reason, and a verification note. & Contractor approval \\
+DIR-09 & Data & The system shall store ratings, reports with their resolution notes, notifications, saved searches, and any final sale price. & Trust and alerts \\
 EIR-01 & External API & The core API shall communicate asynchronously with the Python/FastAPI AI service for classification, defect detection, consistency, and price results. & AI service \\
 EIR-02 & Real-time service & The system shall exchange chat and negotiation messages through the SignalR service. & SignalR \\
 EIR-03 & Object storage & The system shall store listing photographs in AWS S3 and associate them with their lot listing. & AWS S3 \\
+EIR-04 & External API & The AI Service shall send the language-model provider only a lot's structured data and the buyer's question over HTTPS, and shall receive a text answer within 30 seconds. & Language-model provider \\
+EIR-05 & External service & The system shall send sign-up verification and password-reset emails through an email-sending service. & Email service \\
+EIR-06 & External service & The client shall display map tiles from a public map-tile service and show the service's required attribution. & Map-tile service \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \section{Legal, Ethical, Privacy, and Safety Requirements \applicability{If applicable}}
-\begin{table}[H]
-\centering
-\caption{Legal, ethical, privacy, and safety requirements}
-\label{tab:leps-requirements}
-\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.18\textwidth}X X@{}}
+{\footnotesize
+\begin{longtable}{@{}p{0.09\textwidth}p{0.13\textwidth}p{0.48\textwidth}p{0.22\textwidth}@{}}
+\caption{Legal, ethical, privacy, and safety requirements}\label{tab:leps-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Category} & \textbf{Requirement or obligation} & \textbf{Applicable authority or source} \\
 \midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement or obligation} & \textbf{Applicable authority or source} \\
+\midrule
+\endhead
 PR-01 & Privacy & Personal data shall be collected only for stated project purposes and accessed only by authorized roles. & Project privacy requirement \\
+PR-02 & Privacy & The system shall not collect national identity card numbers or images of identity documents. & Project privacy requirement \\
+PR-03 & Privacy & Location metadata shall be removed from every lot photo before storage. & Project privacy requirement \\
+PR-04 & Privacy & A lot's exact pickup location shall be shown only to a Customer holding an Active reservation on it. & Contractor/Seller \\
+PR-05 & Privacy & The language-model provider shall receive no names, phone numbers, email addresses, or user identifiers. & Project privacy requirement \\
+PR-06 & Privacy & A Contractor's business address and verification notes shall be visible only to the Admin. & Contractor/Seller \\
 ER-01 & Ethics & Interview and questionnaire participants shall provide informed consent, and collected responses shall be used only for requirements and evaluation. & Supervisor/institutional guidance \\
+ER-02 & Ethics & Interview notes shall record no participant names. & Supervisor/institutional guidance \\
+ER-03 & Ethics & No automated decision shall be final: the Admin shall have the final say on every flagged lot, and the seller shall see each flag reason. & Contractor/Seller \\
+ER-04 & Ethics & Every published lot shall carry the disclosure sentence, so that buyers are not misled about unphotographed items. & Customer/Buyer \\
+ER-05 & Legal & Datasets, models, and software libraries shall be used only under their licence terms, with attribution recorded in the research data management plan. & Dataset and software licences \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 % =============================================================================
