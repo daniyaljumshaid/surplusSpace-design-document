@@ -6,8 +6,12 @@
 % =============================================================================
 
 \section{Design Traceability Matrix}
+Each row links an objective and scope item to its requirements, the design elements
+that realize them, and the matching test references, which use the form
+TEST-<requirement ID>. A requirement may appear in more than one row.
+
 {\footnotesize
-\begin{longtable}{@{}p{0.12\textwidth}p{0.11\textwidth}p{0.16\textwidth}p{0.23\textwidth}p{0.24\textwidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.10\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
 \caption{Design traceability matrix}\label{tab:traceability}\\
 \toprule
 \textbf{Objective} & \textbf{Scope} & \textbf{Requirement} & \textbf{Design element} & \textbf{Testing-document reference} \\
@@ -17,10 +21,20 @@
 \textbf{Objective} & \textbf{Scope} & \textbf{Requirement} & \textbf{Design element} & \textbf{Testing-document reference} \\
 \midrule
 \endhead
-OBJ-01 & SCP-01 & FR-01 & UC-01; Lot Listing; Listing model & Testing document: listing creation \\
-OBJ-01 & SCP-05 & FR-06--FR-07 & UC-02; search and chat components; reservation model & Testing document: discovery and reservation \\
-OBJ-02 & SCP-03 & FR-02--FR-03 & AI pipeline; condition engine; AI model design & Testing document: classification and defect evaluation \\
-OBJ-03 & SCP-04 & FR-04--FR-05 & Admin review queue; decision engine & Testing document: decision agreement and override \\
+OBJ-01 & SCP-01 & FR-01 & UC-01; SD-01; CMP-01; DEP-01 & TEST-FR-01 \\
+OBJ-01 & SCP-02; SCP-05 & FR-06 & CMP-01 & TEST-FR-06 \\
+OBJ-01 & SCP-02; SCP-05 & FR-07 & SD-03; SD-04 & TEST-FR-07 \\
+OBJ-01 & SCP-05 & FR-20; FR-21; FR-22; FR-23; FR-31 & SD-04; SEC-20; SEC-21; SEC-24; DD-23; DD-26 & TEST-FR-20; TEST-FR-21; TEST-FR-22; TEST-FR-23; TEST-FR-31 \\
+OBJ-01 & SCP-02 & FR-29 & SD-01; SD-02 & TEST-FR-29 \\
+OBJ-01 & SCP-05 & NFR-40; NFR-43 & SD-04; DEP-01 & TEST-NFR-40; TEST-NFR-43 \\
+OBJ-02 & SCP-03 & FR-02; FR-03 & SD-01; CMP-01; DD-20; DD-22 & TEST-FR-02; TEST-FR-03 \\
+OBJ-02 & SCP-03 & NFR-41 & SD-01; DEP-01 & TEST-NFR-41 \\
+OBJ-02 & SCP-01; SCP-03 & NFR-02 & Core algorithm or model (Table~\ref{tab:algorithm-model}) & TEST-NFR-02 \\
+OBJ-02 & SCP-03 & EIR-01 & SEC-22; SEC-23; DD-20; DD-21; DEP-01 & TEST-EIR-01 \\
+OBJ-03 & SCP-04 & FR-04; FR-26; FR-27 & SD-01; CMP-01; DD-24 & TEST-FR-04; TEST-FR-26; TEST-FR-27 \\
+OBJ-03 & SCP-04 & FR-28; NFR-01; NFR-42 & SD-01; SEC-25; DEP-01; DD-25 & TEST-FR-28; TEST-NFR-01; TEST-NFR-42 \\
+OBJ-03 & SCP-04 & FR-05; FR-24; FR-25 & SD-02; CMP-01 & TEST-FR-05; TEST-FR-24; TEST-FR-25 \\
+OBJ-03 & \placeholder{Scope item for the Listing Assistant} & FR-08; FR-30 & SD-05; CMP-01 & TEST-FR-08; TEST-FR-30 \\
 \bottomrule
 \end{longtable}
 }
