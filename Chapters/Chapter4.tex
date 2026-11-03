@@ -72,45 +72,137 @@ INT-07 & AI service -- AWS S3 & Listing photos downloaded directly for assessmen
 \section{Research Methodology and Experimental Design \applicability{Research, Hybrid}}
 \label{sec:research-methodology}
 \subsection{Study or Experimental Design}
-The project will evaluate the integrated system using held-out image data and
-Admin review decisions. Each submitted lot passes through the same classification,
-defect, condition, consistency, and price stages. Results are compared with
-validated labels, sourced reference prices, and human review outcomes.
-
-\subsection{Population, Sample, Participants, or Dataset}
-The AI pipeline will use existing public building-defect datasets, including
-YOLO-format datasets, SDNET2018, and MBDD2025, supplemented by a small
-team-collected validation set of marketplace-style phone photographs. New-material
-prices will be collected from published Pakistani construction-pricing sources.
-Surplus depreciation will be informed by structured interviews with 5--10 Lahore
-dealers and contractors. User requirements will be validated through interviews
-with 4--6 contractors/suppliers and a brief questionnaire.
-
-\subsection{Variables and Data Collection Techniques}
+The research part of this Hybrid project is a quantitative evaluation of existing
+models and of the rules that combine them. It answers the two research questions of
+Chapter~1. RQ-01 is answered offline. Each model (M-01, M-02, M-05) is run on data it
+never saw during training or tuning, and its results are compared with a simple
+baseline, so that a result can be judged as better or worse than doing almost
+nothing. RQ-02 is answered from the working system. Automated decisions on screened lots
+are compared with the Admin's decisions, and Listing Assistant answers are labelled
+against the lot data. Interviews and a questionnaire supply the price data and the
+requirements evidence, and they are not themselves a research question.
+\tref{tab:rq-method} links each question to its method and variables.
 
 \begin{table}[H]
 \centering
-\caption{Variables and data collection}
-\label{tab:variables}
-\begin{tabularx}{\textwidth}{@{}p{0.16\textwidth}p{0.23\textwidth}X X@{}}
+\caption{Research questions, methods, and variables}
+\label{tab:rq-method}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.09\textwidth}Xp{0.2\textwidth}p{0.16\textwidth}@{}}
 \toprule
-\textbf{ID} & \textbf{Variable or construct} & \textbf{Operational definition or measure} & \textbf{Collection source or instrument} \\
+\textbf{RQ} & \textbf{Method} & \textbf{Variables} & \textbf{Target} \\
 \midrule
-VAR-01 & \placeholder{Variable or construct} & \placeholder{How it is defined or measured} & \placeholder{Instrument, sensor, dataset field, interview, etc.} \\
-VAR-02 & Material classification accuracy & Correct predicted category across Bricks, Steel/Rebar, Tiles/Marble, and Wood & Held-out image set \\
-VAR-03 & Defect detection performance & Precision and recall for each configured defect class & Labelled public datasets and real-photo validation set \\
-VAR-04 & Price-estimate error & MAE and RMSE against reference prices & Published Pakistani price sources \\
-VAR-05 & Decision agreement & Agreement between automated publish/flag result and Admin decision & Admin review outcomes \\
+RQ-01 & Offline evaluation of M-01, M-02, and M-05 on the locked team test set and on real prices, each against a baseline & VAR-01, VAR-02, VAR-03 & NFR-03, NFR-04, NFR-05 \\
+RQ-02 & Comparison of automated decisions with Admin decisions on reviewed lots and on a random 10\% audit of auto-published lots; labelling of assistant answers on a fixed question set & VAR-04, VAR-05, VAR-06 & NFR-06, NFR-07 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
+\subsection{Population, Sample, Participants, or Dataset}
+\textbf{Public datasets.} The defect detectors are trained only on the public datasets
+in \tref{tab:defect-classes}, using each dataset's own training and validation splits.
+CLIP is used without training. Each dataset's licence is recorded before use (ER-05,
+RSK-04).
+
+\textbf{Team photo set.} The team photographs real surplus lots in Lahore as a seller
+would: 3--5 photos per lot, taken with ordinary Android phones, at dealer yards and
+construction sites, with the owner's permission. The target is 30 lots per material,
+or 120 lots in total (target, to be agreed with the supervisor). A lot is included when
+it is one of the four materials and is photographed in normal daylight or site light.
+Photos showing people's faces, vehicle number plates, or house numbers are retaken or
+excluded. Two team members label each lot's material and condition grade and draw
+boxes for the defect classes in \tref{tab:defect-classes}. They settle disagreements
+by discussion. The set is split by source (Section~\ref{sec:leakage-controls}) into a
+tuning split of about two-thirds and a locked test split of about one-third. The tuning
+split is used to set thresholds and is never used to train the detectors, because the
+proposal plans a validation set rather than a training set.
+
+\textbf{Interviews and questionnaire.} The team interviews 5--10 Lahore surplus and
+scrap dealers, chosen because they trade the four materials, and asks each for 5--10
+recent real sales: material, quantity, condition, age, area, and price. These give the
+condition and age factors of the baseline formula and the real deals for M-05. The team
+also interviews 4--6 contractors or suppliers and runs a short questionnaire on search,
+negotiation, and trust features. Every participant gives informed consent (ER-01), and
+notes contain no names (ER-02).
+
+\textbf{Price data.} New-material reference prices come from published Pakistani
+sources~\citep{iconssteelrate,toolsfluentcost2026,thenewscosts2026,zameenprices,graanaprices}
+and are recorded with source and date (FR-86). Real surplus prices come from the
+interview deals and from the optional final sale prices of Sold lots (FR-83).
+
+\textbf{Decision and assistant data.} The decision data are the lots screened during
+testing and the pilot (MS-08), with the Admin's recorded decisions (DIR-06). The
+assistant question set holds about 100 questions written by the team over about 20
+test lots. About half can be answered from the lot data, for example ``what is the
+price per kg?''. The rest cannot, for example ``is delivery included?''.
+
+\subsection{Variables and Data Collection Techniques}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.41\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\caption{Variables and data collection}\label{tab:variables}\\
+\toprule
+\textbf{ID} & \textbf{Variable} & \textbf{Operational definition or measure} & \textbf{Collection source or instrument} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Variable} & \textbf{Operational definition or measure} & \textbf{Collection source or instrument} \\
+\midrule
+\endhead
+VAR-01 & Classification accuracy & Share of locked-test lots whose M-01 lot material equals the labelled material, reported overall and per material, with a confusion matrix over Bricks, Steel, Tiles/Marble, Wood, and ``other''. The share of lots flagged Low Classification Confidence is reported alongside (RQ-01). & Locked test split labels; evaluation script run on M-01 outputs \\
+VAR-02 & Defect detection & Precision, recall, and mAP@0.5 per defect class and per material model, where a detection is correct when its box overlaps a labelled box of the same class with an IoU of at least 0.5. Results on the public validation split are reported separately, for comparison only (RQ-01). & Team-drawn boxes on the locked test photos; detector validation run \\
+VAR-03 & Price error & Mean absolute error and root mean square error of the M-05 mid estimate per unit in PKR, overall and per material, on real prices only, reported next to the same measures for the baseline formula (RQ-01). & Held-out interview deals; final sale prices recorded under FR-83 \\
+VAR-04 & Admin agreement rate & Share of judged lots where the automated decision matches the Admin's judgement. A Send to Review matches when the Admin rejects the lot, requests edits, or overrides it to rejected. An Auto-Publish matches when the auditor would approve the lot unchanged (RQ-02). & Admin decisions on reviewed lots (DIR-06); audit form for the 10\% sample of auto-published lots \\
+VAR-05 & Admin overturn rate & Share of lots reaching the Admin whose AI recommendation the Admin overrides, plus the share of audited auto-published lots the auditor would not have approved (RQ-02). & Recorded Overrides (FR-25, DIR-06); audit form \\
+VAR-06 & Supported-answer share & Share of assistant answers to answerable questions that are labelled supported, meaning every factual claim can be traced to a lot field. The share of unanswerable questions that receive the fallback reply is reported alongside (RQ-02). & Logged answers (FR-57) on the fixed question set; labelling sheet completed by two team members \\
+\bottomrule
+\end{longtable}
+}
+
 \subsection{Analysis and Evaluation Protocol}
-Evaluation will report material-classification accuracy and confusion patterns,
-defect-detection precision and recall per defect class, agreement between the
-automated publish/flag decision and Admin review decisions, and price-estimate
-MAE/RMSE against sourced reference prices. The real-photo validation set will be
-kept separate from training data.
+\textbf{Baselines.} Each RQ-01 result is compared with a simple baseline. For material,
+the baseline always predicts the most frequent material in the tuning split. For
+defects, it is the prototype's general building-surface model~\citep{buildingsurfacedefect}.
+For price, it is the depreciation formula of M-05.
+
+\textbf{Procedure.} Models, thresholds, the CLIP prompts, the condition-phrase list,
+and the assistant instructions are frozen and versioned first. Then each model is run
+once on the locked test split, and the results are reported with the model versions
+(DIR-03). Because the samples are small, every proportion (VAR-01, VAR-04, VAR-05,
+VAR-06) is reported as a count with a 95\% Wilson confidence
+interval~\citep{wilson1927interval}, and every result is also given per material. A
+result that misses its target, for example an XGBoost model that does not beat the
+baseline, is reported as it is (Chapter~5).
+
+\textbf{Decision audit.} Auto-published lots never reach the Admin, so the system alone
+cannot show their errors. A random 10\% of them is therefore drawn with a recorded
+random seed and reviewed offline by the Admin on an audit form, without the AI's
+outcome shown. This is a research procedure, not an application feature.
+
+\textbf{Assistant labelling.} The question set is fixed before the evaluation run.
+Two team members independently label each answer as supported or not supported, and
+each unanswerable question as correctly answered with the fallback or not. They see
+the lot data but not the model's own \texttt{supported} value. Their agreement is
+reported with Cohen's kappa~\citep{cohen1960kappa}, and disagreements are settled by
+discussion before VAR-06 is computed.
+
+\textbf{Leakage controls.}\label{sec:leakage-controls}
+\begin{itemize}
+  \item Locked test photos are never used to train or tune any model, threshold,
+        prompt, or phrase list. They are opened only for the final evaluation run.
+  \item The team photo set is split by source. All photos of one lot, and all lots
+        photographed at the same site on the same day, go to the same split, so
+        near-duplicate photos cannot appear in both splits. A perceptual-hash check
+        across the splits finds any that remain.
+  \item Tuning data are kept separate from reporting data. The 0.60 confidence
+        threshold, the 0.40 detection threshold, the quality thresholds, the CLIP
+        prompts, and the phrase list are set on the tuning split only. The public
+        validation splits are used only to select detector weights.
+  \item For M-05, interview deals are split by dealer, formula-built rows are never
+        used for testing, and FR-83 sale prices are used only for testing.
+  \item For the assistant, the question set is written and frozen separately from the
+        questions used while writing the instructions, and labellers do not see the
+        model's own \texttt{supported} value.
+\end{itemize}
 
 
 
