@@ -22,7 +22,7 @@
 \usepackage{float}
 \usepackage[compact]{titlesec}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,calc}
+\usetikzlibrary{arrows.meta,calc,shapes.geometric}
 
 % Match the compact heading treatment used by the supplied UET template.
 \titlespacing{\section}{0pt}{*0}{*0}
@@ -53,6 +53,13 @@
   layer title/.style={font=\footnotesize\bfseries\linespread{1}\selectfont,align=center},
   flow label/.style={align=center,inner sep=0.5mm},
   uses/.style={->,dashed},
+  ad action/.style={draw,rounded corners=2mm,fill=white,align=center,
+                    minimum height=7mm,text width=#1},
+  ad action/.default=26mm,
+  ad decision/.style={draw,diamond,aspect=1.6,fill=white,inner sep=0.6mm,minimum size=6mm},
+  ad initial/.style={circle,fill=black,minimum size=3mm,inner sep=0},
+  ad final/.style={circle,draw,double,double distance=0.6mm,fill=black,
+                   minimum size=2.4mm,inner sep=0},
 }
 % \umlicon{x,y}: UML component icon whose top-right corner is at (x,y).
 \newcommand{\umlicon}[1]{%

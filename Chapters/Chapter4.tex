@@ -234,9 +234,10 @@ Alternative or exception flows & A1, fewer than 3 photos (step 5): the system bl
 A2, location outside every active zone (step 5): the system refuses the lot, names the active zones, and returns to step 3.\newline
 A3, AI Service unavailable after one retry (step 7): the lot receives grade Not Assessed, no price suggestion, and flag reason AI Unavailable, and its status becomes Pending Review.\newline
 A4, flagged to review (step 8): the Decision Engine returns Send to Review, the status becomes Pending Review, the system shows each flag reason, and UC-04 follows.\newline
-A5, rejected (after A3 or A4): the Admin rejects the lot in UC-04, the status becomes Rejected, and the lot cannot be resubmitted. \\
-Postconditions & The lot is Published, Pending Review, or Rejected. \\
-Related requirements & FR-01--FR-04, FR-12, FR-28, FR-61--FR-65, FR-72--FR-74, FR-82, FR-85; NFR-01, NFR-28, NFR-29, NFR-65, NFR-67 \\
+A5, rejected (after A3 or A4): the Admin rejects the lot in UC-04, the status becomes Rejected, and the lot cannot be resubmitted.\newline
+A6, blurry or dark photo (step 7): the status becomes Changes Requested without an Admin decision, the system names each photo to replace, and the Contractor resubmits from step 4 (FR-47). \\
+Postconditions & The lot is Published, Pending Review, Changes Requested, or Rejected. \\
+Related requirements & FR-01--FR-04, FR-12, FR-28, FR-47, FR-61--FR-65, FR-72--FR-74, FR-82, FR-85; NFR-01, NFR-28, NFR-29, NFR-65, NFR-67 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -357,12 +358,181 @@ Related requirements & FR-08, FR-30, FR-72; NFR-06, NFR-60, NFR-63, NFR-66 \\
 \end{table}
 
 \subsection{Activity Model}
-\begin{guidance}
-Model an important workflow using actions, control flows, decisions with guards,
-parallel paths where required, and clear initial and final nodes. Use swimlanes when
-responsibility changes are important.
-\end{guidance}
-\diagramplaceholder{Activity diagram}{Example workflow: submit request, check availability, approve or reject, and notify the student.}
+Figures~\ref{fig:ad-01} and~\ref{fig:ad-02} model the two workflows that carry
+most of the system's decision logic, in UML~2.5.1 activity notation~\citep{omguml251}.
+Rounded boxes are actions, diamonds are decision or merge nodes, and every branch
+leaving a decision carries a guard in square brackets. AD-01 uses swimlanes because
+responsibility moves between the API, the AI Service, and the Admin. The messages
+exchanged in the same workflows are shown in SD-01 and SD-02, so the activity
+diagrams show only the decisions.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \draw[layer] (0,0) rectangle (80,-192);
+  \node[layer title] at (40,-3) {API and Decision Engine};
+  \draw[layer] (80,0) rectangle (108,-192);
+  \node[layer title] at (94,-3) {AI Service};
+  \draw[layer] (108,0) rectangle (146.6,-192);
+  \node[layer title] at (127.3,-3) {Admin};
+
+  \node[ad initial] (start) at (41,-8) {};
+  \node[ad action=28mm] (send) at (41,-16) {Send lot in Screening to AI Service};
+  \node[ad action=24mm] (run) at (94,-16) {Run M-01 to M-05 and return signals};
+  \node[ad decision] (d1) at (41,-27) {};
+  \node[ad action=22mm] (unavail) at (13,-41) {Grade Not Assessed, no price; add flag AI Unavailable};
+  \node[ad decision] (d2) at (41,-39) {};
+  \node[ad action=20mm] (cr1) at (68,-53) {Set Changes Requested; ask to replace each blurry or dark photo};
+  \node[ad final] (f1) at (68,-67) {};
+  \node[ad action=28mm] (c1) at (41,-55) {Check Low Classification Confidence; add flag if raised};
+  \node[ad action=28mm] (c2) at (41,-69) {Check Material Mismatch; add flag if raised};
+  \node[ad action=28mm] (c3) at (41,-83) {Check Mixed Condition; add flag if raised};
+  \node[ad action=28mm] (c4) at (41,-97) {Check Condition-Claim Conflict; add flag if raised};
+  \node[ad action=28mm] (c5) at (41,-111) {Check Price Above Estimate; add flag if raised};
+  \node[ad decision] (m1) at (41,-123) {};
+  \node[ad decision] (d5) at (41,-134) {};
+  \node[ad action=20mm] (review) at (68,-134) {Send to Review: set Pending Review};
+  \node[ad action=30mm] (queue) at (127.3,-134) {Review lot and AI signals in the review queue};
+  \node[ad decision] (d6) at (127.3,-147) {};
+  \node[ad action=26mm] (pub) at (41,-158) {Set status Published};
+  \node[ad action=26mm] (rej) at (41,-171) {Set status Rejected};
+  \node[ad action=26mm] (cr2) at (41,-184) {Set Changes Requested with the Admin's message};
+  \node[ad final] (f2) at (10,-158) {};
+  \node[ad final] (f3) at (10,-171) {};
+  \node[ad final] (f4) at (10,-184) {};
+
+  \draw[->] (start) -- (send);
+  \draw[->] (send) -- (run);
+  \draw[->] (run) |- (d1);
+  \draw[->] (d1) -| (unavail);
+  \node[flow label,anchor=south,text width=20mm] at (16,-27) {[no response after one retry, or 4xx]};
+  \draw[->] (d1) -- node[flow label,left] {[complete\\response]} (d2);
+  \draw[->] (d2) -| node[flow label,above,pos=0.3,text width=18mm] {[any photo blurry or dark]} (cr1);
+  \draw[->] (cr1) -- (f1);
+  \draw[->] (d2) -- node[flow label,left] {[all photos\\ok]} (c1);
+  \draw[->] (c1) -- (c2);
+  \draw[->] (c2) -- (c3);
+  \draw[->] (c3) -- (c4);
+  \draw[->] (c4) -- (c5);
+  \draw[->] (c5) -- (m1);
+  \draw[->] (unavail) |- (m1);
+  \draw[->] (m1) -- (d5);
+  \draw[->] (d5) -- node[flow label,above] {[any flag]} (review);
+  \draw[->] (review) -- (queue);
+  \draw[->] (queue) -- (d6);
+  \draw[->] (d5) -- node[flow label,left] {[no flags]:\\Auto-Publish} (pub);
+  \draw[->] (d6.west) -- ++(-6,0) |- (pub);
+  \node[flow label,anchor=south,text width=26mm] at (94,-158) {[Approve, or Override to publish]};
+  \draw[->] (d6) |- (rej);
+  \node[flow label,anchor=south,text width=26mm] at (94,-171) {[Reject, or Override to reject]};
+  \draw[->] (d6.east) -- ++(8,0) |- (cr2);
+  \node[flow label,anchor=south,text width=26mm] at (94,-184) {[Request Edits]};
+  \draw[->] (pub) -- (f2);
+  \draw[->] (rej) -- (f3);
+  \draw[->] (cr2) -- (f4);
+\end{tikzpicture}
+\caption{Activity Diagram AD-01: Decision Engine flow}
+\label{fig:ad-01}
+\end{figure}
+
+AD-01 starts when a lot enters Screening and the API sends it to the AI Service.
+If the AI Service gives no response after one retry, or returns a 4xx error, the
+API gives the lot the grade Not Assessed with no price and raises the flag reason
+AI Unavailable, so the lot can never be auto-published without all checks (FR-28,
+FR-59). If any photo is blurry or dark, the lot is not assessed further: it moves to
+Changes Requested without an Admin decision, and the Contractor is told which photos
+to replace (FR-47). When the Contractor resubmits, the lot returns to Screening
+(FR-13). Otherwise the Decision Engine runs all five checks in a fixed order and
+records every flag raised, rather than stopping at the first one (FR-58). The first
+two checks come from M-01, the third from M-03, the fourth from M-04, and the fifth
+from M-05. With no flags, the outcome is Auto-Publish and the lot is Published
+(FR-26). This includes an honestly described Major lot, whose grade is shown to
+buyers. With any flag, the outcome is Send to Review, and the lot waits in
+Pending Review until the Admin acts (FR-04, FR-24). Approve publishes the lot, Reject
+ends it (FR-85), Request Edits returns it to the Contractor with the Admin's message,
+and Override publishes or rejects it against the AI's recommendation, with the
+Override recorded (FR-05, FR-25).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \draw[layer] (0,0) rectangle (132,-192);
+  \node[layer title] at (66,-3) {AI Service: YOLO defect detection and Condition engine};
+
+  \node[ad initial] (start) at (45,-8) {};
+  \node[ad action=30mm] (next) at (45,-16) {Take the next photo of the lot};
+  \node[ad action=30mm] (qual) at (45,-28) {Check blur and darkness with OpenCV};
+  \node[ad decision] (dq) at (45,-39) {};
+  \node[ad action=28mm] (markq) at (95,-39) {Record the photo as blurry or dark};
+  \node[ad action=28mm] (det) at (45,-52) {Detect defects with the YOLO model of the lot's material};
+  \node[ad action=28mm] (keep) at (45,-66) {Keep defects with a confidence of at least 0.40};
+  \node[ad decision] (dg) at (45,-78) {};
+  \node[ad action=20mm] (good) at (17,-94) {Photo grade Good};
+  \node[ad action=22mm] (minor) at (45,-94) {Photo grade Minor};
+  \node[ad action=22mm] (major) at (95,-94) {Photo grade Major};
+  \node[ad decision] (mp) at (45,-105) {};
+  \node[ad decision] (mp2) at (45,-114) {};
+  \node[ad decision] (dmore) at (45,-124) {};
+  \node[ad decision] (dlot) at (45,-138) {};
+  \node[ad action=26mm] (na) at (102,-138) {Lot grade Not Assessed; return the photo quality results};
+  \node[ad final] (f1) at (124,-138) {};
+  \node[ad action=20mm] (mixed) at (17,-152) {Lot grade Mixed};
+  \node[ad action=28mm] (worst) at (45,-152) {Lot grade is the worst photo grade};
+  \node[ad decision] (m3) at (45,-164) {};
+  \node[ad action=30mm] (ret) at (45,-175) {Return the lot grade and per-photo results};
+  \node[ad final] (f2) at (45,-186) {};
+
+  \draw[->] (start) -- (next);
+  \draw[->] (next) -- (qual);
+  \draw[->] (qual) -- (dq);
+  \draw[->] (dq) -- node[flow label,above] {[blurry or dark]} (markq);
+  \draw[->] (dq) -- node[flow label,right] {[ok]} (det);
+  \draw[->] (det) -- (keep);
+  \draw[->] (keep) -- (dg);
+  \draw[->] (dg) -| (good);
+  \node[flow label,anchor=south] at (28,-78) {[no defect]};
+  \draw[->] (dg) -- node[flow label,right,text width=20mm] {[1 or 2 small defects of a minor type]} (minor);
+  \draw[->] (dg) -| (major);
+  \node[flow label,anchor=south,text width=34mm] at (78,-78) {[any major-type defect, 3 or more defects, or one defect over 10\% of the photo]};
+  \draw[->] (good) |- (mp);
+  \draw[->] (minor) -- (mp);
+  \draw[->] (major) |- (mp);
+  \draw[->] (mp) -- (mp2);
+  \draw[->] (markq) -- (124,-39) |- (mp2);
+  \draw[->] (mp2) -- (dmore);
+  \draw[->] (dmore) -- (4,-124) |- (next);
+  \node[flow label,anchor=south] at (20,-124) {[more photos]};
+  \draw[->] (dmore) -- node[flow label,right] {[no more photos]} (dlot);
+  \draw[->] (dlot) -- (na);
+  \node[flow label,anchor=north,text width=26mm] at (68,-138.5) {[any photo blurry or dark, or detection failed]};
+  \draw[->] (na) -- (f1);
+  \draw[->] (dlot) -| (mixed);
+  \node[flow label,anchor=south,text width=22mm] at (26,-138) {[photo grades include Good and Major]};
+  \draw[->] (dlot) -- node[flow label,right] {[else]} (worst);
+  \draw[->] (mixed) |- (m3);
+  \draw[->] (worst) -- (m3);
+  \draw[->] (m3) -- (ret);
+  \draw[->] (ret) -- (f2);
+\end{tikzpicture}
+\caption{Activity Diagram AD-02: Condition grading across 3--5 photos}
+\label{fig:ad-02}
+\end{figure}
+
+AD-02 refines the ``Run M-01 to M-05'' action of AD-01 for condition grading (M-02
+and M-03). Each photo is first checked for blur and darkness. A blurry or dark photo
+is recorded and not graded (FR-43). A photo that passes is run through the YOLO
+detector of the lot's classified material (FR-44), and detections below a confidence
+of 0.40 are discarded. The grade decision tests Major first, so its three guards
+cover every case: any defect of a major type, 3 or more defects, or one defect
+covering more than 10\% of the photo gives Major; no defect gives Good; and 1 or 2
+small defects of a minor type give Minor (FR-45). After the last photo, a lot with
+any blurry or dark photo, or whose detection failed, is graded Not Assessed. AD-01 then
+sends the first case to Changes Requested and treats the second as AI Unavailable. A
+lot whose photo grades include both Good and Major is graded Mixed, because a few
+damaged items may be hidden among good ones; every other lot takes its worst photo
+grade, never an average (FR-46). Mixed lots always go to review (FR-27). All numeric
+thresholds are provisional, are tuned on the team's tuning photos, and are never
+tuned on the test set (Section~\ref{sec:algorithm-design}).
 
 \subsection{State-Machine Model \applicability{State-dependent systems and games}}
 \begin{guidance}
@@ -454,7 +624,7 @@ REST message name with its endpoint once Appendix B.2 is agreed.}
   \seqmsg{seq return}{79}{98.5}{-153}{Send to Review}
   \seqmsg{seq call}{98.5}{61}{-158}{save all: Pending Review}
   \seqmsg{seq call}{98.5}{61}{-170}{Not Assessed, AI Unavailable,\\Pending Review}
-  \seqmsg{seq call}{98.5}{61}{-182}{Pending Review,\\flag \placeholder{to be agreed}}
+  \seqmsg{seq call}{98.5}{61}{-182}{Pending Review,\\flag AI Unavailable}
 
   \seqmsg{seq async}{98.5}{8.5}{-190}{LotStatusChanged (INT-03)}
 \end{tikzpicture}
@@ -961,6 +1131,7 @@ access controls and responsible team members.
 \end{table}
 
 \section{Algorithm or Model Design \applicability{Research, Hybrid; Development or Game if a core algorithm or AI model is used}}
+\label{sec:algorithm-design}
 \begin{table}[H]
 \centering
 \caption{Core algorithm or model}

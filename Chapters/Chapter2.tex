@@ -75,13 +75,33 @@ FR-28 & When the AI Service is unavailable, the system shall give the lot the gr
 FR-29 & The system shall deliver screening status updates to the seller. & Must & Contractor/Seller \\
 FR-30 & The system shall deliver Listing Assistant answers to the buyer, and a fallback reply when the information is missing or the LLM provider is unavailable. & Should & Customer/Buyer \\
 FR-31 & The system shall show the sender when a chat message has been read. & Should & Customer/Buyer; Contractor/Seller \\
+FR-40 & The system shall score each lot photo against text prompts for Bricks, Steel, Tiles/Marble, and Wood and against an ``other'' label for a photo that shows no building material, and shall take the lot's material as the top score averaged over all of its photos (FR-02). & Must & Customer/Buyer \\
+FR-41 & The system shall raise the flag reason Low Classification Confidence when the lot's top averaged material score is below the Admin's confidence threshold, when the ``other'' label has the top score, or when the lot's photos disagree on the material. & Must & Admin \\
+FR-42 & The system shall raise the flag reason Material Mismatch when the material chosen by the Contractor differs from the material classified from the photos. & Must & Customer/Buyer \\
+FR-43 & The system shall check each lot photo for blur and darkness before defect detection, and record its quality result as ok, blurry, or dark. & Must & Contractor/Seller \\
+FR-44 & The system shall detect visible defects in each usable photo with the defect detector of the lot's classified material, and shall record each defect's class, confidence, and bounding box (FR-03). & Must & Customer/Buyer \\
+FR-45 & The system shall grade a usable photo Good when no defect is detected with a confidence of at least 0.40, Minor when it has 1 or 2 small defects of a minor type, and Major when it has any defect of a major type, 3 or more defects, or one defect covering more than 10\% of the photo. & Must & Customer/Buyer \\
+FR-46 & The system shall grade a lot Mixed when the grades of its usable photos include both Good and Major, and shall otherwise give the lot the worst grade among its usable photos (FR-27). & Must & Customer/Buyer \\
+FR-47 & When any photo of a lot is blurry or dark, the system shall set the lot to Changes Requested without an Admin decision, and shall tell the Contractor which photos to replace. & Must & Contractor/Seller \\
+FR-48 & The system shall map the Contractor's description to a claimed condition level using a fixed list of English and Roman Urdu condition phrases. & Must & Admin \\
+FR-49 & The system shall raise the flag reason Condition-Claim Conflict when the description claims a good or new condition and the lot's grade is Major or Mixed. & Must & Customer/Buyer \\
+FR-50 & The system shall estimate a low, middle, and high surplus price per unit in PKR for each lot graded Good, Minor, Major, or Mixed, from its material, quantity, condition grade, age band, location, and new-material reference price (FR-86). & Should & Customer/Buyer \\
+FR-51 & The system shall raise the flag reason Price Above Estimate when the asking price per unit exceeds the high estimate multiplied by one plus the Admin's price margin, which is 25\% until the Admin changes it. & Must & Customer/Buyer \\
+FR-52 & The system shall allow the Admin to change the classification confidence threshold and the price margin, and shall apply the new values to every lot screened after the change (UC-20). & Must & Admin \\
+FR-53 & The system shall record the version of each model used with every AI assessment (DIR-03). & Must & Admin \\
+FR-54 & The system shall show the Admin, for a chosen date range, the share of screened lots that were auto-published, the share that were flagged, and the share of AI decisions that the Admin overturned (UC-24). & Should & Admin \\
+FR-55 & The system shall return each Listing Assistant reply with the answer text, whether the answer is supported by the lot's data, and the lot fields the answer used (FR-08). & Should & Customer/Buyer \\
+FR-56 & The system shall accept at most 20 Listing Assistant questions per user per hour, and shall tell a user who reaches the limit when the next question can be asked. & Should & Admin \\
+FR-57 & The system shall log each Listing Assistant question and reply without the identity of the user who asked. & Should & Admin \\
+FR-58 & The system shall run every screening check and record every flag reason raised, rather than stopping at the first flag (FR-26). & Must & Admin \\
+FR-59 & The system shall treat a 4xx error response from the AI Service as the flag reason AI Unavailable without retrying, and shall log the error code (FR-28). & Must & Admin \\
 FR-60 & The system shall display the sentence ``AI assessment applies to the uploaded representative samples and does not guarantee the condition of every unphotographed item.'' on every lot details screen shown to a Customer. & Must & Customer/Buyer \\
 FR-61 & The system shall prevent a lot from being submitted from the Create Lot screen while fewer than 3 or more than 5 photos are attached. & Must & Contractor/Seller \\
 FR-62 & The system shall compress each lot photo on the device before upload. & Should & Contractor/Seller \\
 FR-63 & The system shall display the current status of each lot to its Contractor, using the values Draft, Screening, Pending Review, Changes Requested, Published, Reserved, Sold, Expired, and Rejected. & Must & Contractor/Seller \\
 FR-64 & The system shall display the condition grade of a screened lot to its Contractor. & Must & Contractor/Seller \\
 FR-65 & The system shall display each flag reason of a Pending Review lot to its Contractor. & Should & Contractor/Seller \\
-FR-66 & The system shall display the Admin's message to the Contractor on a Changes Requested lot. & Must & Contractor/Seller \\
+FR-66 & The system shall display the Admin's message, or the automatic list of photos to replace (FR-47), to the Contractor on a Changes Requested lot. & Must & Contractor/Seller \\
 FR-67 & The system shall display the condition grade of a lot on the lot details screen as both an icon and a text label. & Must & Customer/Buyer \\
 FR-68 & The system shall list the detected defects of a lot on the lot details screen. & Should & Customer/Buyer \\
 FR-69 & The system shall display an alert to a Customer when a newly Published lot matches one of their saved searches. & Should & Customer/Buyer \\
