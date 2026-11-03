@@ -979,11 +979,16 @@ Related requirements & FR-02--FR-04, NFR-02 \\
 \end{table}
 
 \section{User Interface and Accessibility Design \applicability{User-facing Development, Hybrid, and Game projects; Research prototypes if applicable}}
-The client is built with Flutter~\citep{flutterdocs} for Android and the web.
-\fref{fig:navigation-structure} shows the navigation structure. After Sign In, the
-account's role opens Customer mode, Contractor mode, or the Admin area. One registered
-user moves between Customer and Contractor modes with the profile switch on the Profile
-screen, so the switch stays in one predictable place in both modes.
+The client is built with Flutter~\citep{flutterdocs} for Android and the web; Customers
+and Contractors mainly use a phone, and the Admin mainly uses a desktop browser.
+\fref{fig:navigation-structure} shows the navigation structure. A new user registers and
+verifies an email address before signing in, and Reset Password is reached from Sign In.
+After Sign In, the account opens Customer mode, Contractor mode, or the Admin area; the
+Admin's fixed account first enters a two-factor code. One registered user moves between
+Customer and Contractor modes with the profile switch on the Profile screen, so the switch
+stays in one predictable place in both modes, and Contractor mode opens only after the
+Admin approves the user's Contractor application. In each area, the main screens are
+reached from the bottom navigation, and the dashed screens open from the screen above them.
 
 \begin{figure}[H]
 \centering
