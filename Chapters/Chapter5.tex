@@ -21,20 +21,27 @@ TEST-<requirement ID>. A requirement may appear in more than one row.
 \textbf{Objective} & \textbf{Scope} & \textbf{Requirement} & \textbf{Design element} & \textbf{Testing-document reference} \\
 \midrule
 \endhead
-OBJ-01 & SCP-01 & FR-01; FR-61; FR-62; FR-74 & UC-01; SD-01; CMP-01; DEP-01; DD-03; Figure~\ref{fig:key-wireframes} & TEST-FR-01; TEST-FR-61; TEST-FR-62; TEST-FR-74 \\
+OBJ-01 & SCP-01 & FR-01; FR-61; FR-62; FR-74 & UC-01; SD-01; CMP-01; DEP-01; DD-03; Figure~\ref{fig:wf-create-lot} & TEST-FR-01; TEST-FR-61; TEST-FR-62; TEST-FR-74 \\
 OBJ-01 & SCP-01 & FR-13; FR-14; FR-15; FR-77; FR-85 & UC-10; UC-11; UC-28; UC-29; UC-32 & TEST-FR-13; TEST-FR-14; TEST-FR-15; TEST-FR-77; TEST-FR-85 \\
-OBJ-01 & SCP-01 & NFR-28; NFR-29; NFR-65; NFR-67 & UC-01; DD-03; Figure~\ref{fig:key-wireframes} & TEST-NFR-28; TEST-NFR-29; TEST-NFR-65; TEST-NFR-67 \\
+OBJ-01 & SCP-01 & NFR-28; NFR-29; NFR-65; NFR-67 & UC-01; DD-03; Figure~\ref{fig:wf-create-lot} & TEST-NFR-28; TEST-NFR-29; TEST-NFR-65; TEST-NFR-67 \\
 OBJ-01 & SCP-01 & FR-60; NFR-02 & UC-13; DD-04; Condition engine (Table~\ref{tab:m-03}) & TEST-FR-60; TEST-NFR-02 \\
 OBJ-01 & SCP-03 & FR-02; FR-03 & UC-06; SD-01; CMP-01; DD-20; DD-22 & TEST-FR-02; TEST-FR-03 \\
 OBJ-01 & SCP-03 & NFR-03; NFR-04; NFR-05 & Models M-01, M-02, and M-05 (Tables~\ref{tab:m-01}, \ref{tab:m-02}, and~\ref{tab:m-05}) & TEST-NFR-03; TEST-NFR-04; TEST-NFR-05 \\
 OBJ-01 & SCP-03 & FR-86 & UC-31 & TEST-FR-86 \\
+OBJ-01 & SCP-03 & FR-40; FR-41; FR-42 & UC-06; SD-01; AD-01 & TEST-FR-40; TEST-FR-41; TEST-FR-42 \\
+OBJ-01 & SCP-03 & FR-43; FR-44; FR-45; FR-46; FR-47 & UC-01; UC-06; AD-02 & TEST-FR-43; TEST-FR-44; TEST-FR-45; TEST-FR-46; TEST-FR-47 \\
+OBJ-01 & SCP-03 & FR-48; FR-49 & UC-06; AD-01 & TEST-FR-48; TEST-FR-49 \\
+OBJ-01 & SCP-03 & FR-50; FR-51 & UC-06; UC-31; AD-01 & TEST-FR-50; TEST-FR-51 \\
+OBJ-02 & SCP-03 & FR-53; FR-58; FR-59 & SD-01; AD-01; DD-25 & TEST-FR-53; TEST-FR-58; TEST-FR-59 \\
+OBJ-02 & SCP-04 & FR-52; FR-54 & UC-20; UC-24; Figure~\ref{fig:wf-dashboard} & TEST-FR-52; TEST-FR-54 \\
+OBJ-03 & SCP-04 & FR-55; FR-56; FR-57 & UC-05; SD-05; Figure~\ref{fig:wf-marketplace} & TEST-FR-55; TEST-FR-56; TEST-FR-57 \\
 OBJ-02 & SCP-03 & FR-29 & SD-01; SD-02 & TEST-FR-29 \\
 OBJ-02 & SCP-03 & NFR-41 & SD-01; DEP-01 & TEST-NFR-41 \\
 OBJ-02 & SCP-03 & EIR-01 & SEC-22; SEC-23; DD-20; DD-21; DEP-01 & TEST-EIR-01 \\
 OBJ-02 & SCP-04 & FR-04; FR-26; FR-27 & UC-20; SD-01; CMP-01; DD-24 & TEST-FR-04; TEST-FR-26; TEST-FR-27 \\
 OBJ-02 & SCP-04 & FR-28; NFR-01; NFR-42 & SD-01; SEC-25; DEP-01; DD-25 & TEST-FR-28; TEST-NFR-01; TEST-NFR-42 \\
 OBJ-02 & SCP-04 & FR-05; FR-24; FR-25 & UC-04; UC-19; SD-02; CMP-01 & TEST-FR-05; TEST-FR-24; TEST-FR-25 \\
-OBJ-02 & SCP-04 & FR-63; FR-64; FR-65; FR-66; FR-72; FR-73 & UC-01; UC-04; Figure~\ref{fig:key-wireframes} & TEST-FR-63; TEST-FR-64; TEST-FR-65; TEST-FR-66; TEST-FR-72; TEST-FR-73 \\
+OBJ-02 & SCP-04 & FR-63; FR-64; FR-65; FR-66; FR-72; FR-73 & UC-01; UC-04; Figures~\ref{fig:wf-my-lots} and~\ref{fig:wf-review-queue} & TEST-FR-63; TEST-FR-64; TEST-FR-65; TEST-FR-66; TEST-FR-72; TEST-FR-73 \\
 OBJ-02 & SCP-04 & FR-11; FR-12; FR-19; FR-81; FR-82 & UC-09; UC-18; UC-21; UC-22; UC-23; UC-25; UC-35; Figure~\ref{fig:navigation-structure} & TEST-FR-11; TEST-FR-12; TEST-FR-19; TEST-FR-81; TEST-FR-82 \\
 OBJ-02 & SCP-04 & NFR-07 & UC-24 & TEST-NFR-07 \\
 OBJ-03 & SCP-02 & FR-09; FR-10; FR-71 & UC-07; UC-08; UC-26; UC-33; DD-02 & TEST-FR-09; TEST-FR-10; TEST-FR-71 \\
@@ -44,8 +51,8 @@ OBJ-03 & SCP-02; SCP-05 & FR-07; FR-16; FR-17; FR-18; FR-70; NFR-21 & UC-03; UC-
 OBJ-03 & SCP-05 & FR-20; FR-21; FR-22; FR-23; FR-31 & UC-14; SD-04; SEC-20; SEC-21; SEC-24; DD-23; DD-26 & TEST-FR-20; TEST-FR-21; TEST-FR-22; TEST-FR-23; TEST-FR-31 \\
 OBJ-03 & SCP-05 & NFR-40; NFR-43 & SD-04; DEP-01 & TEST-NFR-40; TEST-NFR-43 \\
 OBJ-03 & SCP-05 & FR-80; FR-83 & UC-12; UC-16 & TEST-FR-80; TEST-FR-83 \\
-OBJ-03 & SCP-02 & FR-67; FR-68; FR-75; FR-76 & UC-13; UC-27; DD-05; Figure~\ref{fig:key-wireframes} & TEST-FR-67; TEST-FR-68; TEST-FR-75; TEST-FR-76 \\
-OBJ-03 & SCP-02 & NFR-60; NFR-61; NFR-62; NFR-63; NFR-64; NFR-66; NFR-68 & DD-01; DD-05; Figure~\ref{fig:key-wireframes} & TEST-NFR-60; TEST-NFR-61; TEST-NFR-62; TEST-NFR-63; TEST-NFR-64; TEST-NFR-66; TEST-NFR-68 \\
+OBJ-03 & SCP-02 & FR-67; FR-68; FR-75; FR-76 & UC-13; UC-27; DD-05; Figure~\ref{fig:wf-marketplace} & TEST-FR-67; TEST-FR-68; TEST-FR-75; TEST-FR-76 \\
+OBJ-03 & SCP-02 & NFR-60; NFR-61; NFR-62; NFR-63; NFR-64; NFR-66; NFR-68 & DD-01; DD-05; Figures~\ref{fig:wf-marketplace} to~\ref{fig:wf-contractor-approvals} & TEST-NFR-60; TEST-NFR-61; TEST-NFR-62; TEST-NFR-63; TEST-NFR-64; TEST-NFR-66; TEST-NFR-68 \\
 OBJ-03 & SCP-04 & FR-08; FR-30; NFR-06 & UC-05; SD-05; CMP-01 & TEST-FR-08; TEST-FR-30; TEST-NFR-06 \\
 \bottomrule
 \end{longtable}

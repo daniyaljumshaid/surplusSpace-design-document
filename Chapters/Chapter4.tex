@@ -628,11 +628,45 @@ thresholds are provisional, are tuned on the team's tuning photos, and are never
 tuned on the test set (Section~\ref{sec:algorithm-design}).
 
 \subsection{State-Machine Model \applicability{State-dependent systems and games}}
-\begin{guidance}
-Model the lifecycle of one important stateful entity. Show states, triggering
-events, guards where needed, actions, and initial and final states.
-\end{guidance}
-\diagramplaceholder{State-machine diagram}{Example entity: Appointment; states may include Requested, Approved, Rescheduled, Completed, and Cancelled.}
+The lot is the central stateful entity, and its reservation decides whether a lot can be
+sold. \fref{fig:st-01} shows the lot lifecycle (ST-01) and \fref{fig:st-02} the
+reservation lifecycle (ST-02). Both use the locked status names, and each transition is
+labelled \emph{event [guard] / action}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_4_4_3_st_lot.pdf}
+\caption{State-machine diagram ST-01: Lot lifecycle}
+\label{fig:st-01}
+\end{figure}
+
+A new lot starts as Draft and enters Screening when it has 3--5 photos and a pickup point
+inside an active zone. A blurry or dark photo returns it to Changes Requested without an
+Admin decision (FR-47). Otherwise, a lot with no flags is published automatically, and a
+lot with any flag, including the AI being unavailable, waits in Pending Review for the
+Admin. Request Edits also leads to Changes Requested, from which the Contractor resubmits
+to Screening; a lot left there for 14 days expires (FR-14). Editing a Published lot sends
+it back to Screening (FR-13), so no change reaches buyers unchecked. A Published lot
+becomes Reserved only through the guarded reservation in \fref{fig:st-02}, returns to
+Published if that reservation is cancelled or ends in No-Show, and becomes Sold when the
+Contractor marks it sold. A lot expires 30 days after publication and can be relisted
+through Screening (FR-15). Rejected and Sold are final (FR-85).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_4_4_3_st_reservation.pdf}
+\caption{State-machine diagram ST-02: Reservation lifecycle}
+\label{fig:st-02}
+\end{figure}
+
+The guard on reserve, that no other Active reservation exists for the lot, is what keeps a
+lot from being reserved by two buyers at once; it is enforced by a version-checked update
+inside a database transaction (UC-03, SD-03, NFR-21). The Contractor ends an Active
+reservation by marking it sold or, only after the 48-hour deadline, No-Show; either user
+can cancel it. If no outcome is recorded within 24 hours after the deadline, the Scheduler
+cancels it without penalty (UC-34), and suspending either user also cancels it (FR-19).
+When a reservation ends without a sale, the lot returns to Published, or to Expired if its
+30 days have passed.
 
 \subsection{Sequence Model}
 \begin{guidance}
@@ -957,11 +991,48 @@ that do not communicate a design decision.
 \end{guidance}
 
 \subsection{Class or Domain Model}
-\begin{guidance}
-Show important domain concepts or software classes, relevant attributes and
-operations, relationships, multiplicities, and inheritance where justified.
-\end{guidance}
-\diagramplaceholder{Class or domain diagram}{Example classes: Student, Adviser, Appointment, AvailabilitySlot, and Notification.}
+The domain model is shown in two views of one model so that each stays readable at page
+width. \fref{fig:class-marketplace} covers accounts, lots, and trading;
+\fref{fig:class-screening} covers AI screening, Admin review, and the settings the AI uses,
+and lists every enumeration with its locked values. Lot, LotPhoto, User, and Category
+appear in both views; the second view shows only the attributes it needs. Framework
+classes, such as tokens and database contexts, are left out because they do not express
+a design decision.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{fig_4_5_1_class_marketplace.pdf}
+\caption{Domain model, view 1: marketplace}
+\label{fig:class-marketplace}
+\end{figure}
+
+One User account holds both profiles and switches between them; a ContractorApplication
+must be approved before the user can sell. A Lot belongs to one Zone and one Category,
+whose Unit fixes the quantity unit, and is composed of 3--5 LotPhotos. A Lot has many
+Reservations over time but at most one Active at once, and each buyer may hold at most
+three Active reservations; these constraints are enforced in the database
+(\sref{sec:data-design}). A completed Reservation can receive up to two Ratings, one from
+each side. ChatThreads belong to a Lot and are composed of Messages. A Report refers to a
+lot or a message, and its reporter, like a message sender, is recorded as a User
+reference to keep the diagram readable.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{fig_4_5_1_class_screening.pdf}
+\caption{Domain model, view 2: AI screening, review, and enumerations}
+\label{fig:class-screening}
+\end{figure}
+
+Each screening of a lot creates a new AIAssessment, so a re-screened lot keeps its full
+history for evaluation (DIR-03). An AIAssessment is composed of one PhotoAssessment per
+photo, which records the photo's quality, material, and grade, and each PhotoAssessment
+holds its DetectedDefects. The assessment stores the signals and the Decision Engine's
+outcome with every flag reason raised, and the model versions used (FR-53, FR-58). Each
+ReviewDecision records the Admin's action and the AI outcome it confirmed or overturned,
+which feeds the Admin-agreement measures of the research evaluation. ThresholdConfig and
+ReferencePrice keep each change with the Admin who made it. The enumerations use exactly
+the locked values, so the same words appear in the state machines, the database, the API,
+and the screens.
 
 \subsection{Component Model}
 \begin{guidance}
@@ -1196,12 +1267,76 @@ Figure~\ref{fig:deployment-diagram}.
 \label{sec:data-design}
 
 \subsection{Database, Schema, and Persistence Design \applicability{Development, Hybrid, Game, if applicable}}
-\begin{guidance}
-Describe persistent entities, identifiers, relationships, integrity constraints,
-and important indexing or retention decisions. Use an ER diagram, schema, or other
-notation appropriate to the selected database model.
-\end{guidance}
-\diagramplaceholder{Data model or schema}{Example entities: User, AvailabilitySlot, Appointment, and NotificationLog.}
+\label{sec:database-design}
+Persistent data is stored in PostgreSQL with the PostGIS extension~\citep{postgisdocs},
+and short-lived data in Redis. ERD-01 is shown in two parts that mirror the two views of
+the domain model: \fref{fig:erd-marketplace} holds accounts, lots, and trading, and
+\fref{fig:erd-screening} holds AI screening, review, and settings. Each table has a
+surrogate primary key (\textsc{pk}) and names its references as foreign keys
+(\textsc{fk}); every column with its type and constraint is listed in the data dictionary
+(\sref{sec:data-dictionary}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_6_1_erd_marketplace.pdf}
+\caption{ERD-01, part 1: accounts, lots, and trading}
+\label{fig:erd-marketplace}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_6_1_erd_screening.pdf}
+\caption{ERD-01, part 2: AI screening, review, and settings}
+\label{fig:erd-screening}
+\end{figure}
+
+\tref{tab:persistence-decisions} records the persistence decisions that the ERD alone does
+not show.
+
+{\footnotesize
+\begin{longtable}{@{}p{0.2\textwidth}p{0.55\textwidth}p{0.17\textwidth}@{}}
+\caption{Persistence decisions}\label{tab:persistence-decisions}\\
+\toprule
+\textbf{Concern} & \textbf{Design} & \textbf{Related} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Concern} & \textbf{Design} & \textbf{Related} \\
+\midrule
+\endhead
+Location search & Pickup locations, zone centres, and saved-search centres are stored as geography points with spatial (GiST) indexes, and radius searches use a PostGIS distance query~\citep{postgisdocs}. & FR-06, FR-82, NFR-20 \\
+One buyer per lot & A partial unique index allows only one row with status Active per lot in reservations, and the lot's version is checked and increased in the same transaction that creates the reservation~\citep{postgresqlisolation}. & FR-07, NFR-21, ST-02 \\
+Reservation limit & The buyer's Active reservations are counted inside the same transaction before a new one is created. & FR-17 \\
+Locked values & Statuses, grades, flags, actions, materials, units, and the other locked lists are PostgreSQL enumerated types with exactly the values in \fref{fig:class-screening}. & ST-01, ST-02 \\
+Integrity checks & Check constraints keep ratings between 1 and 5 stars, photo positions between 1 and 5 and unique per lot, quantities and prices above zero, and each report pointing to exactly one lot or message. The 3--5 photo count is checked when a lot is submitted. & FR-61, FR-80, FR-81 \\
+Indexes & Lots by status, category, and publication time; lots by seller; reservations by buyer and status; Active reservations by pickup deadline; messages by thread and time; AI assessments by lot and time; review decisions by time. & NFR-20 \\
+No hard deletes & Users and lots are never deleted: Remove sets the lot's removed time, suspension sets the user's flag, and foreign keys reject deletes, so no history is lost. & FR-19, FR-77 \\
+Retention & AI assessments, review decisions, and threshold and reference-price changes are kept for the whole evaluation; expired refresh tokens are deleted. & DIR-03, DIR-06, DIR-07 \\
+Photos & The database stores only each photo's storage key; images sit in a private object-storage bucket with location metadata removed. & DIR-02, PR-03, NFR-29 \\
+Credentials & Passwords are stored only as Argon2id hashes; refresh tokens only as hashes with a family identifier for reuse detection; the Admin's authenticator key is encrypted at rest. & NFR-23, NFR-25, NFR-26 \\
+Scheduled work & The Scheduler finds lots to expire and reservations to cancel through the timestamp indexes above. & FR-14--FR-16, UC-32, UC-34 \\
+\bottomrule
+\end{longtable}
+}
+
+Redis holds only data that can be lost without losing a record, each key with an expiry
+time (DD-26), as \tref{tab:redis-keys} lists.
+
+\begin{table}[H]
+\centering
+\caption{Redis keys}
+\label{tab:redis-keys}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.27\textwidth}X p{0.2\textwidth}@{}}
+\toprule
+\textbf{Key} & \textbf{Purpose} & \textbf{Expiry} \\
+\midrule
+\texttt{presence:\{userId\}} & Shows that a user is online in chat (FR-22). & 90 s, renewed by the client \\
+\texttt{assistant:quota:\{userId\}} & Counts Listing Assistant questions in the current hour (FR-56). & 1 hour \\
+\texttt{screening:lock:\{lotId\}} & Stops two workers from screening the same lot at once. & 150 s, longer than the AI timeout \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Research Data Management \applicability{Research, Hybrid}}
 \label{sec:research-data-management}
@@ -1520,11 +1655,16 @@ Related requirements & FR-08, FR-30, FR-55, FR-56, FR-57, NFR-06; PR-04, PR-05, 
 }
 
 \section{User Interface and Accessibility Design \applicability{User-facing Development, Hybrid, and Game projects; Research prototypes if applicable}}
-The client is built with Flutter~\citep{flutterdocs} for Android and the web.
-\fref{fig:navigation-structure} shows the navigation structure. After Sign In, the
-account's role opens Customer mode, Contractor mode, or the Admin area. One registered
-user moves between Customer and Contractor modes with the profile switch on the Profile
-screen, so the switch stays in one predictable place in both modes.
+The client is built with Flutter~\citep{flutterdocs} for Android and the web; Customers
+and Contractors mainly use a phone, and the Admin mainly uses a desktop browser.
+\fref{fig:navigation-structure} shows the navigation structure. A new user registers and
+verifies an email address before signing in, and Reset Password is reached from Sign In.
+After Sign In, the account opens Customer mode, Contractor mode, or the Admin area; the
+Admin's fixed account first enters a two-factor code. One registered user moves between
+Customer and Contractor modes with the profile switch on the Profile screen, so the switch
+stays in one predictable place in both modes, and Contractor mode opens only after the
+Admin approves the user's Contractor application. In each area, the main screens are
+reached from the navigation bar, and the dashed screens open from the screen above them.
 
 \begin{figure}[H]
 \centering
@@ -1533,44 +1673,84 @@ screen, so the switch stays in one predictable place in both modes.
 \label{fig:navigation-structure}
 \end{figure}
 
-\fref{fig:key-wireframes} shows the six key wireframes, and \tref{tab:wireframe-annotations}
-explains the validation (V), feedback (F), and accessibility (A) markers on each one.
-The legend under the wireframes gives the five condition grades and nine lot statuses.
+Figures~\ref{fig:wf-marketplace} to~\ref{fig:wf-contractor-approvals} show the six key
+wireframes as desktop web layouts: three for the Customer and Contractor and three for the
+Admin. On a phone the same screens stack their panels in a single column (NFR-68). Each
+wireframe marks its main validation (V), feedback (F), and accessibility (A) decisions with
+small lettered markers, which \tref{tab:wireframe-annotations} explains.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_8_wireframes.pdf}
-\caption{Key wireframes}
-\label{fig:key-wireframes}
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_marketplace.pdf}
+\caption{Wireframe: Marketplace (Customer)}
+\label{fig:wf-marketplace}
 \end{figure}
 
-\begin{table}[H]
+\begin{figure}[H]
 \centering
-\caption{Wireframe annotations}
-\label{tab:wireframe-annotations}
-\footnotesize
-\begin{tabularx}{\textwidth}{@{}p{0.15\textwidth}XXX@{}}
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_create_lot.pdf}
+\caption{Wireframe: Create Lot (Contractor)}
+\label{fig:wf-create-lot}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_my_lots.pdf}
+\caption{Wireframe: My Lots (Contractor)}
+\label{fig:wf-my-lots}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_review_queue.pdf}
+\caption{Wireframe: Review Queue (Admin)}
+\label{fig:wf-review-queue}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_dashboard.pdf}
+\caption{Wireframe: Dashboard (Admin)}
+\label{fig:wf-dashboard}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_contractor_approvals.pdf}
+\caption{Wireframe: Contractor Approvals (Admin)}
+\label{fig:wf-contractor-approvals}
+\end{figure}
+
+{\footnotesize
+\begin{longtable}{@{}p{0.15\textwidth}p{0.26\textwidth}p{0.26\textwidth}p{0.25\textwidth}@{}}
+\caption{Wireframe annotations}\label{tab:wireframe-annotations}\\
 \toprule
 \textbf{Wireframe} & \textbf{Validation (V)} & \textbf{Feedback (F)} & \textbf{Accessibility (A)} \\
 \midrule
-1. Create Lot & Submit Lot stays disabled until 3--5 photos are attached (FR-61). & The message states how many photos to add, and the screen states that photos are compressed (FR-62, FR-73). & Each photo slot has a screen-reader label (NFR-63). \\
-2. Lot Status and AI Result & The Admin message states what to correct before resubmission (FR-66). & The status chip shows the lot's current status (FR-63). & The grade appears as an icon and text (NFR-64). \\
-3. Search Lots & Radius and price fields accept numbers only. & The result count and hint state how to widen the search (FR-73). & Every result card shows its grade as an icon and text (NFR-64). \\
-4. Lot Details & Reserve is checked against the lot's status and version (UC-03). & The disclosure sentence is always visible (FR-60). & The grade appears as an icon and text, and the defects are listed as text (FR-67, FR-68). \\
-5. Ask Assistant & Send stays disabled while the question is empty. & A missing answer is stated plainly and offers Chat With Seller (FR-08). & The source of the answers is stated in text, and each message has a screen-reader label (NFR-63). \\
-6. Admin Review Queue & Request Edits requires a message (UC-04). & The screen confirms that the decision is recorded (UC-04). & Claims and AI signals sit side by side as labelled text (NFR-63, NFR-64). \\
+\endfirsthead
+\toprule
+\textbf{Wireframe} & \textbf{Validation (V)} & \textbf{Feedback (F)} & \textbf{Accessibility (A)} \\
+\midrule
+\endhead
+Marketplace & Send stays disabled while the question is empty, and the assistant limit of 20 questions an hour is stated (FR-30). & The empty state says how to widen the search, and the disclosure sentence is always shown (FR-60, FR-73). & Filters have visible labels, and every grade is an icon and text (FR-67, NFR-64). \\
+Create Lot & Submit Lot stays disabled until 3--5 photos are attached and the pin lies inside an active zone, with the reason shown (FR-61, FR-82). & Messages say how many photos to add and where to move the pin, and the screen states that photos are compressed (FR-62, FR-73). & Each material card names its unit in text, and the map pin has a text label (FR-74, NFR-63). \\
+My Lots & Mark No-Show is available only after the pickup deadline, and the final sale price is optional (FR-16, FR-83). & The Admin's message, the flag reasons, and the Rejected note tell the seller what happened and what to do (FR-65, FR-66, FR-85). & Statuses are text chips, and each row offers only the actions its status allows as text links (FR-63, NFR-64). \\
+Review Queue & Request Edits cannot be confirmed without a message to the seller (FR-25). & The panel states that Reject is final and that every decision is recorded (FR-25, FR-85). & Seller claims and AI findings sit side by side as labelled text, and flags are named chips (FR-24, NFR-63). \\
+Dashboard & The reporting period is chosen from a fixed list. & Agreement and overturn rates and the flag-reason counts are shown as values, not only as bars. & The period selector has a label, and inbox items show read state with text as well as a dot (NFR-64). \\
+Contractor Approvals & A private verification note is required, and a rejection needs a reason shown to the applicant (FR-12). & Mark phone verified records the phone check, and the zone check is shown next to the address. & Tabs show their counts in text, and every field has a visible label (NFR-63). \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 The design supports the quality goals as follows.
 \begin{itemize}
-\item \textbf{Usability:} Create Lot fits within 3 screens (NFR-65), and all three roles share the same field, button, status-chip, and grade patterns.
+\item \textbf{Usability:} Create Lot is one screen with four numbered sections (NFR-65), a live listing preview, and a short explanation of what happens after submitting. All three roles share the same field, button, status-chip, and grade patterns.
 \item \textbf{Accessibility:} Text contrast and scaling follow WCAG 2.2 Level AA~\citep{wcag22} (NFR-60, NFR-62). Grades, statuses, and flags are never shown by colour alone (NFR-64). Touch targets and screen-reader labels follow NFR-61 and NFR-63.
-\item \textbf{Responsive layout:} Screens adapt to widths from 320 to 1920 logical pixels on Android and Flutter web (NFR-68).
-\item \textbf{Error prevention:} Controls stay disabled until their input is valid (FR-61), and photos are compressed on the device for weak mobile data (FR-62, NFR-67).
-\item \textbf{Feedback:} Each screen has a visible state for loading, AI pending, flagged, rejected, and error (FR-72), every tap gets a visible response (NFR-66), and messages say how to fix a problem (FR-73).
-\item \textbf{Consistency:} The grade icons and status chips in \fref{fig:key-wireframes} appear unchanged on every screen and in every role.
+\item \textbf{Responsive layout:} The wireframes show the desktop layout; screens adapt to widths from 320 to 1920 logical pixels, and on a phone the panels stack in one column (NFR-68).
+\item \textbf{Error prevention:} Controls stay disabled until their input is valid (FR-61), each lot row offers only the actions its status allows, and photos are compressed on the device for weak mobile data (FR-62, NFR-67).
+\item \textbf{Feedback:} Each screen has a visible state for loading, AI pending, flagged, rejected, and error (FR-72), every tap gets a visible response (NFR-66), messages say how to fix a problem (FR-73), and notifications report screening results and decisions (FR-76).
+\item \textbf{Privacy:} Buyers see only a lot's area until they reserve (FR-75), and the seller's address and verification note are visible only to the Admin (PR-04, PR-06).
+\item \textbf{Consistency:} The grade icons, status chips, and flag names in the wireframes appear unchanged on every screen and in every role.
 \end{itemize}
 
 \section{Security, Privacy, and Safety Design \applicability{If applicable}}

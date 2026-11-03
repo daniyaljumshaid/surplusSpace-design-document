@@ -1,0 +1,17 @@
+\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usetikzlibrary{arrows.meta,calc,shapes.multipart}
+\tikzset{
+  diagram/.style={x=1mm,y=1mm,font=\scriptsize,line width=0.4pt},
+  cls/.style={draw,fill=white,rectangle split,rectangle split parts=3,
+    rectangle split part align={center,left,left},text width=46mm,inner sep=1.2mm,font=\scriptsize},
+  cls2/.style={draw,fill=white,rectangle split,rectangle split parts=2,
+    rectangle split part align={center,left},text width=46mm,inner sep=1.2mm,font=\scriptsize},
+  m/.style={font=\scriptsize,inner sep=0.6mm,fill=white},
+  role/.style={font=\scriptsize\itshape,inner sep=0.6mm,fill=white},
+  comp/.style={-{Diamond[fill=black,length=2.6mm,width=1.8mm]}},
+  agg/.style={-{Diamond[open,length=2.6mm,width=1.8mm]}}}
+% \cls{node}{x,y}{Name}{attributes}{operations}
+\newcommand{\cls}[5]{\node[cls,anchor=north] (#1) at (#2) {\textbf{#3}\nodepart{second}#4\nodepart{third}#5};}
+% \clsb{node}{x,y}{Name}{attributes}  (no operations compartment content)
+\newcommand{\clsb}[4]{\node[cls,anchor=north] (#1) at (#2) {\textbf{#3}\nodepart{second}#4\nodepart{third}\phantom{x}};}
+\newcommand{\enum}[4]{\node[cls2,anchor=north,text width=#4] (#1) at (#2) {\guillemotleft enumeration\guillemotright\\\textbf{#1}\nodepart{second}#3};}

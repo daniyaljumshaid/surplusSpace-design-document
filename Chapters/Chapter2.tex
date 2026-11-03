@@ -59,7 +59,7 @@ FR-12 & The system shall allow only Contractors approved by the Admin to create 
 FR-13 & The system shall return a Published or Changes Requested lot to Screening whenever its Contractor edits it. & Must & Customer/Buyer \\
 FR-14 & The system shall set a Changes Requested lot to Expired when its Contractor does not resubmit it within 14 days. & Should & Admin \\
 FR-15 & The system shall set a Published lot to Expired 30 days after publication, and shall send a relisted Expired lot to Screening. & Must & Contractor/Seller \\
-FR-16 & The system shall allow the Contractor to mark an Active reservation Completed or No-Show, allow either party to cancel it, and cancel it automatically when its 48-hour pickup deadline passes without an outcome. & Must & Contractor/Seller \\
+FR-16 & The system shall allow the Contractor to mark an Active reservation Completed or No-Show, allow either party to cancel it, and cancel it automatically 24 hours after its 48-hour pickup deadline if no outcome has been recorded. & Must & Contractor/Seller \\
 FR-17 & The system shall prevent a Customer from holding more than 3 Active reservations at the same time. & Should & Contractor/Seller \\
 FR-18 & The system shall prevent a user from reserving, rating, or chatting as a buyer on a lot that the same user listed. & Must & Customer/Buyer; Contractor/Seller \\
 FR-19 & The system shall allow the Admin to suspend a user, which blocks the user's sign-in, hides the user's lots, and cancels the user's Active reservations. & Must & Admin \\
@@ -112,7 +112,7 @@ FR-73 & The system shall state the action needed to correct the problem in every
 FR-74 & The system shall require the Contractor to choose one of the four materials on the Create Lot screen and shall show the quantity unit fixed for that material: pieces for Bricks, kilograms for Steel, square feet for Tiles/Marble, and cubic feet for Wood. & Must & Contractor/Seller \\
 FR-75 & The system shall show a Customer only a lot's area and distance until the Customer holds an Active reservation on it, and the exact pickup location after that. & Must & Contractor/Seller \\
 FR-76 & The system shall list each user's notifications for screening results, Admin decisions, new chat messages, reservation changes, and saved-search matches. & Should & Customer/Buyer; Contractor/Seller \\
-FR-77 & The system shall provide a Remove action for a lot in any status except Reserved, which hides the lot from all users. & Should & Contractor/Seller \\
+FR-77 & The system shall provide a Remove action for a lot in Draft, Changes Requested, Published, Expired, Rejected, or Sold status, which hides the lot from all users. & Should & Contractor/Seller \\
 FR-80 & The system shall allow the Customer and Contractor of a Completed reservation to rate each other once, from 1 to 5 stars, within 14 days, and shall reveal each rating only after both have rated or the 14 days have ended. & Should & Customer/Buyer; Contractor/Seller \\
 FR-81 & The system shall allow a user to report a lot or a chat message with a reason, and allow the Admin to resolve the report with a note. & Should & Admin \\
 FR-82 & The system shall allow the Admin to manage categories, zones, and search-radius options, and shall accept a lot only when its pickup location lies inside an active zone. & Must & Admin \\

@@ -1,0 +1,42 @@
+% Source for fig_4_5_1_class_screening.pdf. Build: pdflatex fig_4_5_1_class_screening.tex
+\documentclass[tikz,border=3pt]{standalone}
+\input{cls_preamble.tex}
+\begin{document}
+\begin{tikzpicture}[diagram]
+\clsb{photo}{0,0}{LotPhoto}{storageKey: String\\order: Integer}
+\clsb{lot}{72,0}{Lot}{status: LotStatus\\version: Integer}
+\clsb{rev}{144,0}{ReviewDecision}{action: ReviewAction\\message: String [0..1]\\overrideReason: String [0..1]\\aiOutcome: DecisionOutcome\\decidedAt: DateTime}
+\clsb{pa}{0,-40}{PhotoAssessment}{quality: PhotoQuality\\material: Material\\confidence: Decimal\\grade: ConditionGrade [0..1]}
+\clsb{ai}{72,-40}{AIAssessment}{material: Material\\materialConfidence: Decimal\\grade: ConditionGrade\\claimedCondition: String [0..1]\\conditionConflict: Boolean\\priceLowPerUnit: Money [0..1]\\priceMidPerUnit: Money [0..1]\\priceHighPerUnit: Money [0..1]\\flags: FlagReason [0..6]\\outcome: DecisionOutcome\\modelVersions: String\\createdAt: DateTime}
+\clsb{admin}{144,-40}{User}{isAdmin: Boolean}
+\clsb{def}{0,-82}{DetectedDefect}{defectClass: String\\confidence: Decimal\\box: BoundingBox}
+\node[cls,anchor=north,text width=54mm] (thr) at (148,-72) {\textbf{ThresholdConfig}\nodepart{second}minClassificationConfidence: Decimal\\priceMarginPercent: Decimal\\defectConfidence: Decimal\\changedBy: User\\changedAt: DateTime\nodepart{third}\phantom{x}};
+\clsb{cat}{72,-100}{Category}{material: Material\\unit: Unit}
+\clsb{ref}{144,-104}{ReferencePrice}{pricePerUnit: Money\\source: String\\priceDate: Date\\changedBy: User}
+% associations
+\draw[comp] (photo.east |- 0,-8) -- node[m,above,pos=.15]{3..5}node[m,above,pos=.8]{1} (lot.west |- 0,-8);
+\draw (lot.east |- 0,-8) -- node[m,above,pos=.12]{1}node[m,above,pos=.85]{0..*}node[role,below]{reviewed in} (rev.west |- 0,-8);
+\draw (rev.south) -- node[m,right,pos=.15]{0..*}node[m,right,pos=.8]{1}node[role,left]{decided by} (admin.north);
+\draw[comp] (ai.north) -- node[m,right,pos=.15]{0..*}node[m,right,pos=.8]{1}node[role,left]{screened by} (lot.south);
+\draw[comp] (pa.east |- 0,-48) -- node[m,above,pos=.15]{3..5}node[m,above,pos=.8]{1} (ai.west |- 0,-48);
+\draw (pa.north) -- node[m,right,pos=.2]{*}node[m,right,pos=.8]{1}node[role,left]{assesses} (photo.south);
+\draw[comp] (def.north) -- node[m,right,pos=.2]{0..*}node[m,right,pos=.8]{1} (pa.south);
+\draw[comp] (ref.west |- 0,-110) -- node[m,above,pos=.15]{0..*}node[m,above,pos=.8]{1} (cat.east |- 0,-110);
+% enumerations
+\enum{LotStatus}{-14,-130}{Draft\\Screening\\Pending Review\\Changes Requested\\Published\\Reserved\\Sold\\Expired\\Rejected}{30mm}
+\enum{ConditionGrade}{24,-130}{Good\\Minor\\Major\\Mixed\\Not Assessed}{30mm}
+\enum{FlagReason}{70,-130}{Low Classification Confidence\\Mixed Condition\\Material Mismatch\\Condition-Claim Conflict\\Price Above Estimate\\AI Unavailable}{42mm}
+\enum{DecisionOutcome}{117,-130}{Auto-Publish\\Send to Review}{30mm}
+\enum{ReviewAction}{156,-130}{Approve\\Reject\\Request Edits\\Override}{30mm}
+\enum{ReservationStatus}{-14,-172}{Active\\Completed\\Cancelled\\No-Show}{30mm}
+\enum{Material}{24,-172}{Bricks\\Steel\\Tiles/Marble\\Wood}{30mm}
+\enum{Unit}{62,-172}{pieces\\kg\\sq ft\\cubic ft}{30mm}
+\enum{AgeBand}{100,-172}{Unused\\Under 1 year\\1--3 years\\Over 3 years}{30mm}
+\enum{PhotoQuality}{138,-172}{ok\\blurry\\dark}{30mm}
+\enum{SellerType}{-14,-202}{Contractor\\Builder\\Material dealer\\Individual}{30mm}
+\enum{ApplicationStatus}{24,-202}{Waiting\\Approved\\Rejected}{30mm}
+\enum{ReportReason}{62,-202}{Misleading listing\\Fraud\\Abusive message\\Other}{30mm}
+\enum{ReportStatus}{100,-202}{Open\\Resolved}{30mm}
+\enum{Profile}{138,-202}{Customer\\Contractor}{30mm}
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,12 @@
+\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usetikzlibrary{arrows.meta,calc,shapes.multipart}
+\tikzset{
+  diagram/.style={x=1mm,y=1mm,font=\scriptsize,line width=0.4pt},
+  tbl/.style={draw,fill=white,rectangle split,rectangle split parts=2,
+    rectangle split part align={center,left},rectangle split part fill={black!12,white},
+    text width=44mm,inner sep=1.2mm,font=\scriptsize},
+  m/.style={font=\scriptsize,inner sep=0.6mm,fill=white}}
+% \tbl{node}{x,y}{table_name}{columns}
+\newcommand{\tbl}[4]{\node[tbl,anchor=north] (#1) at (#2) {\textbf{#3}\nodepart{second}#4};}
+\newcommand{\pk}[1]{\underline{\textbf{#1}}\ \textsc{pk}}
+\newcommand{\fk}[1]{#1\ \textsc{fk}}

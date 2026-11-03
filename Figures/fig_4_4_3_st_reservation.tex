@@ -1,0 +1,22 @@
+% Source for fig_4_4_3_st_reservation.pdf (ST-02). Build: pdflatex fig_4_4_3_st_reservation.tex
+\documentclass[tikz,border=3pt]{standalone}
+\input{st_preamble.tex}
+\begin{document}
+\begin{tikzpicture}[diagram]
+  \node[ad initial] (i) at (-62,0) {};
+  \node[st] (act) at (0,0) {Active};
+  \node[st] (com) at (100,32) {Completed};
+  \node[st] (nos) at (100,0) {No-Show};
+  \node[st] (can) at (100,-32) {Cancelled};
+  \node[ad final] (f1) at (132,32) {};
+  \node[ad final] (f2) at (132,0) {};
+  \node[ad final] (f3) at (132,-32) {};
+  \draw[->] (i) -- node[tl,above=1mm]{reserve [lot Published,\\no other Active reservation,\\buyer holds fewer than 3]}node[tl,below=1mm]{/ lot Reserved,\\pickup deadline in 48 h} (act);
+  \draw[->] (act.north) |- node[tl,pos=.72,above]{Mark Sold / lot Sold} (com.west);
+  \draw[->] (act) -- node[tl,above=1mm]{Mark No-Show [after deadline]}node[tl,below=1mm]{/ lot Published or Expired} (nos);
+  \draw[->] (act.south) |- node[tl,pos=.72,below=1mm]{cancel by either user, or auto-cancel [24 h after deadline],\\or user suspended / lot Published or Expired} (can.west);
+  \draw[->] (com) -- (f1);
+  \draw[->] (nos) -- (f2);
+  \draw[->] (can) -- (f3);
+\end{tikzpicture}
+\end{document}

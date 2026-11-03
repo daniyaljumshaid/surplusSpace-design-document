@@ -1,36 +1,62 @@
 % Source for fig_4_8_navigation.pdf. Build: pdflatex fig_4_8_navigation.tex
 \documentclass[tikz,border=2pt]{standalone}
-\usetikzlibrary{positioning,arrows.meta,fit}
+\usetikzlibrary{positioning,arrows.meta,fit,calc}
 \renewcommand{\familydefault}{\sfdefault}
+% \screens{prefix}{x}{list of level/label}: level 0 = main screen, level 1 = opened from the screen above it
+\newcommand{\screens}[3]{%
+  \foreach \lvl/\t [count=\i] in {#3}{%
+    \pgfmathsetmacro\off{.42*\lvl}
+    \pgfmathsetmacro\bw{4.1-.84*\lvl}\pgfmathsetmacro\tw{4.1-.84*\lvl-.2}
+    \ifnum\lvl=0
+      \node[scr] (#1\i) at (#2,{-3.55-.66*\i}) {\t};
+    \else
+      \node[sub,minimum width=\bw cm,text width=\tw cm] (#1\i) at ({#2+\off},{-3.55-.66*\i}) {\t};
+      \draw[semithick] ({#2-2.05+.42*\lvl},{-3.55-.66*\i+.42}) |- (#1\i.west);
+    \fi}}
 \begin{document}
 \begin{tikzpicture}[
   font=\footnotesize,
   >={Stealth[length=2mm]},
-  scr/.style={draw,rounded corners=1.5pt,minimum width=3.9cm,minimum height=.62cm,align=center,inner sep=2pt},
-  mode/.style={scr,fill=black!12,font=\footnotesize\bfseries},
-  link/.style={->,semithick}]
-\node[scr,fill=black!12,font=\footnotesize\bfseries,minimum width=4.6cm] (signin) at (5.2,0) {Sign In};
-\node[mode] (cus) at (0,-2.0) {Customer mode};
-\node[mode] (con) at (5.2,-2.0) {Contractor mode};
-\node[mode] (adm) at (10.4,-2.0) {Admin};
-\draw[link] (signin.south) -- ++(0,-.45) -| (cus.north);
-\draw[link] (signin.south) -- (con.north);
-\draw[link] (signin.south) -- ++(0,-.45) -| (adm.north);
-\draw[<->,very thick] (cus.east) -- node[above=1pt,font=\scriptsize,align=center]{Profile\\switch} (con.west);
-\foreach \name/\x/\items in {
-  c/0/{Search,Lot Details,Chats,Reservations,Saved Searches,Profile},
-  s/5.2/{My Lots,Create Lot,Lot Status and AI Result,Chats,Profile},
-  a/10.4/{Review Queue,Contractor Approvals,Thresholds,Catalog and Zones,Users and Reports,AI Dashboard}}{
-  \foreach \t [count=\i] in \items {
-    \node[scr] (\name\i) at (\x,-2.25-.82*\i) {\t};
-  }
-}
-\node[draw,dashed,inner sep=4pt,fit=(c1)(c6)] (cg) {};
-\node[draw,dashed,inner sep=4pt,fit=(s1)(s5)] (sg) {};
-\node[draw,dashed,inner sep=4pt,fit=(a1)(a6)] (ag) {};
+  scr/.style={draw,rounded corners=1.5pt,minimum width=4.1cm,text width=3.9cm,minimum height=.6cm,align=center,inner sep=2pt,fill=white},
+  sub/.style={draw,rounded corners=1.5pt,dashed,minimum width=3.4cm,text width=3.2cm,minimum height=.56cm,align=center,inner sep=2pt,font=\scriptsize,fill=white},
+  mode/.style={draw,rounded corners=1.5pt,minimum width=4.1cm,minimum height=.62cm,fill=black!12,font=\footnotesize\bfseries},
+  entry/.style={draw,rounded corners=1.5pt,minimum width=2.9cm,minimum height=.6cm,fill=black!12,font=\footnotesize\bfseries},
+  link/.style={->,semithick},
+  lbl/.style={font=\scriptsize,align=center,fill=white,inner sep=1pt}]
+% entry flow
+\node[entry] (reg) at (-.6,0) {Register};
+\node[entry] (ver) at (2.9,0) {Verify Email};
+\node[entry] (sig) at (6.4,0) {Sign In};
+\node[entry] (rst) at (6.4,1.25) {Reset Password};
+\node[entry] (tfa) at (11.2,-1.3) {Two-Factor Code};
+\draw[link] (reg) -- (ver);
+\draw[link] (ver) -- (sig);
+\draw[link,<->] (sig) -- node[lbl,right=2pt]{Forgot password} (rst);
+% modes
+\node[mode] (cus) at (0,-2.7) {Customer mode};
+\node[mode] (con) at (5.6,-2.7) {Contractor mode};
+\node[mode] (adm) at (11.2,-2.7) {Admin area};
+\draw[link] (sig.south) -- ++(0,-.55) -| (cus.north);
+\draw[link] (sig.south) -- ++(0,-.55) -| node[lbl,pos=.78,right=1pt]{approved only} (con.north);
+\draw[link] (sig.east) -| node[lbl,pos=.25,above]{Admin account} (tfa.north);
+\draw[link] (tfa) -- (adm);
+\draw[<->,very thick] (cus.east) -- node[above=1pt,font=\scriptsize,align=center]{Profile switch} (con.west);
+% screens in each area
+\screens{c}{0}{0/Marketplace,1/Saved Searches,1/Lot Details,2/Reserve Lot,2/Ask Assistant,2/Report Content,
+  0/Chats,1/Chat Thread,0/My Reservations,1/Rate User,0/Notifications,0/Profile,1/Contractor Application}
+\screens{s}{5.6}{0/My Lots,1/Lot Status and AI Result,2/Edit Lot,1/Lot Reservation,2/Mark Sold,2/Mark No-Show,
+  0/Create Lot,1/Pickup Location,0/Chats,0/Notifications,0/Profile}
+\screens{a}{11.2}{0/Dashboard,0/Review Queue,1/Review Detail,0/Contractor Approvals,0/Users,
+  0/Reports,0/AI Thresholds,0/Reference Prices,0/Catalog,0/Zones}
+\node[draw,dashed,inner sep=4pt,fit=(c1)(c13)] (cg) {};
+\node[draw,dashed,inner sep=4pt,fit=(s1)(s11)] (sg) {};
+\node[draw,dashed,inner sep=4pt,fit=(a1)(a10)] (ag) {};
 \draw[link] (cus.south) -- (cg.north);
 \draw[link] (con.south) -- (sg.north);
 \draw[link] (adm.south) -- (ag.north);
-\node[font=\scriptsize,align=center] at (5.2,-7.45) {The profile switch sits on the Profile screen\\of both Customer and Contractor modes.};
+% legend
+\node[scr,minimum width=1.6cm,text width=1.4cm] (k1) at (1.0,-13.45) {Screen};
+\node[sub,minimum width=1.9cm,text width=1.7cm,anchor=west] (k2) at (2.2,-13.45) {Opened from it};
+\node[font=\scriptsize,align=left,anchor=west] at (4.7,-13.45) {The profile switch sits on the Profile screen of both modes;\\Contractor mode opens only after the Admin approves the application.};
 \end{tikzpicture}
 \end{document}
