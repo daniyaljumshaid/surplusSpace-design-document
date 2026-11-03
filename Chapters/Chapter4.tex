@@ -1574,23 +1574,43 @@ The design supports the quality goals as follows.
 \end{itemize}
 
 \section{Security, Privacy, and Safety Design \applicability{If applicable}}
-\begin{guidance}
-Explain the design controls used to satisfy the corresponding requirements in
-Chapter~\ref{chap:requirements}. Address relevant threats, authentication,
-authorization, data protection, logging, secure failure, privacy, and safety. Do
-not make general claims such as ``the system is secure'' without specific controls.
-\end{guidance}
+Table~\ref{tab:security-controls} lists each security, privacy, or safety risk
+and the specific control that handles it. SEC-01 to SEC-09 cover the marketplace
+(accounts, lots, reservations, and photos), SEC-10 to SEC-19 cover the AI
+pipeline and the research data, and SEC-20 to SEC-25 cover chat, transport, and
+failure. The backend runs on ASP.NET Core~10, because version~8 stops receiving
+security updates on 10 November 2026, during the project (NFR-30).
 
-\begin{table}[H]
-\centering
-\caption{Security, privacy, and safety controls}
-\label{tab:security-controls}
-\begin{tabularx}{\textwidth}{@{}p{0.16\textwidth}X X p{0.19\textwidth}@{}}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.44\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}@{}}
+\caption{Security, privacy, and safety controls}\label{tab:security-controls}\\
 \toprule
 \textbf{Design ID} & \textbf{Risk or requirement} & \textbf{Design control} & \textbf{Related requirement(s)} \\
 \midrule
-SEC-01 & Unauthorized access to appointment records & Role-based authorization is checked at the service layer before records are returned or modified. & FR-XX, NFR-XX \\
-SEC-02 & \placeholder{Threat, privacy concern, or safety hazard} & \placeholder{Specific design control} & \placeholder{Requirement IDs} \\
+\endfirsthead
+\toprule
+\textbf{Design ID} & \textbf{Risk or requirement} & \textbf{Design control} & \textbf{Related requirement(s)} \\
+\midrule
+\endhead
+SEC-01 & Broken access control & Every request is checked at the service layer for the user's role and, for a lot, reservation, or rating, for ownership. Access is denied by default when no rule allows it. A user cannot reserve, rate, or chat as a buyer on a lot they listed. & FR-11, FR-18 \\
+SEC-02 & Posting before approval & The server checks that the Contractor's account is approved by the Admin on every lot creation, not only in the app's interface. & FR-12 \\
+SEC-03 & Weak or stolen passwords & Passwords follow the NIST rules~\citep{nist80063b4}: at least 15 characters, no composition rules, and a check against a list of common and breached passwords. They are stored with Argon2id (19~MiB memory, 2 iterations, parallelism 1)~\citep{owasppasswordstorage}. & NFR-22, NFR-23 \\
+SEC-04 & Brute-force sign-in & An account is locked for 15 minutes after 5 consecutive failed sign-ins, and the sign-in endpoint is rate limited. & NFR-24 \\
+SEC-05 & Token theft & Access tokens (JWT) expire after 15 minutes. Refresh tokens rotate on every use, and reuse of an old one revokes the whole token family. Tokens are stored in the Android Keystore on the app and in an HttpOnly cookie on the web. All refresh tokens are revoked on sign-out, password change, or suspension. & NFR-25, FR-19 \\
+SEC-06 & Admin account takeover & Every Admin sign-in requires a time-based one-time code (TOTP) as a second factor. & NFR-26 \\
+SEC-07 & Two buyers reserving the same lot & The reservation is a version-checked update inside a database transaction, and a database constraint allows only one Active reservation per lot. & FR-07, NFR-21 \\
+SEC-08 & Malicious or oversized uploads & The server accepts only JPEG, PNG, or WebP photos of at most 2~MB and only 3 to 5 photos per lot, whatever the app sent. Location metadata is removed before a photo is stored. & NFR-28, NFR-29, FR-61 \\
+SEC-09 & Exposure of lot photos & Photos are kept in a private S3 bucket and shown only through short-lived pre-signed links. & EIR-03, PR-03 \\
+SEC-10 & Prompt injection through the seller's description & The description is passed to the language model as data marked untrusted, never as instructions. The model has no tools, so it cannot act, and it must reply in the fixed structure \texttt{\{answer, supported, fieldsUsed\}} (Table~\ref{tab:m-07}). & FR-08, FR-30 \\
+SEC-11 & Personal data reaching the language model & Only the lot's fields are sent: material, quantity and unit, grade, defects, price per unit, area name instead of the exact location, the description, and the AI confidence. Names, phone numbers, email addresses, and user identifiers are never sent, and questions are logged without the asker's identity. & PR-04, PR-05, EIR-04, FR-57 \\
+SEC-12 & Abuse that drives up language-model cost & Each user can ask at most 20 questions per hour. & FR-56, RSK-05 \\
+SEC-13 & Manipulating screening through the description & The consistency check uses a fixed rule-based phrase list (Table~\ref{tab:m-04}), and no language model takes part in screening, so text in the description cannot change the screening result. & FR-48, FR-49 \\
+SEC-14 & Exposure of secrets & The language-model API key and the AI Service key are kept in AWS Secrets Manager and read from the environment at run time. They never appear in Git or in the app. & EIR-04, SEC-22 \\
+SEC-15 & AI results that cannot be traced & The version of every model is stored with each AI assessment. Datasets and models are used only under their licences, which the research data management plan records (Table~\ref{tab:data-management}). & FR-53, DIR-03, ER-05 \\
+SEC-16 & Admin actions that cannot be accounted for & Every Admin review action and Override is logged with the Admin, the lot, the AI's recommendation, and the time. & FR-25, DIR-06 \\
+SEC-17 & Unfair automated decisions about a seller's lot & The AI never rejects a lot. A lot with any flag goes to the Admin, the seller sees each flag reason, and the Admin has the final say. & FR-26, FR-65, ER-03 \\
+SEC-18 & Buyers misled by AI output & Each assistant reply states whether it is supported by the lot's data, and a missing field, refusal, error, or timeout gives the fallback ``not available, contact the seller''. Every published lot carries the sentence saying the AI assessment covers only the photographed samples. & FR-08, FR-55, FR-60, ER-04 \\
+SEC-19 & Privacy of interview participants and people in team photos & Participants give informed consent and are recorded by code only, with no list linking codes to names. Team photos that show faces, number plates, or house numbers are retaken or excluded (Table~\ref{tab:data-management}). & ER-01, ER-02, PR-01 \\
 SEC-20 & Unauthenticated connection to the chat hub & The hub rejects any connection without a valid authenticated user. & FR-20 \\
 SEC-21 & Reading or sending messages in another user's thread & The hub checks that the user is a participant of the thread on every join and send. & FR-20, FR-21, PR-01 \\
 SEC-22 & Direct access to the AI Service & The AI Service is not publicly reachable: it requires a secret API key and accepts traffic only from the API server. & EIR-01 \\
@@ -1598,8 +1618,8 @@ SEC-23 & Interception of data in transit & Client traffic to the API and chat hu
 SEC-24 & Abusive chat messages & A chat participant can report a message, and the report goes to an Admin. & FR-20 \\
 SEC-25 & Unsafe behaviour when a dependency fails & Failures never publish a lot or grant access: an AI failure sends the lot to Pending Review, and a failed authorization check denies the action. & FR-28, NFR-01 \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \section{Design Decisions and Rationale}
 \begin{guidance}
