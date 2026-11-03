@@ -1038,18 +1038,29 @@ Focus on decisions that materially affect quality, cost, risk, maintainability, 
 project feasibility. Do not repeat the tools list from Section~\ref{sec:tools}.
 \end{guidance}
 
-\begin{table}[H]
-\centering
-\caption{Design decisions}
-\label{tab:design-decisions}
-\begin{tabularx}{\textwidth}{@{}p{0.14\textwidth}X X X@{}}
+Rows appear in ID order. Each member writes the rows in their own ID block.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.29\textwidth}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.32\textwidth}@{}}
+\caption{Design decisions}\label{tab:design-decisions}\\
 \toprule
 \textbf{ID} & \textbf{Decision} & \textbf{Alternatives considered} & \textbf{Rationale and trade-off} \\
 \midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Decision} & \textbf{Alternatives considered} & \textbf{Rationale and trade-off} \\
+\midrule
+\endhead
 DD-01 & \placeholder{Selected design decision} & \placeholder{Feasible alternatives} & \placeholder{Evidence-based reason and accepted limitation} \\
 DD-20 & Photos reach the AI Service through time-limited, read-only pre-signed S3 URLs, one per photo. The API sends the URLs, and the AI Service downloads the photos directly. The bucket stays private, and S3 and the AI Service stay in the same AWS region. & The API forwards the photo bytes to the AI Service. & Photo traffic does not load the application server, which also runs chat and search. Accepted limitation: a link can expire, so links are created just before each call and last 15 minutes (provisional). \\
+DD-21 & The AI pipeline runs as a separate Python and FastAPI service on its own machine (Figure~\ref{fig:deployment-diagram}). & Run the models in-process inside the ASP.NET Core API. & The marketplace keeps working when an AI component is unavailable (NFR-01, NFR-42), and the models use Python libraries. Accepted trade-off: an extra network hop over HTTPS, a second machine to run, and a secret API key to manage (SEC-22). \\
+DD-22 & The API accepts a lot and replies at once with status Screening. A background worker takes one lot at a time from PostgreSQL and calls the AI Service over HTTPS, receiving the results in that response (Figure~\ref{fig:sd-01}). & Screen the lot during the seller's submit request; have the AI Service return results by callback or polling. & Inference runs on CPU and can take a few seconds per lot, so the seller does not wait, and the AI Service stays stateless because it holds no jobs. Accepted trade-off: lots queue one at a time, so results are not immediate, and the worker must handle the 120-second timeout and one retry. \\
+DD-23 & Chat and negotiation use a SignalR hub in the ASP.NET Core backend, over WebSocket (INT-03). & \placeholder{Proposed: clients poll the REST API for new messages.} & SignalR keeps a live connection open, so messages arrive instantly, and it runs in the same backend that already authenticates users (SEC-20). Accepted trade-off: the server holds an open connection for each online user, which load testing must cover (NFR-43). \\
+DD-24 & The Decision Engine runs in the ASP.NET Core API. & Run the Decision Engine inside the AI Service. & The Admin-tuned thresholds live in the API's database, and the AI Service stays stateless and only returns signals. Accepted trade-off: the API and the AI Service must agree the signal fields exactly (Appendix~\ref{sec:ai-service-interface}). \\
+DD-25 & If the AI Service is unavailable after one retry, the lot receives the grade Not Assessed with no price suggestion and the flag reason AI Unavailable, and moves to Pending Review (FR-28). & Publish the lot without a price suggestion, as the proposal allows. & No lot is published without all checks, and the Admin keeps final authority. Accepted trade-off: an outage adds lots to the Admin review queue, and those lots are not visible to buyers until reviewed. \\
+DD-26 & Redis stores presence and short locks, with expiry times. & \placeholder{Proposed: store presence in PostgreSQL.} & This data is short-lived and not relational, so it suits fast temporary storage. Accepted trade-off: Redis data is not permanent, so anything that must last, such as messages and read status, stays in PostgreSQL. \placeholder{State what the short locks protect.} \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 % =============================================================================
