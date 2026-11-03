@@ -3,11 +3,8 @@
 
 \chapter{Definitions, Acronyms, and Domain Terms}
 \label{app:terms}
-\begin{guidance}
-Define abbreviations and specialized terms that a reader may not know. Do not list
-common computing terms unless they have a project-specific meaning.
-\end{guidance}
 
+{\small
 \begin{longtable}{@{}p{0.27\textwidth}p{0.68\textwidth}@{}}
 \caption{Definitions, acronyms, and domain terms}\label{tab:terms}\\
 \toprule
@@ -18,7 +15,79 @@ common computing terms unless they have a project-specific meaning.
 \textbf{Term or acronym} & \textbf{Definition} \\
 \midrule
 \endhead
-\placeholder{Term} & \placeholder{Clear project-specific definition} \\
-\placeholder{Acronym} & \placeholder{Expanded form and meaning} \\
+\multicolumn{2}{@{}l}{\textbf{Domain terms}} \\
+Lot & One listing of a quantity of one material, with 3--5 representative photographs. ``Listing'' is used only as casual wording for a published lot. \\
+Representative photographs & The 3--5 photographs that stand for a whole lot. AI assessment applies only to them. \\
+Surplus material & Unused or leftover construction material offered for resale. \\
+Condition grade & One of Good, Minor, Major, Mixed, or Not Assessed, derived from the defects detected in a lot's photographs. \\
+Mixed & The grade given when a lot's photographs disagree substantially, for example one undamaged and one with major defects. A Mixed lot always goes to Admin review. \\
+Not Assessed & The grade given when the AI could not assess a lot, for example because the AI Service was unavailable. \\
+Admin Review Queue & The list of Pending Review lots that the Admin approves, rejects, returns for edits, or overrides. \\
+Decision Engine & The rule-based component in the API that reads the AI signals and chooses Auto-Publish or Send to Review. \\
+Flag reason & A reason a lot is sent to review: Low Classification Confidence, Mixed Condition, Material Mismatch, Condition-Claim Conflict, Price Above Estimate, or AI Unavailable. \\
+Reference price & The current new-material price per unit, with its source and date, that the Admin maintains for price estimation. \\
+Zone & An Admin-defined service area with a name, a centre point, and a radius. Lots can be posted only inside an active zone. \\
+Disclosure sentence & ``AI assessment applies to the uploaded representative samples and does not guarantee the condition of every unphotographed item.'' \\
+Efflorescence & A white, powdery salt deposit on the surface of bricks or masonry. \\
+Spalling & Flaking or breaking away of pieces from the surface of brick, concrete, or stone. \\
+Roman Urdu & Urdu written in the Latin alphabet, as many sellers write descriptions. \\
+\multicolumn{2}{@{}l}{\textbf{AI and evaluation terms}} \\
+Zero-shot classification & Classifying an image into categories described in text, without training on labelled examples of those categories. \\
+CLIP & Contrastive Language--Image Pre-training: a model that matches images with text descriptions, used for material classification~\citep{radford2021clip}. \\
+YOLO & You Only Look Once: a family of object-detection models that find and box objects in one pass, used for defect detection~\citep{redmon2016yolo}. \\
+XGBoost & Extreme Gradient Boosting: a tree-boosting method, used for price estimation~\citep{chen2016xgboost}. \\
+LLM & Large language model: the external model that answers Listing Assistant questions. \\
+Hallucination & Generated text that is not supported by the source it was given~\citep{ji2023hallucination}. \\
+Precision & Of the defects the model flagged, the share that were real. \\
+Recall & Of the real defects, the share that the model found. \\
+IoU & Intersection over Union: the overlap between a predicted box and the true box, divided by their combined area. \\
+mAP@0.5 & Mean average precision, counting a detection as correct when its IoU is at least 0.5. \\
+MAE & Mean absolute error: the average size of the price error. \\
+RMSE & Root mean squared error: a price-error measure that weighs large errors more heavily. \\
+Baseline & A simple method that a model is compared against, to show whether the model helps. \\
+ONNX, OpenVINO & Formats and runtimes for running trained models efficiently on a CPU. \\
+\multicolumn{2}{@{}l}{\textbf{Technical acronyms}} \\
+AI & Artificial intelligence. \\
+ML & Machine learning. \\
+API & Application programming interface: the set of operations one software component offers another. \\
+REST & Representational State Transfer: a style of web API based on resources and HTTP methods such as GET and POST. \\
+JSON & JavaScript Object Notation: the text format used for API requests and responses. \\
+HTTPS & HTTP over an encrypted TLS connection. \\
+TLS & Transport Layer Security: the protocol that encrypts network traffic. \\
+URL & Uniform Resource Locator: a web address. A pre-signed URL gives time-limited access to one private file. \\
+RBAC & Role-based access control: permissions depend on the user's role (Admin, Customer, or Contractor). \\
+Argon2id & A password-hashing algorithm designed to make password guessing slow and costly~\citep{owasppasswordstorage}. \\
+ASP.NET Core & Microsoft's framework for building the backend web API. \\
+SignalR & An ASP.NET Core library that keeps a live connection open for real-time chat~\citep{microsoftsignalr}. \\
+FastAPI & A Python framework for building the AI Service's web API~\citep{fastapidocs}. \\
+PostGIS & A PostgreSQL extension for storing and searching map locations~\citep{postgisdocs}. \\
+Haversine & A formula for the distance between two points on a sphere~\citep{sinnott1984haversine}. \\
+AWS, S3, SES & Amazon Web Services; Simple Storage Service, used for lot photos; Simple Email Service, used for verification and reset emails. \\
+CPU, GPU & Central and graphics processing units. Inference runs on a CPU; training uses a GPU. \\
+UAV & Unmanned aerial vehicle (drone). \\
+UI & User interface. \\
+UML & Unified Modeling Language~\citep{omguml251}. \\
+WCAG & Web Content Accessibility Guidelines~\citep{wcag22}. \\
+CSS pixel & A size unit used by web browsers, independent of the screen's physical pixels. \\
+JPEG, PNG, WebP & Image file formats accepted for lot photos. \\
+MB, MiB, GB & Megabyte, mebibyte, and gigabyte: units of data size. \\
+\multicolumn{2}{@{}l}{\textbf{Identifier prefixes used in this document}} \\
+OBJ, SCP, EXC & Objective, in-scope item, and out-of-scope item (Chapter~\ref{chap:overview}). \\
+RQ & Research question. \\
+ACD & Assumption, constraint, or dependency. \\
+FR, NFR & Functional requirement and non-functional requirement. \\
+DIR, EIR & Data requirement and external interface requirement. \\
+PR, ER & Privacy requirement and ethics or legal requirement. \\
+INT & Interface between two parts of the system. \\
+VAR & Variable measured in the research evaluation. \\
+UC & Use case. \\
+SD, CMP, DEP & Sequence diagram, component diagram, and deployment diagram. \\
+AI-, CHAT- & AI Service endpoint and chat hub event (Appendix~\ref{app:specs}). \\
+SEC & Security, privacy, or safety control. \\
+DD & Design decision. \\
+RSK & Risk. \\
+MS & Milestone. \\
+TEST- & A test in the separate software testing document. \\
 \bottomrule
 \end{longtable}
+}

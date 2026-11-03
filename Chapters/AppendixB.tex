@@ -2,12 +2,7 @@
 % Replace blue placeholders and remove example text before submission.
 
 \chapter{Supporting Specifications \applicability{If applicable}}
-\begin{guidance}
-Place lengthy supporting material here only when it is necessary for understanding
-or reproducing the design, such as API contracts, data dictionaries, detailed
-pseudocode, questionnaires, or supplementary diagrams. Refer to every included
-item from the main document.
-\end{guidance}
+\label{app:specs}
 
 \section{Data Dictionary}
 \placeholder{Member 2: insert the data dictionary.}
@@ -22,8 +17,8 @@ Figure~\ref{fig:sd-01} and Figure~\ref{fig:sd-05}. The AI Service requires a sec
 API key and accepts traffic only from the API server (SEC-22). It stays stateless,
 stores nothing, and returns signals only; the Decision Engine in the API makes the
 publish or review decision. Routes, timeouts, retries, and link expiry are
-provisional. \placeholder{Field lists follow the work plan and await Member 4's
-changes.}
+provisional. JSON field names use camelCase, and status, grade, and flag values are
+spelled exactly as in the rest of this document.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.74\textwidth}@{}}
@@ -39,12 +34,12 @@ changes.}
 Purpose & Classify the material, detect visible defects, grade the condition, check description--image consistency, and estimate a surplus price for one lot (FR-02, FR-03). \\
 Caller & Background worker in the ASP.NET Core backend. The lot's status in PostgreSQL acts as the queue, and the worker takes one lot at a time. It starts only once GET /health confirms the models are loaded, and after a restart it resumes any lots still in Screening. \\
 Endpoint & POST /v1/screenings \\
-Request fields & Lot identifier; one time-limited, read-only pre-signed URL for each of the 3--5 photographs (DD-20); description; quantity; location; reference price. URLs are created just before each call and expire after 15 minutes. \placeholder{Field names and types} \\
-Response fields & Material; confidence; defects; grade (Good, Minor, Major, Mixed, or Not Assessed); price estimate; flags (Low Classification Confidence, Mixed Condition, Material Mismatch, Condition-Claim Conflict, or Price Above Estimate). \placeholder{Field names and types} \\
+Request fields & \texttt{lotId} (identifier); \texttt{photoUrls} (3--5 time-limited, read-only pre-signed URLs, DD-20, created just before each call and valid for 15 minutes); \texttt{sellerMaterial} (bricks, steel, tiles\_marble, or wood); \texttt{quantity} (number); \texttt{unit} (pieces, kg, sq\_ft, or cubic\_ft); \texttt{ageBand} (unused, under\_1\_year, 1\_to\_3\_years, or over\_3\_years); \texttt{description} (text); \texttt{location} (latitude and longitude); \texttt{referencePricePerUnit} (PKR). \\
+Response fields & \texttt{material} and \texttt{materialConfidence} (0--1); \texttt{photos}, one entry per photo with its \texttt{material}, \texttt{confidence}, \texttt{quality} (ok, blurry, or dark), \texttt{defects} (each with \texttt{class}, \texttt{confidence}, and a normalised \texttt{box}), and \texttt{grade}; \texttt{grade} for the lot (Good, Minor, Major, Mixed, or Not Assessed); \texttt{consistency} (\texttt{materialMatch}, \texttt{conditionClaim}, \texttt{conditionConflict}); \texttt{priceEstimate} (\texttt{low}, \texttt{mid}, and \texttt{high} per unit, in PKR); \texttt{modelVersions}; \texttt{processingMs}. The response carries signals only: the Decision Engine in the API derives the flag reasons from them using the Admin's thresholds (DD-24). \\
 Result return & In the HTTPS response, with no callback or polling. The worker saves the results, the decision, and the status in one database transaction. \\
 Timeout & 120 seconds. \\
 Retries & One, from the worker only, after a wait of a few seconds with jitter. Saving results is safe to repeat for the same lot. \\
-Error behaviour & Partial results count as a failed attempt, so no lot is auto-published without all checks. A 4xx error is not retried, and the lot goes to Pending Review with flag reason \placeholder{to be agreed}. \\
+Error behaviour & Partial results count as a failed attempt, so no lot is auto-published without all checks. A 4xx error is not retried; the lot goes to Pending Review with the flag reason AI Unavailable, and the error code is logged. \\
 Fallback & If the retry fails, the lot receives the grade Not Assessed with no price suggestion and the flag reason AI Unavailable, and moves to Pending Review (FR-28). The API sets this flag itself, so it is not an AI Service response value. \\
 \bottomrule
 \end{longtable}
@@ -62,12 +57,13 @@ Fallback & If the retry fails, the lot receives the grade Not Assessed with no p
 Purpose & Answer a buyer's question using only the lot's own structured data (FR-08, FR-30). \\
 Caller & ASP.NET Core REST API. \\
 Endpoint & POST /v1/assistant/answers \\
-Request fields & Lot identifier; question; lot data (material, quantity, condition, detected defects, price, location, seller description, and AI confidence). \placeholder{Field names and types} \\
-Response fields & Answer text, or the fallback reply. \placeholder{Field names and types} \\
+Request fields & \texttt{lotId}; \texttt{question} (text); \texttt{lot} (material, quantity and unit, grade, detected defects, price per unit, area name, seller description marked as untrusted text, and AI confidence). No names, contact details, user identifiers, or exact pickup location are sent (PR-04, PR-05). \\
+Response fields & \texttt{answer} (text, or the fallback reply); \texttt{supported} (true when the answer comes from the lot data); \texttt{fieldsUsed} (the lot fields the answer relies on). \\
+Model & Claude Sonnet 5.5 (\texttt{claude-sonnet-5-5}) at low effort, with no tools. \\
 Result return & In the HTTPS response. \\
 Timeout & 30 seconds. \\
 Retries & None, because only the background worker retries. \\
-Error behaviour & \placeholder{Agreed error responses} \\
+Error behaviour & An empty or over-long question is rejected with a 400 error. If the language model refuses, fails, or does not answer within the timeout, the fallback reply is returned. The API limits each user to 20 questions an hour. \\
 Fallback & If the information is missing, the reply is ``not available, contact the seller''. A fallback reply is also returned if the LLM provider is unavailable (FR-30). \\
 \bottomrule
 \end{longtable}
@@ -86,7 +82,7 @@ Purpose & Confirm that the models are loaded. \\
 Caller & Background worker, before it starts. \\
 Endpoint & GET /health \\
 Request fields & None. \\
-Response fields & \placeholder{Field names and types} \\
+Response fields & \texttt{status} (ok or loading) and \texttt{modelVersions}. \\
 Error behaviour & The worker does not start until this check confirms the models are loaded. \\
 \bottomrule
 \end{longtable}
@@ -98,7 +94,7 @@ Events travel over INT-03, as shown in Figure~\ref{fig:sd-04}. The hub rejects
 unauthenticated connections (SEC-20) and checks that the user is a thread participant
 on every join and send (SEC-21). Negotiation uses the same messages as chat
 (FR-23), so it has no separate events. For hub-to-client events, the last column
-shows who receives the event. \placeholder{Payload field names and types}
+shows who receives the event. The hub also delivers in-app notifications (FR-76) to signed-in users.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
@@ -111,12 +107,13 @@ shows who receives the event. \placeholder{Payload field names and types}
 \textbf{ID} & \textbf{Event name} & \textbf{Direction} & \textbf{Payload} & \textbf{Who may use it} \\
 \midrule
 \endhead
-CHAT-01 & SendMessage & Client to hub & Thread and message text (FR-20) & Thread participants \\
-CHAT-02 & ReceiveMessage & Hub to client & Thread, sender, and message text; also used for undelivered messages on reconnecting (FR-20, FR-21) & The recipient \\
-CHAT-03 & MarkRead & Client to hub & Thread and the message read (FR-31) & The recipient \\
-CHAT-04 & MessageRead & Hub to client & Thread and the message read (FR-31) & The message's sender \\
-CHAT-05 & PresenceChanged & Hub to client & Participant and online or offline state (FR-22) & Thread participants \\
-CHAT-06 & LotStatusChanged & Hub to client & Lot and its new status (FR-29) & The lot's seller \\
+CHAT-01 & SendMessage & Client to hub & \texttt{threadId}, \texttt{text} (FR-20) & Thread participants \\
+CHAT-02 & ReceiveMessage & Hub to client & \texttt{threadId}, \texttt{messageId}, \texttt{senderId}, \texttt{text}, \texttt{sentAt}; also used for undelivered messages on reconnecting (FR-20, FR-21) & The recipient \\
+CHAT-03 & MarkRead & Client to hub & \texttt{threadId}, \texttt{messageId} (FR-31) & The recipient \\
+CHAT-04 & MessageRead & Hub to client & \texttt{threadId}, \texttt{messageId}, \texttt{readAt} (FR-31) & The message's sender \\
+CHAT-05 & PresenceChanged & Hub to client & \texttt{userId}, \texttt{online} (FR-22) & Thread participants \\
+CHAT-06 & LotStatusChanged & Hub to client & \texttt{lotId}, \texttt{status} (FR-29) & The lot's seller \\
+CHAT-07 & NotificationReceived & Hub to client & \texttt{notificationId}, \texttt{type}, \texttt{text}, \texttt{createdAt} (FR-76) & The notified user \\
 \bottomrule
 \end{longtable}
 }
