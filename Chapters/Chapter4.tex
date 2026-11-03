@@ -988,7 +988,7 @@ Admin's fixed account first enters a two-factor code. One registered user moves 
 Customer and Contractor modes with the profile switch on the Profile screen, so the switch
 stays in one predictable place in both modes, and Contractor mode opens only after the
 Admin approves the user's Contractor application. In each area, the main screens are
-reached from the bottom navigation, and the dashed screens open from the screen above them.
+reached from the navigation bar, and the dashed screens open from the screen above them.
 
 \begin{figure}[H]
 \centering
@@ -997,44 +997,84 @@ reached from the bottom navigation, and the dashed screens open from the screen 
 \label{fig:navigation-structure}
 \end{figure}
 
-\fref{fig:key-wireframes} shows the six key wireframes, and \tref{tab:wireframe-annotations}
-explains the validation (V), feedback (F), and accessibility (A) markers on each one.
-The legend under the wireframes gives the five condition grades and nine lot statuses.
+Figures~\ref{fig:wf-marketplace} to~\ref{fig:wf-contractor-approvals} show the six key
+wireframes as desktop web layouts: three for the Customer and Contractor and three for the
+Admin. On a phone the same screens stack their panels in a single column (NFR-68). Each
+wireframe marks its main validation (V), feedback (F), and accessibility (A) decisions with
+small lettered markers, which \tref{tab:wireframe-annotations} explains.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_8_wireframes.pdf}
-\caption{Key wireframes}
-\label{fig:key-wireframes}
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_marketplace.pdf}
+\caption{Wireframe: Marketplace (Customer)}
+\label{fig:wf-marketplace}
 \end{figure}
 
-\begin{table}[H]
+\begin{figure}[H]
 \centering
-\caption{Wireframe annotations}
-\label{tab:wireframe-annotations}
-\footnotesize
-\begin{tabularx}{\textwidth}{@{}p{0.15\textwidth}XXX@{}}
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_create_lot.pdf}
+\caption{Wireframe: Create Lot (Contractor)}
+\label{fig:wf-create-lot}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_my_lots.pdf}
+\caption{Wireframe: My Lots (Contractor)}
+\label{fig:wf-my-lots}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_review_queue.pdf}
+\caption{Wireframe: Review Queue (Admin)}
+\label{fig:wf-review-queue}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_dashboard.pdf}
+\caption{Wireframe: Dashboard (Admin)}
+\label{fig:wf-dashboard}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{fig_4_8_wf_contractor_approvals.pdf}
+\caption{Wireframe: Contractor Approvals (Admin)}
+\label{fig:wf-contractor-approvals}
+\end{figure}
+
+{\footnotesize
+\begin{longtable}{@{}p{0.15\textwidth}p{0.26\textwidth}p{0.26\textwidth}p{0.25\textwidth}@{}}
+\caption{Wireframe annotations}\label{tab:wireframe-annotations}\\
 \toprule
 \textbf{Wireframe} & \textbf{Validation (V)} & \textbf{Feedback (F)} & \textbf{Accessibility (A)} \\
 \midrule
-1. Create Lot & Submit Lot stays disabled until 3--5 photos are attached (FR-61). & The message states how many photos to add, and the screen states that photos are compressed (FR-62, FR-73). & Each photo slot has a screen-reader label (NFR-63). \\
-2. Lot Status and AI Result & The Admin message states what to correct before resubmission (FR-66). & The status chip shows the lot's current status (FR-63). & The grade appears as an icon and text (NFR-64). \\
-3. Search Lots & Radius and price fields accept numbers only. & The result count and hint state how to widen the search (FR-73). & Every result card shows its grade as an icon and text (NFR-64). \\
-4. Lot Details & Reserve is checked against the lot's status and version (UC-03). & The disclosure sentence is always visible (FR-60). & The grade appears as an icon and text, and the defects are listed as text (FR-67, FR-68). \\
-5. Ask Assistant & Send stays disabled while the question is empty. & A missing answer is stated plainly and offers Chat With Seller (FR-08). & The source of the answers is stated in text, and each message has a screen-reader label (NFR-63). \\
-6. Admin Review Queue & Request Edits requires a message (UC-04). & The screen confirms that the decision is recorded (UC-04). & Claims and AI signals sit side by side as labelled text (NFR-63, NFR-64). \\
+\endfirsthead
+\toprule
+\textbf{Wireframe} & \textbf{Validation (V)} & \textbf{Feedback (F)} & \textbf{Accessibility (A)} \\
+\midrule
+\endhead
+Marketplace & Send stays disabled while the question is empty, and the assistant limit of 20 questions an hour is stated (FR-30). & The empty state says how to widen the search, and the disclosure sentence is always shown (FR-60, FR-73). & Filters have visible labels, and every grade is an icon and text (FR-67, NFR-64). \\
+Create Lot & Submit Lot stays disabled until 3--5 photos are attached and the pin lies inside an active zone, with the reason shown (FR-61, FR-82). & Messages say how many photos to add and where to move the pin, and the screen states that photos are compressed (FR-62, FR-73). & Each material card names its unit in text, and the map pin has a text label (FR-74, NFR-63). \\
+My Lots & Mark No-Show is available only after the pickup deadline, and the final sale price is optional (FR-16, FR-83). & The Admin's message, the flag reasons, and the Rejected note tell the seller what happened and what to do (FR-65, FR-66, FR-85). & Statuses are text chips, and each row offers only the actions its status allows as text links (FR-63, NFR-64). \\
+Review Queue & Request Edits cannot be confirmed without a message to the seller (FR-25). & The panel states that Reject is final and that every decision is recorded (FR-25, FR-85). & Seller claims and AI findings sit side by side as labelled text, and flags are named chips (FR-24, NFR-63). \\
+Dashboard & The reporting period is chosen from a fixed list. & Agreement and overturn rates and the flag-reason counts are shown as values, not only as bars. & The period selector has a label, and inbox items show read state with text as well as a dot (NFR-64). \\
+Contractor Approvals & A private verification note is required, and a rejection needs a reason shown to the applicant (FR-12). & Mark phone verified records the phone check, and the zone check is shown next to the address. & Tabs show their counts in text, and every field has a visible label (NFR-63). \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 The design supports the quality goals as follows.
 \begin{itemize}
-\item \textbf{Usability:} Create Lot fits within 3 screens (NFR-65), and all three roles share the same field, button, status-chip, and grade patterns.
+\item \textbf{Usability:} Create Lot is one screen with four numbered sections (NFR-65), a live listing preview, and a short explanation of what happens after submitting. All three roles share the same field, button, status-chip, and grade patterns.
 \item \textbf{Accessibility:} Text contrast and scaling follow WCAG 2.2 Level AA~\citep{wcag22} (NFR-60, NFR-62). Grades, statuses, and flags are never shown by colour alone (NFR-64). Touch targets and screen-reader labels follow NFR-61 and NFR-63.
-\item \textbf{Responsive layout:} Screens adapt to widths from 320 to 1920 logical pixels on Android and Flutter web (NFR-68).
-\item \textbf{Error prevention:} Controls stay disabled until their input is valid (FR-61), and photos are compressed on the device for weak mobile data (FR-62, NFR-67).
-\item \textbf{Feedback:} Each screen has a visible state for loading, AI pending, flagged, rejected, and error (FR-72), every tap gets a visible response (NFR-66), and messages say how to fix a problem (FR-73).
-\item \textbf{Consistency:} The grade icons and status chips in \fref{fig:key-wireframes} appear unchanged on every screen and in every role.
+\item \textbf{Responsive layout:} The wireframes show the desktop layout; screens adapt to widths from 320 to 1920 logical pixels, and on a phone the panels stack in one column (NFR-68).
+\item \textbf{Error prevention:} Controls stay disabled until their input is valid (FR-61), each lot row offers only the actions its status allows, and photos are compressed on the device for weak mobile data (FR-62, NFR-67).
+\item \textbf{Feedback:} Each screen has a visible state for loading, AI pending, flagged, rejected, and error (FR-72), every tap gets a visible response (NFR-66), messages say how to fix a problem (FR-73), and notifications report screening results and decisions (FR-76).
+\item \textbf{Privacy:} Buyers see only a lot's area until they reserve (FR-75), and the seller's address and verification note are visible only to the Admin (PR-04, PR-06).
+\item \textbf{Consistency:} The grade icons, status chips, and flag names in the wireframes appear unchanged on every screen and in every role.
 \end{itemize}
 
 \section{Security, Privacy, and Safety Design \applicability{If applicable}}
