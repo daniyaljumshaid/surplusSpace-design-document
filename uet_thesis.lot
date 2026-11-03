@@ -31,28 +31,28 @@
 \contentsline {table}{\numberline {4.14}{\ignorespaces Defect classes, provisional defect types, and datasets per material}}{65}{table.4.14}%
 \contentsline {table}{\numberline {4.15}{\ignorespaces Model M-02: YOLO defect detection}}{66}{table.4.15}%
 \contentsline {table}{\numberline {4.16}{\ignorespaces Model M-03: Condition engine}}{67}{table.4.16}%
-\contentsline {table}{\numberline {4.17}{\ignorespaces Model M-04: Consistency checker}}{68}{table.4.17}%
-\contentsline {table}{\numberline {4.18}{\ignorespaces Model M-05: XGBoost price model}}{69}{table.4.18}%
-\contentsline {table}{\numberline {4.19}{\ignorespaces Model M-06: Decision Engine}}{70}{table.4.19}%
-\contentsline {table}{\numberline {4.20}{\ignorespaces Model M-07: AI Listing Assistant}}{71}{table.4.20}%
-\contentsline {table}{\numberline {4.21}{\ignorespaces Wireframe annotations}}{78}{table.4.21}%
-\contentsline {table}{\numberline {4.22}{\ignorespaces Security, privacy, and safety controls}}{80}{table.4.22}%
-\contentsline {table}{\numberline {4.23}{\ignorespaces Design decisions}}{84}{table.4.23}%
+\contentsline {table}{\numberline {4.17}{\ignorespaces Model M-04: Consistency checker}}{69}{table.4.17}%
+\contentsline {table}{\numberline {4.18}{\ignorespaces Model M-05: XGBoost price model}}{70}{table.4.18}%
+\contentsline {table}{\numberline {4.19}{\ignorespaces Model M-06: Decision Engine}}{71}{table.4.19}%
+\contentsline {table}{\numberline {4.20}{\ignorespaces Model M-07: AI Listing Assistant}}{72}{table.4.20}%
+\contentsline {table}{\numberline {4.21}{\ignorespaces Wireframe annotations}}{79}{table.4.21}%
+\contentsline {table}{\numberline {4.22}{\ignorespaces Security, privacy, and safety controls}}{81}{table.4.22}%
+\contentsline {table}{\numberline {4.23}{\ignorespaces Design decisions}}{85}{table.4.23}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Design traceability matrix}}{87}{table.5.1}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Verification and validation strategy}}{91}{table.caption.124}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces Software testing document reference}}{92}{table.caption.126}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Risk register}}{92}{table.5.4}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Milestones and schedule}}{96}{table.caption.129}%
-\contentsline {table}{\numberline {5.6}{\ignorespaces Team roles and responsibilities}}{97}{table.caption.131}%
-\contentsline {table}{\numberline {5.7}{\ignorespaces Artifact management}}{98}{table.caption.133}%
-\contentsline {table}{\numberline {5.8}{\ignorespaces Tools and technologies}}{100}{table.caption.135}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces Design traceability matrix}}{92}{table.5.1}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Verification and validation strategy}}{96}{table.caption.124}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Software testing document reference}}{97}{table.caption.126}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Risk register}}{97}{table.5.4}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Milestones and schedule}}{101}{table.caption.129}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Team roles and responsibilities}}{102}{table.caption.131}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces Artifact management}}{103}{table.caption.133}%
+\contentsline {table}{\numberline {5.8}{\ignorespaces Tools and technologies}}{105}{table.caption.135}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {A.1}{\ignorespaces Definitions, acronyms, and domain terms}}{101}{table.A.1}%
+\contentsline {table}{\numberline {A.1}{\ignorespaces Definitions, acronyms, and domain terms}}{106}{table.A.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {B.1}{\ignorespaces Data dictionary}}{107}{table.B.1}%
-\contentsline {table}{\numberline {B.2}{\ignorespaces REST API contract}}{113}{table.B.2}%
-\contentsline {table}{\numberline {B.3}{\ignorespaces AI-01: Lot screening}}{118}{table.B.3}%
-\contentsline {table}{\numberline {B.4}{\ignorespaces AI-02: Listing Assistant}}{119}{table.B.4}%
-\contentsline {table}{\numberline {B.5}{\ignorespaces AI-03: Health check}}{120}{table.B.5}%
-\contentsline {table}{\numberline {B.6}{\ignorespaces Chat hub events}}{120}{table.B.6}%
+\contentsline {table}{\numberline {B.1}{\ignorespaces Data dictionary}}{112}{table.B.1}%
+\contentsline {table}{\numberline {B.2}{\ignorespaces REST API contract}}{118}{table.B.2}%
+\contentsline {table}{\numberline {B.3}{\ignorespaces AI-01: Lot screening}}{123}{table.B.3}%
+\contentsline {table}{\numberline {B.4}{\ignorespaces AI-02: Listing Assistant}}{124}{table.B.4}%
+\contentsline {table}{\numberline {B.5}{\ignorespaces AI-03: Health check}}{125}{table.B.5}%
+\contentsline {table}{\numberline {B.6}{\ignorespaces Chat hub events}}{125}{table.B.6}%
