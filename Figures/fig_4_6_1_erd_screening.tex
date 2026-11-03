@@ -1,0 +1,28 @@
+% Source for fig_4_6_1_erd_screening.pdf (ERD-01, part 2). Build: pdflatex fig_4_6_1_erd_screening.tex
+\documentclass[tikz,border=3pt]{standalone}
+\input{erd_preamble.tex}
+\begin{document}
+\begin{tikzpicture}[diagram]
+\tbl{photo}{0,0}{lot\_photos}{\pk{id}\\\fk{lot\_id}\\position}
+\tbl{lot}{72,0}{lots}{\pk{id}\\status\\version}
+\tbl{rev}{144,0}{review\_decisions}{\pk{id}\\\fk{lot\_id}\\\fk{assessment\_id}\\\fk{admin\_id}\\action\\message\\override\_reason\\ai\_outcome\\decided\_at}
+\tbl{pa}{0,-40}{photo\_assessments}{\pk{id}\\\fk{assessment\_id}\\\fk{photo\_id}\\quality\\material\\confidence\\grade}
+\tbl{ai}{72,-40}{ai\_assessments}{\pk{id}\\\fk{lot\_id}\\material\\material\_confidence\\grade\\claimed\_condition\\condition\_conflict\\price\_low\_per\_unit\\price\_mid\_per\_unit\\price\_high\_per\_unit\\flags (flag\_reason[\,])\\outcome\\model\_versions (jsonb)\\created\_at}
+\tbl{user}{144,-50}{users}{\pk{id}\\is\_admin}
+\tbl{def}{0,-88}{detected\_defects}{\pk{id}\\\fk{photo\_assessment\_id}\\defect\_class\\confidence\\box\_x, box\_y, box\_w, box\_h}
+\tbl{thr}{144,-74}{threshold\_configs}{\pk{id}\\min\_classification\_confidence\\price\_margin\_percent\\defect\_confidence\\\fk{changed\_by}\\changed\_at}
+\tbl{cat}{72,-112}{categories}{\pk{id}\\material\\unit}
+\tbl{ref}{144,-112}{reference\_prices}{\pk{id}\\\fk{category\_id}\\price\_per\_unit\\source\\price\_date\\\fk{changed\_by}\\changed\_at}
+\draw (lot.west |- 0,-8) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{3..5} (photo.east |- 0,-8);
+\draw (lot.east |- 0,-8) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..*} (rev.west |- 0,-8);
+\draw (lot.south) -- node[m,right,pos=.2]{1}node[m,right,pos=.8]{0..*} (ai.north);
+\draw (ai.west |- 0,-48) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{3..5} (pa.east |- 0,-48);
+\draw (pa.north) -- node[m,right,pos=.2]{0..*}node[m,right,pos=.8]{1} (photo.south);
+\draw (pa.south) -- node[m,right,pos=.2]{1}node[m,right,pos=.8]{0..*} (def.north);
+\draw (rev.south) -- node[m,right,pos=.2]{0..*}node[m,right,pos=.8]{1 (admin)} (user.north);
+\draw (ai.east |- 0,-52) -- node[m,above,pos=.5]{1} (108,-52) |- node[m,above,pos=.85]{0..*} (rev.west |- 0,-30);
+\draw (ref.west |- 0,-120) -- node[m,above,pos=.12]{0..*}node[m,above,pos=.88]{1} (cat.east |- 0,-120);
+\node[draw,fill=white,align=left,text width=62mm,anchor=north west] at (-22,-130)
+  {threshold\_configs and reference\_prices keep one row per change; the newest row is the current value. changed\_by references \textbf{users}.};
+\end{tikzpicture}
+\end{document}

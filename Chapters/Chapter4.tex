@@ -1174,12 +1174,76 @@ Figure~\ref{fig:deployment-diagram}.
 \label{sec:data-design}
 
 \subsection{Database, Schema, and Persistence Design \applicability{Development, Hybrid, Game, if applicable}}
-\begin{guidance}
-Describe persistent entities, identifiers, relationships, integrity constraints,
-and important indexing or retention decisions. Use an ER diagram, schema, or other
-notation appropriate to the selected database model.
-\end{guidance}
-\diagramplaceholder{Data model or schema}{Example entities: User, AvailabilitySlot, Appointment, and NotificationLog.}
+\label{sec:database-design}
+Persistent data is stored in PostgreSQL with the PostGIS extension~\citep{postgisdocs},
+and short-lived data in Redis. ERD-01 is shown in two parts that mirror the two views of
+the domain model: \fref{fig:erd-marketplace} holds accounts, lots, and trading, and
+\fref{fig:erd-screening} holds AI screening, review, and settings. Each table has a
+surrogate primary key (\textsc{pk}) and names its references as foreign keys
+(\textsc{fk}); every column with its type and constraint is listed in the data dictionary
+(\sref{sec:data-dictionary}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_6_1_erd_marketplace.pdf}
+\caption{ERD-01, part 1: accounts, lots, and trading}
+\label{fig:erd-marketplace}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{fig_4_6_1_erd_screening.pdf}
+\caption{ERD-01, part 2: AI screening, review, and settings}
+\label{fig:erd-screening}
+\end{figure}
+
+\tref{tab:persistence-decisions} records the persistence decisions that the ERD alone does
+not show.
+
+{\footnotesize
+\begin{longtable}{@{}p{0.2\textwidth}p{0.55\textwidth}p{0.17\textwidth}@{}}
+\caption{Persistence decisions}\label{tab:persistence-decisions}\\
+\toprule
+\textbf{Concern} & \textbf{Design} & \textbf{Related} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Concern} & \textbf{Design} & \textbf{Related} \\
+\midrule
+\endhead
+Location search & Pickup locations, zone centres, and saved-search centres are stored as geography points with spatial (GiST) indexes, and radius searches use a PostGIS distance query~\citep{postgisdocs}. & FR-06, FR-82, NFR-20 \\
+One buyer per lot & A partial unique index allows only one row with status Active per lot in reservations, and the lot's version is checked and increased in the same transaction that creates the reservation~\citep{postgresqlisolation}. & FR-07, NFR-21, ST-02 \\
+Reservation limit & The buyer's Active reservations are counted inside the same transaction before a new one is created. & FR-17 \\
+Locked values & Statuses, grades, flags, actions, materials, units, and the other locked lists are PostgreSQL enumerated types with exactly the values in \fref{fig:class-screening}. & ST-01, ST-02 \\
+Integrity checks & Check constraints keep ratings between 1 and 5 stars, photo positions between 1 and 5 and unique per lot, quantities and prices above zero, and each report pointing to exactly one lot or message. The 3--5 photo count is checked when a lot is submitted. & FR-61, FR-80, FR-81 \\
+Indexes & Lots by status, category, and publication time; lots by seller; reservations by buyer and status; Active reservations by pickup deadline; messages by thread and time; AI assessments by lot and time; review decisions by time. & NFR-20 \\
+No hard deletes & Users and lots are never deleted: Remove sets the lot's removed time, suspension sets the user's flag, and foreign keys reject deletes, so no history is lost. & FR-19, FR-77 \\
+Retention & AI assessments, review decisions, and threshold and reference-price changes are kept for the whole evaluation; expired refresh tokens are deleted. & DIR-03, DIR-06, DIR-07 \\
+Photos & The database stores only each photo's storage key; images sit in a private object-storage bucket with location metadata removed. & DIR-02, PR-03, NFR-29 \\
+Credentials & Passwords are stored only as Argon2id hashes; refresh tokens only as hashes with a family identifier for reuse detection; the Admin's authenticator key is encrypted at rest. & NFR-23, NFR-25, NFR-26 \\
+Scheduled work & The Scheduler finds lots to expire and reservations to cancel through the timestamp indexes above. & FR-14--FR-16, UC-32, UC-34 \\
+\bottomrule
+\end{longtable}
+}
+
+Redis holds only data that can be lost without losing a record, each key with an expiry
+time (DD-26), as \tref{tab:redis-keys} lists.
+
+\begin{table}[H]
+\centering
+\caption{Redis keys}
+\label{tab:redis-keys}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.27\textwidth}X p{0.2\textwidth}@{}}
+\toprule
+\textbf{Key} & \textbf{Purpose} & \textbf{Expiry} \\
+\midrule
+\texttt{presence:\{userId\}} & Shows that a user is online in chat (FR-22). & 90 s, renewed by the client \\
+\texttt{assistant:quota:\{userId\}} & Counts Listing Assistant questions in the current hour (FR-56). & 1 hour \\
+\texttt{screening:lock:\{lotId\}} & Stops two workers from screening the same lot at once. & 150 s, longer than the AI timeout \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Research Data Management \applicability{Research, Hybrid}}
 \begin{guidance}

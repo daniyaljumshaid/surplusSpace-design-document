@@ -1,0 +1,37 @@
+% Source for fig_4_6_1_erd_marketplace.pdf (ERD-01, part 1). Build: pdflatex fig_4_6_1_erd_marketplace.tex
+\documentclass[tikz,border=3pt]{standalone}
+\input{erd_preamble.tex}
+\begin{document}
+\begin{tikzpicture}[diagram]
+\tbl{app}{0,0}{contractor\_applications}{\pk{id}\\\fk{user\_id} (unique)\\seller\_type\\business\_name\\business\_address\\yard\_location (geography)\\years\_in\_business\\shop\_photo\_key\\link\\status\\rejection\_reason\\verification\_note\\\fk{decided\_by}\\decided\_at}
+\tbl{user}{72,0}{users}{\pk{id}\\name\\email (unique)\\phone\\password\_hash\\is\_admin\\active\_profile\\is\_suspended\\no\_show\_count\\email\_verified\_at\\created\_at}
+\tbl{note}{144,0}{notifications}{\pk{id}\\\fk{user\_id}\\type\\text\\created\_at\\read\_at}
+\tbl{tok}{144,-36}{refresh\_tokens}{\pk{id}\\\fk{user\_id}\\token\_hash\\family\_id\\expires\_at\\revoked\_at}
+\tbl{ss}{144,-72}{saved\_searches}{\pk{id}\\\fk{user\_id}\\centre (geography)\\radius\_km\\max\_price\\materials}
+\tbl{zone}{0,-66}{zones}{\pk{id}\\name\\centre (geography)\\radius\_km\\is\_active}
+\tbl{cat}{0,-98}{categories}{\pk{id}\\material (unique)\\unit\\is\_active}
+\tbl{lot}{72,-58}{lots}{\pk{id}\\\fk{seller\_id}\\\fk{zone\_id}\\\fk{category\_id}\\quantity\\description\\total\_price\\age\_band\\pickup\_location (geography)\\status\\version\\published\_at\\changes\_requested\_at\\removed\_at\\final\_sale\_price\\created\_at}
+\tbl{photo}{0,-126}{lot\_photos}{\pk{id}\\\fk{lot\_id}\\storage\_key\\position (1--5)\\size\_bytes\\uploaded\_at}
+\tbl{thread}{144,-110}{chat\_threads}{\pk{id}\\\fk{lot\_id}\\\fk{buyer\_id}\\created\_at}
+\tbl{msg}{144,-138}{messages}{\pk{id}\\\fk{thread\_id}\\\fk{sender\_id}\\text\\sent\_at\\read\_at}
+\tbl{res}{72,-142}{reservations}{\pk{id}\\\fk{lot\_id}\\\fk{buyer\_id}\\status\\created\_at\\pickup\_deadline\\ended\_at}
+\tbl{rate}{0,-166}{ratings}{\pk{id}\\\fk{reservation\_id}\\\fk{rater\_id}\\\fk{rated\_id}\\stars (1--5)\\comment\\visible\_at}
+\tbl{rep}{144,-172}{reports}{\pk{id}\\\fk{reporter\_id}\\\fk{lot\_id} (nullable)\\\fk{message\_id} (nullable)\\reason\\explanation\\status\\resolution\_note\\\fk{resolved\_by}}
+% relationships (cardinality at each end)
+\draw (user.west |- 0,-10) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..1} (app.east |- 0,-10);
+\draw (user.east |- 0,-10) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..*} (note.west |- 0,-10);
+\draw (user.east |- 0,-22) -- node[m,above,pos=.5]{1} (106,-22) |- node[m,above,pos=.85]{0..*} (tok.west |- 0,-44);
+\draw (user.east |- 0,-30) -- node[m,above,pos=.5]{1} (101,-30) |- node[m,above,pos=.9]{0..*} (ss.west |- 0,-80);
+\draw (user.south) -- node[m,right,pos=.2]{1 (seller)}node[m,right,pos=.8]{0..*} (lot.north);
+\draw (lot.west |- 0,-72) -- node[m,above,pos=.12]{0..*}node[m,above,pos=.88]{1} (zone.east |- 0,-72);
+\draw (lot.west |- 0,-104) -- node[m,above,pos=.12]{0..*}node[m,above,pos=.88]{1} (cat.east |- 0,-104);
+\draw (lot.west |- 0,-132) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{3..5} (photo.east |- 0,-132);
+\draw (lot.south) -- node[m,right,pos=.2]{1}node[m,right,pos=.8]{0..*}node[m,left,pos=.5,align=right]{at most one\\Active} (res.north);
+\draw (lot.east |- 0,-116) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..*} (thread.west |- 0,-116);
+\draw (msg.north) -- node[m,right,pos=.2]{1..*}node[m,right,pos=.8]{1} (thread.south);
+\draw (rep.north) -- node[m,right,pos=.2]{0..*}node[m,right,pos=.8]{0..1} (msg.south);
+\draw (res.west |- 0,-172) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..2} (rate.east |- 0,-172);
+\node[draw,fill=white,align=left,text width=60mm,anchor=north west] at (40,-196)
+  {Foreign keys to \textbf{users} that are not drawn: buyer\_id (reservations, chat\_threads), sender\_id, rater\_id, rated\_id, reporter\_id, resolved\_by, decided\_by. reports.lot\_id also references lots.};
+\end{tikzpicture}
+\end{document}
