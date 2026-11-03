@@ -41,6 +41,18 @@ FR-05 & The system shall allow Admins to approve, reject, request edits, or over
 FR-06 & The system shall allow users to search listings by location, price, and category. & Must & Customer/Buyer \\
 FR-07 & The system shall support real-time chat, negotiation, and lot reservation. & Must & Customer/Buyer; Contractor/Seller \\
 FR-08 & The system shall answer buyer questions using only the listing's structured data and return an explicit unavailable response when information is missing. & Should & Customer/Buyer \\
+FR-20 & The system shall let the buyer and seller of a lot exchange messages in real time in a chat thread. & Must & Customer/Contractor \\
+FR-21 & The system shall persist every chat message so that an offline recipient receives it and the thread history remains available. & Must & Customer/Contractor \\
+FR-22 & The system shall show the presence of chat participants. & Should & Customer/Contractor \\
+FR-23 & The system shall provide the chat thread as the negotiation channel between buyer and seller. & Must & Customer/Contractor \\
+FR-24 & The system shall show Admins each Pending Review lot in the review queue with its AI signals: material, confidence, defects, condition grade, price estimate, and flag reasons. & Must & Admin \\
+FR-25 & The system shall apply the Admin review actions Approve, Reject, Request Edits, and Override to a queued lot and record each Override. & Must & Admin \\
+FR-26 & The system shall apply the outcome Auto-Publish when the AI is confident and no flags are raised, and Send to Review otherwise. & Must & AI pipeline \\
+FR-27 & The system shall send every lot with a Mixed condition grade to review. & Must & Admin \\
+FR-28 & When the AI Service is unavailable, the system shall give the lot the grade Not Assessed with no price suggestion, raise the flag reason AI Unavailable, and move the lot to Pending Review. & Must & AI pipeline \\
+FR-29 & The system shall deliver screening status updates to the seller. & Must & Contractor/Seller \\
+FR-30 & The system shall deliver Listing Assistant answers to the buyer, and a fallback reply when the information is missing or the LLM provider is unavailable. & Should & Customer/Buyer \\
+FR-31 & The system shall show the sender when a chat message has been read. & Should & Customer/Contractor \\
 FR-60 & The system shall display the sentence ``AI assessment applies to the uploaded representative samples and does not guarantee the condition of every unphotographed item.'' on every lot details screen shown to a Customer. & Must & Customer/Buyer \\
 FR-61 & The system shall prevent a lot from being submitted from the Create Lot screen while fewer than 3 or more than 5 photos are attached. & Must & Contractor/Seller \\
 FR-62 & The system shall compress each lot photo on the device before upload. & Should & Contractor/Seller \\
@@ -73,6 +85,10 @@ FR-73 & The system shall state the action needed to correct the problem in every
 \endhead
 NFR-01 & Reliability & AI components shall be decoupled so that a temporarily unavailable AI service does not invalidate a submitted lot, which instead waits in Pending Review. & Must \\
 NFR-02 & Transparency & The system shall disclose that AI assessment applies to representative samples and does not guarantee every unphotographed item. & Must \\
+NFR-40 & Chat performance & A chat message shall reach an online recipient within \placeholder{target time} with \placeholder{number} concurrent users. & Must \\
+NFR-41 & AI turnaround & AI screening of one lot shall complete within \placeholder{target time}. & Must \\
+NFR-42 & Availability & Search, chat, and reservation shall remain usable while the AI Service is down. & Must \\
+NFR-43 & Load and concurrency & The REST API and chat hub shall support \placeholder{number} concurrent users at \placeholder{request or message rate}, checked with k6 or JMeter. & Must \\
 NFR-60 & Accessibility & Text on every screen shall have a contrast ratio of at least 4.5:1, or at least 3:1 for large-scale text, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
 NFR-61 & Accessibility & Every interactive control shall have a touch target of at least 48 by 48 logical pixels on Android and Flutter web. & Should \\
 NFR-62 & Accessibility & At a text scale of 200\%, every screen shall keep all of its content and functions, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
