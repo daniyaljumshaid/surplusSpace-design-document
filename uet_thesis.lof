@@ -2,20 +2,25 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces System context diagram}}{10}{figure.caption.46}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces High-level architecture}}{10}{figure.caption.47}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Core gameplay loop}}{12}{figure.caption.57}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Use-case diagram}}{13}{figure.caption.64}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Activity diagram}}{14}{figure.caption.67}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces State-machine diagram}}{14}{figure.caption.69}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Sequence diagram}}{15}{figure.caption.71}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Class or domain diagram}}{15}{figure.caption.74}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Component diagram}}{16}{figure.caption.76}%
-\contentsline {figure}{\numberline {4.10}{\ignorespaces Package diagram}}{16}{figure.caption.78}%
-\contentsline {figure}{\numberline {4.11}{\ignorespaces Deployment diagram}}{16}{figure.caption.80}%
-\contentsline {figure}{\numberline {4.12}{\ignorespaces Data model or schema}}{17}{figure.caption.83}%
-\contentsline {figure}{\numberline {4.13}{\ignorespaces Navigation structure or user flow}}{18}{figure.caption.89}%
-\contentsline {figure}{\numberline {4.14}{\ignorespaces Key wireframe or prototype}}{19}{figure.caption.90}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces System Context Diagram}}{26}{figure.caption.44}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Use-case diagram}}{32}{figure.caption.54}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Activity Diagram AD-01: Decision Engine flow}}{39}{figure.caption.61}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Activity Diagram AD-02: Condition grading across 3--5 photos}}{41}{figure.caption.62}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces State-machine diagram}}{42}{figure.caption.64}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Sequence Diagram SD-01: Lot submission, screening, and decision}}{43}{figure.caption.66}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Sequence Diagram SD-02: Admin review}}{44}{figure.caption.67}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Sequence Diagram SD-03: Reserve Lot}}{45}{figure.caption.68}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Sequence Diagram SD-04: Buyer and seller chat}}{46}{figure.caption.69}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Sequence Diagram SD-05: Ask Listing Assistant}}{47}{figure.caption.70}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Class or domain diagram}}{48}{figure.caption.73}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces System Architecture Diagram}}{49}{figure.caption.75}%
+\contentsline {figure}{\numberline {4.13}{\ignorespaces Component Diagram (CMP-01)}}{50}{figure.caption.76}%
+\contentsline {figure}{\numberline {4.14}{\ignorespaces Package diagram}}{51}{figure.caption.78}%
+\contentsline {figure}{\numberline {4.15}{\ignorespaces Deployment Diagram (DEP-01)}}{51}{figure.caption.80}%
+\contentsline {figure}{\numberline {4.16}{\ignorespaces Data model or schema}}{52}{figure.caption.83}%
+\contentsline {figure}{\numberline {4.17}{\ignorespaces AI pipeline: screening models M-01 to M-06 and the Listing Assistant M-07}}{53}{figure.caption.87}%
+\contentsline {figure}{\numberline {4.18}{\ignorespaces Navigation structure}}{63}{figure.caption.109}%
+\contentsline {figure}{\numberline {4.19}{\ignorespaces Key wireframes}}{64}{figure.caption.110}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
