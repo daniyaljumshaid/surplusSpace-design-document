@@ -1205,24 +1205,36 @@ notation appropriate to the selected database model.
 
 \subsection{Research Data Management \applicability{Research, Hybrid}}
 \label{sec:research-data-management}
-\begin{guidance}
-Explain how research data will be collected or acquired, named, stored, protected,
-anonymized or pseudonymized, versioned, retained, shared, and disposed of. Identify
-access controls and responsible team members.
-\end{guidance}
+\tref{tab:data-management} gives the plan for each kind of research data. It follows
+the artifact rules in \tref{tab:artifact-management}. Large files, meaning datasets,
+photos, and model weights, are never stored in plain Git. Their master copies are kept
+in a team-only shared Google Drive folder, which the Google Colab training notebooks
+read directly. Only code, configuration, and small manifests are kept in the GitHub
+repository. The AI/ML lead is responsible for the plan, and every team member follows
+it.
 
-\begin{table}[H]
-\centering
-\caption{Research data management plan}
-\label{tab:data-management}
-\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}X X@{}}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.4\textwidth}>{\raggedright\arraybackslash}p{0.37\textwidth}@{}}
+\caption{Research data management plan}\label{tab:data-management}\\
 \toprule
-\textbf{Data category} & \textbf{Management method} & \textbf{Protection, retention, or access rule} \\
+\textbf{Data category} & \textbf{Management method: format, location, naming, and versioning} & \textbf{Protection, retention, or access rule: access, retention, sharing, and disposal} \\
 \midrule
-\placeholder{Raw/processed data, code, consent records, model artifacts} & \placeholder{Format, location, naming, and versioning} & \placeholder{Access, retention, sharing, and disposal} \\
+\endfirsthead
+\toprule
+\textbf{Data category} & \textbf{Management method: format, location, naming, and versioning} & \textbf{Protection, retention, or access rule: access, retention, sharing, and disposal} \\
+\midrule
+\endhead
+Public datasets & Images and labels in the format downloaded, under \texttt{datasets/<name>/<download date>/} in the team Drive. A \texttt{SOURCE.md} file records the URL, download date, and licence (MBDD2025 and SDNET2018 are CC~BY~4.0; the other licences are being checked, RSK-04). Originals are never edited; converted copies go under \texttt{processed/}. & Team only. They are not redistributed; the report cites and links them (ER-05). Copies are deleted after the final evaluation unless the licence allows keeping them. \\
+Team-collected photos & JPEG files with location metadata removed on import, named \texttt{<material>\_<lot>\_<photo>.jpg}, for example \texttt{steel\_L017\_3.jpg}. A manifest CSV lists each photo's lot, site code, date, and split. The locked test split sits in a separate read-only folder. & Team and supervisor only. Sites are coded and not named, and photos with faces, number plates, or house numbers are retaken or excluded. They are not shared outside the team without the owners' permission, and they are deleted when the project ends unless the supervisor asks to keep them for assessment. \\
+Annotations & Bounding boxes as YOLO text files and lot labels (material and grade) as CSV, with labeller initials and no other personal data, versioned as \texttt{annotations\_v<N>} with a change log. & Team only. Kept and deleted together with the photos they describe. \\
+Interview notes and questionnaires & Notes typed into a fixed template with no names, using participant codes (D01--D10 for dealers, C01--C06 for contractors). Reported deals go into a CSV keyed by dealer code. Questionnaire responses are exported without email addresses. Signed consent forms are kept apart from the notes, and no list links codes to names (ER-01, ER-02). & Team only, and consent forms only with the supervisor. Kept until the project ends, then disposed of as the supervisor advises (\tref{tab:artifact-management}). Only aggregate results appear in the report. \\
+Price reference data & New-material prices per unit, each with source and date, kept in the system's PostgreSQL table (DIR-07). A CSV snapshot \texttt{reference\_prices\_<date>.csv} is saved with every M-05 training run. & These are published figures, so they may be shared with their citations. Snapshots are kept with the model version they trained. \\
+Trained model weights & PyTorch \texttt{.pt} files and any ONNX or OpenVINO exports, named \texttt{<model>-<material>-v<major>.<minor>-<date>}, for example \texttt{m02-steel-v1.0-2026-12-01.pt}. Each is stored in the team Drive with a short model card giving its training-data version, settings, and validation metrics. The deployed copy sits on the AI Service server, and its version string is stored with every AI result (DIR-03). & Team only. They are not published while the AGPL-3.0 and dataset-licence questions (P-27) are open. Kept until the final evaluation is complete (\tref{tab:artifact-management}). \\
+Evaluation outputs & Metrics as JSON or CSV, confusion matrices, audit forms, and labelling sheets, named \texttt{eval-<VAR>-<model version>-<date>} under \texttt{results/} in the team Drive. Audit forms and labelling sheets hold lot IDs only. & Team and supervisor. Summaries appear in the final report. Kept until the project ends. \\
+Code and configuration & Python and C\# source, plus YAML or JSON configuration for thresholds, CLIP prompts, the condition-phrase list, and assistant instructions, in the GitHub repository, versioned by commit and release tag. Dataset manifests are kept here too; large files are excluded by \texttt{.gitignore}. & Team only, with no secrets in the repository (\tref{tab:artifact-management}). Kept as the project's permanent record. \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \section{Algorithm or Model Design \applicability{Research, Hybrid; Development or Game if a core algorithm or AI model is used}}
 \label{sec:algorithm-design}

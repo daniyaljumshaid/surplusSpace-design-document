@@ -16,38 +16,39 @@
 \contentsline {table}{\numberline {3.3}{\ignorespaces Comparative analysis}}{24}{table.caption.40}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {4.1}{\ignorespaces Major interfaces}}{27}{table.caption.45}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Variables and data collection}}{29}{table.caption.50}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Use-case list}}{30}{table.4.3}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Use-case specification: Create Lot}}{34}{table.caption.55}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Use-case specification: Search Lots}}{35}{table.caption.56}%
-\contentsline {table}{\numberline {4.6}{\ignorespaces Use-case specification: Reserve Lot}}{36}{table.caption.57}%
-\contentsline {table}{\numberline {4.7}{\ignorespaces Use-case specification: Review Flagged Lot}}{37}{table.caption.58}%
-\contentsline {table}{\numberline {4.8}{\ignorespaces Use-case specification: Ask Listing Assistant}}{38}{table.caption.59}%
-\contentsline {table}{\numberline {4.9}{\ignorespaces Research data management plan}}{53}{table.caption.85}%
-\contentsline {table}{\numberline {4.10}{\ignorespaces Model M-01: CLIP classification}}{54}{table.4.10}%
-\contentsline {table}{\numberline {4.11}{\ignorespaces Defect classes, provisional defect types, and datasets per material}}{55}{table.4.11}%
-\contentsline {table}{\numberline {4.12}{\ignorespaces Model M-02: YOLO defect detection}}{56}{table.4.12}%
-\contentsline {table}{\numberline {4.13}{\ignorespaces Model M-03: Condition engine}}{57}{table.4.13}%
-\contentsline {table}{\numberline {4.14}{\ignorespaces Model M-04: Consistency checker}}{59}{table.4.14}%
-\contentsline {table}{\numberline {4.15}{\ignorespaces Model M-05: XGBoost price model}}{60}{table.4.15}%
-\contentsline {table}{\numberline {4.16}{\ignorespaces Model M-06: Decision Engine}}{61}{table.4.16}%
-\contentsline {table}{\numberline {4.17}{\ignorespaces Model M-07: AI Listing Assistant}}{62}{table.4.17}%
-\contentsline {table}{\numberline {4.18}{\ignorespaces Wireframe annotations}}{65}{table.caption.111}%
-\contentsline {table}{\numberline {4.19}{\ignorespaces Security, privacy, and safety controls}}{67}{table.caption.113}%
-\contentsline {table}{\numberline {4.20}{\ignorespaces Design decisions}}{68}{table.4.20}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Research questions, methods, and variables}}{28}{table.caption.48}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Variables and data collection}}{29}{table.4.3}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Use-case list}}{32}{table.4.4}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Use-case specification: Create Lot}}{36}{table.caption.55}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Use-case specification: Search Lots}}{37}{table.caption.56}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Use-case specification: Reserve Lot}}{38}{table.caption.57}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces Use-case specification: Review Flagged Lot}}{39}{table.caption.58}%
+\contentsline {table}{\numberline {4.9}{\ignorespaces Use-case specification: Ask Listing Assistant}}{40}{table.caption.59}%
+\contentsline {table}{\numberline {4.10}{\ignorespaces Research data management plan}}{55}{table.4.10}%
+\contentsline {table}{\numberline {4.11}{\ignorespaces Model M-01: CLIP classification}}{58}{table.4.11}%
+\contentsline {table}{\numberline {4.12}{\ignorespaces Defect classes, provisional defect types, and datasets per material}}{59}{table.4.12}%
+\contentsline {table}{\numberline {4.13}{\ignorespaces Model M-02: YOLO defect detection}}{60}{table.4.13}%
+\contentsline {table}{\numberline {4.14}{\ignorespaces Model M-03: Condition engine}}{61}{table.4.14}%
+\contentsline {table}{\numberline {4.15}{\ignorespaces Model M-04: Consistency checker}}{62}{table.4.15}%
+\contentsline {table}{\numberline {4.16}{\ignorespaces Model M-05: XGBoost price model}}{63}{table.4.16}%
+\contentsline {table}{\numberline {4.17}{\ignorespaces Model M-06: Decision Engine}}{64}{table.4.17}%
+\contentsline {table}{\numberline {4.18}{\ignorespaces Model M-07: AI Listing Assistant}}{65}{table.4.18}%
+\contentsline {table}{\numberline {4.19}{\ignorespaces Wireframe annotations}}{68}{table.caption.110}%
+\contentsline {table}{\numberline {4.20}{\ignorespaces Security, privacy, and safety controls}}{70}{table.caption.112}%
+\contentsline {table}{\numberline {4.21}{\ignorespaces Design decisions}}{71}{table.4.21}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Design traceability matrix}}{71}{table.5.1}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Verification and validation strategy}}{74}{table.caption.118}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces Software testing document reference}}{75}{table.caption.120}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Risk register}}{75}{table.5.4}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Milestones and schedule}}{79}{table.caption.123}%
-\contentsline {table}{\numberline {5.6}{\ignorespaces Team roles and responsibilities}}{80}{table.caption.125}%
-\contentsline {table}{\numberline {5.7}{\ignorespaces Artifact management}}{81}{table.caption.127}%
-\contentsline {table}{\numberline {5.8}{\ignorespaces Tools and technologies}}{83}{table.caption.129}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces Design traceability matrix}}{74}{table.5.1}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Verification and validation strategy}}{77}{table.caption.117}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Software testing document reference}}{78}{table.caption.119}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Risk register}}{78}{table.5.4}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Milestones and schedule}}{82}{table.caption.122}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Team roles and responsibilities}}{83}{table.caption.124}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces Artifact management}}{84}{table.caption.126}%
+\contentsline {table}{\numberline {5.8}{\ignorespaces Tools and technologies}}{86}{table.caption.128}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {A.1}{\ignorespaces Definitions, acronyms, and domain terms}}{84}{table.A.1}%
+\contentsline {table}{\numberline {A.1}{\ignorespaces Definitions, acronyms, and domain terms}}{87}{table.A.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {B.1}{\ignorespaces AI-01: Lot screening}}{88}{table.B.1}%
-\contentsline {table}{\numberline {B.2}{\ignorespaces AI-02: Listing Assistant}}{90}{table.B.2}%
-\contentsline {table}{\numberline {B.3}{\ignorespaces AI-03: Health check}}{90}{table.B.3}%
-\contentsline {table}{\numberline {B.4}{\ignorespaces Chat hub events}}{91}{table.B.4}%
+\contentsline {table}{\numberline {B.1}{\ignorespaces AI-01: Lot screening}}{91}{table.B.1}%
+\contentsline {table}{\numberline {B.2}{\ignorespaces AI-02: Listing Assistant}}{93}{table.B.2}%
+\contentsline {table}{\numberline {B.3}{\ignorespaces AI-03: Health check}}{93}{table.B.3}%
+\contentsline {table}{\numberline {B.4}{\ignorespaces Chat hub events}}{94}{table.B.4}%
