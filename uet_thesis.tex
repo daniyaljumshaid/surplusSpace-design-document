@@ -132,7 +132,8 @@
 }
 
 \newcommand{\placeholder}[1]{\textcolor{PlaceholderBlue}{\textit{<#1>}}}
-\newcommand{\applicability}[1]{\texorpdfstring{\normalfont\small\textit{(#1)}}{(#1)}}
+% Template applicability notes are not printed in the final document.
+\newcommand{\applicability}[1]{}
 
 \newenvironment{guidance}
   {\begin{quote}\small\color{GuidanceGray}\textbf{Guidance.} }

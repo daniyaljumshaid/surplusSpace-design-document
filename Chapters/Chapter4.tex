@@ -48,6 +48,64 @@ consistency, and price signals to the decision engine.
 \label{fig:system-context}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[diagram]
+  \useasboundingbox (0,-6) rectangle (146.6,156);
+  % Client layer
+  \draw[layer] (0,135) rectangle (147,156);
+  \node[layer title] at (73.5,151.5) {Client Layer};
+  \node[diagram box=10mm,minimum width=62mm] at (36,142) {Flutter client\\web and Android};
+  \node[diagram box=10mm,minimum width=62mm] at (111,142) {Customer/Contractor and Admin\\role-based interfaces};
+
+  % Backend / API layer
+  \draw[layer] (0,83) rectangle (147,122);
+  \node[layer title] at (73.5,118) {Backend / API Layer (ASP.NET Core 8)};
+  \node[diagram box=12mm,text width=22mm] at (15,107) {REST API};
+  \node[diagram box=12mm,text width=26mm] at (44,107) {Authentication\\and RBAC};
+  \node[diagram box=12mm,text width=42mm] at (83,107) {Marketplace operations\\listings, search, reservations};
+  \node[diagram box=12mm,text width=34mm] at (126,107) {SignalR hub\\chat and negotiation};
+  \node[diagram box=11mm,text width=38mm] at (28,92) {AI Verification\\background worker};
+  \node[diagram box=11mm,text width=38mm] at (73.5,92) {Decision Engine\\publish or Admin review};
+  \node[diagram box=11mm,text width=38mm] at (119,92) {Admin Review Queue};
+
+  % Data and storage layer
+  \draw[layer] (0,0) rectangle (43,70);
+  \node[layer title] at (21.5,64.5) {Data and Storage\\Layer};
+  \node[diagram box=13mm,text width=33mm] at (21.5,50) {PostgreSQL and PostGIS\\marketplace data};
+  \node[diagram box=13mm,text width=33mm] at (21.5,32) {Redis\\cache and presence};
+  \node[diagram box=13mm,external,text width=33mm] at (21.5,14) {AWS S3\\listing photos};
+
+  % AI service layer
+  \draw[layer] (51,26) rectangle (147,70);
+  \node[layer title] at (99,65) {AI Service Layer (Python/FastAPI)};
+  \node[diagram box=13mm,text width=26mm] at (67,53) {CLIP\\classification};
+  \node[diagram box=13mm,text width=26mm] at (99,53) {YOLO\\defect detection};
+  \node[diagram box=13mm,text width=26mm] at (131,53) {Condition\\engine};
+  \node[diagram box=13mm,text width=26mm] at (67,36) {Consistency\\checker};
+  \node[diagram box=13mm,text width=26mm] at (99,36) {XGBoost\\price model};
+  \node[diagram box=13mm,text width=26mm] at (131,36) {AI Listing\\Assistant};
+
+  % External service
+  \draw[layer] (51,0) rectangle (147,16);
+  \node[layer title] at (70,8) {External Service};
+  \node[diagram box=10mm,external,text width=52mm] at (117,8) {External LLM provider (to confirm)};
+
+  % Connections between layers
+  \draw[<->] (15,135) -- node[right,flow label] {HTTPS with JSON (INT-01)} (15,122);
+  \draw[<->] (126,135) -- node[left,flow label] {WebSocket: chat and negotiation (INT-03)} (126,122);
+  \draw[<->] (21.5,83) -- node[right,flow label] {database and cache (INT-04);\\photo access (INT-05)} (21.5,70);
+  \draw[<->] (99,83) -- node[right,flow label] {AI requests and results (INT-02)} (99,70);
+  \draw[<->] (131,26) -- node[left,flow label] {LLM I/O (INT-06)} (131,16);
+  \draw[<->] (39,14) -- (47,14) -- (47,40) -- (51,40);
+  \node[flow label,fill=white,rotate=90] at (47,27) {photos (INT-07)};
+
+  \node[anchor=north west,inner sep=0pt] at (0,-2) {Dashed outline: service outside the system boundary. INT identifiers refer to Table~\ref{tab:major-interfaces}.};
+\end{tikzpicture}
+\caption{System Architecture Diagram}
+\label{fig:system-architecture}
+\end{figure}
+
 \begin{table}[H]
 \centering
 \caption{Major interfaces}
@@ -949,64 +1007,6 @@ interfaces, and dependencies.
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[diagram]
-  \useasboundingbox (0,-6) rectangle (146.6,156);
-  % Client layer
-  \draw[layer] (0,135) rectangle (147,156);
-  \node[layer title] at (73.5,151.5) {Client Layer};
-  \node[diagram box=10mm,minimum width=62mm] at (36,142) {Flutter client\\web and Android};
-  \node[diagram box=10mm,minimum width=62mm] at (111,142) {Customer/Contractor and Admin\\role-based interfaces};
-
-  % Backend / API layer
-  \draw[layer] (0,83) rectangle (147,122);
-  \node[layer title] at (73.5,118) {Backend / API Layer (ASP.NET Core 8)};
-  \node[diagram box=12mm,text width=22mm] at (15,107) {REST API};
-  \node[diagram box=12mm,text width=26mm] at (44,107) {Authentication\\and RBAC};
-  \node[diagram box=12mm,text width=42mm] at (83,107) {Marketplace operations\\listings, search, reservations};
-  \node[diagram box=12mm,text width=34mm] at (126,107) {SignalR hub\\chat and negotiation};
-  \node[diagram box=11mm,text width=38mm] at (28,92) {AI Verification\\background worker};
-  \node[diagram box=11mm,text width=38mm] at (73.5,92) {Decision Engine\\publish or Admin review};
-  \node[diagram box=11mm,text width=38mm] at (119,92) {Admin Review Queue};
-
-  % Data and storage layer
-  \draw[layer] (0,0) rectangle (43,70);
-  \node[layer title] at (21.5,64.5) {Data and Storage\\Layer};
-  \node[diagram box=13mm,text width=33mm] at (21.5,50) {PostgreSQL and PostGIS\\marketplace data};
-  \node[diagram box=13mm,text width=33mm] at (21.5,32) {Redis\\cache and presence};
-  \node[diagram box=13mm,external,text width=33mm] at (21.5,14) {AWS S3\\listing photos};
-
-  % AI service layer
-  \draw[layer] (51,26) rectangle (147,70);
-  \node[layer title] at (99,65) {AI Service Layer (Python/FastAPI)};
-  \node[diagram box=13mm,text width=26mm] at (67,53) {CLIP\\classification};
-  \node[diagram box=13mm,text width=26mm] at (99,53) {YOLO\\defect detection};
-  \node[diagram box=13mm,text width=26mm] at (131,53) {Condition\\engine};
-  \node[diagram box=13mm,text width=26mm] at (67,36) {Consistency\\checker};
-  \node[diagram box=13mm,text width=26mm] at (99,36) {XGBoost\\price model};
-  \node[diagram box=13mm,text width=26mm] at (131,36) {AI Listing\\Assistant};
-
-  % External service
-  \draw[layer] (51,0) rectangle (147,16);
-  \node[layer title] at (70,8) {External Service};
-  \node[diagram box=10mm,external,text width=52mm] at (117,8) {External LLM provider (to confirm)};
-
-  % Connections between layers
-  \draw[<->] (15,135) -- node[right,flow label] {HTTPS with JSON (INT-01)} (15,122);
-  \draw[<->] (126,135) -- node[left,flow label] {WebSocket: chat and negotiation (INT-03)} (126,122);
-  \draw[<->] (21.5,83) -- node[right,flow label] {database and cache (INT-04);\\photo access (INT-05)} (21.5,70);
-  \draw[<->] (99,83) -- node[right,flow label] {AI requests and results (INT-02)} (99,70);
-  \draw[<->] (131,26) -- node[left,flow label] {LLM I/O (INT-06)} (131,16);
-  \draw[<->] (39,14) -- (47,14) -- (47,40) -- (51,40);
-  \node[flow label,fill=white,rotate=90] at (47,27) {photos (INT-07)};
-
-  \node[anchor=north west,inner sep=0pt] at (0,-2) {Dashed outline: service outside the system boundary. INT identifiers refer to Table~\ref{tab:major-interfaces}.};
-\end{tikzpicture}
-\caption{System Architecture Diagram}
-\label{fig:system-architecture}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[diagram]
   \useasboundingbox (0,0) rectangle (146.6,158);
   % Client
   \umlcomponent{client}{55}{153}{104}{10}{Flutter client (web and Android)}
@@ -1094,14 +1094,6 @@ interfaces, and dependencies.
 \caption{Component Diagram (CMP-01)}
 \label{fig:component-diagram}
 \end{figure}
-
-\subsection{Package Model \applicability{If required}}
-\begin{guidance}
-Use a package diagram when the organization and dependencies of modules or layers
-need clarification. Omit it when the component or class model already communicates
-the structure adequately.
-\end{guidance}
-\diagramplaceholder{Package diagram}{Example packages: presentation, application, domain, and infrastructure.}
 
 \subsection{Deployment Model \applicability{Deployed, distributed, networked, or multi-device systems}}
 \begin{guidance}
