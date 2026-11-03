@@ -1,0 +1,33 @@
+% Source for fig_4_5_1_class_marketplace.pdf. Build: pdflatex fig_4_5_1_class_marketplace.tex
+\documentclass[tikz,border=3pt]{standalone}
+\input{cls_preamble.tex}
+\begin{document}
+\begin{tikzpicture}[diagram]
+\cls{app}{0,0}{ContractorApplication}{sellerType: SellerType\\businessName: String\\businessAddress: String\\yardLocation: GeoPoint\\yearsInBusiness: Integer\\shopPhotoKey: String [0..1]\\link: String [0..1]\\status: ApplicationStatus\\rejectionReason: String [0..1]\\verificationNote: String}{approve(note)\\reject(reason, note)}
+\cls{user}{72,0}{User}{name: String\\email: String\\phone: String\\passwordHash: String\\isAdmin: Boolean\\activeProfile: Profile\\isSuspended: Boolean\\noShowCount: Integer}{switchProfile()\\suspend()\\unsuspend()}
+\clsb{note}{144,0}{Notification}{type: String\\text: String\\createdAt: DateTime\\readAt: DateTime [0..1]}
+\clsb{ss}{144,-36}{SavedSearch}{centre: GeoPoint\\radiusKm: Integer\\maxPrice: Money [0..1]\\materials: Material [0..4]}
+\clsb{zone}{0,-62}{Zone}{name: String\\centre: GeoPoint\\radiusKm: Integer\\isActive: Boolean}
+\clsb{cat}{0,-94}{Category}{material: Material\\unit: Unit\\isActive: Boolean}
+\cls{lot}{72,-60}{Lot}{quantity: Decimal\\description: String\\totalPrice: Money\\ageBand: AgeBand\\pickupLocation: GeoPoint\\status: LotStatus\\version: Integer\\publishedAt: DateTime [0..1]\\changesRequestedAt: DateTime [0..1]\\removedAt: DateTime [0..1]\\finalSalePrice: Money [0..1]}{submit()\\edit()\\relist()\\remove()\\markSold(finalPrice)}
+\clsb{photo}{0,-124}{LotPhoto}{storageKey: String\\order: Integer\\sizeBytes: Integer\\uploadedAt: DateTime}
+\clsb{thread}{144,-80}{ChatThread}{buyer: User\\createdAt: DateTime}
+\clsb{msg}{144,-110}{Message}{sender: User\\text: String\\sentAt: DateTime\\readAt: DateTime [0..1]}
+\clsb{rep}{144,-148}{Report}{reporter: User\\reportedLot: Lot [0..1]\\reportedMessage: Message [0..1]\\reason: ReportReason\\explanation: String\\status: ReportStatus\\resolutionNote: String [0..1]}
+\cls{res}{72,-140}{Reservation}{buyer: User\\status: ReservationStatus\\createdAt: DateTime\\pickupDeadline: DateTime\\endedAt: DateTime [0..1]}{complete(finalPrice)\\markNoShow()\\cancel()\\\{buyer holds at most 3 Active\}}
+\clsb{rate}{0,-160}{Rating}{rater: User\\rated: User\\stars: Integer \{1..5\}\\comment: String [0..1]\\visibleAt: DateTime}
+% User associations
+\draw (user.west |- 0,-14) -- node[m,above,pos=.15]{1}node[m,above,pos=.85]{0..1}node[role,below]{submits} (app.east |- 0,-14);
+\draw (user.east |- 0,-12) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..*} (note.west |- 0,-12);
+\draw (user.east |- 0,-30) -| (108,-44) -- node[m,above,pos=.12]{1}node[m,above,pos=.85]{0..*}node[role,below,pos=.5]{saves} (ss.west |- 0,-44);
+\draw (user.south) -- node[m,right,pos=.12]{1 seller}node[m,right,pos=.85]{0..*}node[role,left]{sells} (lot.north);
+% Lot associations
+\draw (lot.west |- 0,-68) -- node[m,above,pos=.15]{*}node[m,above,pos=.85]{1}node[role,below]{located in} (zone.east |- 0,-68);
+\draw (lot.west |- 0,-98) -- node[m,above,pos=.15]{*}node[m,above,pos=.85]{1}node[role,below]{of} (cat.east |- 0,-98);
+\draw[comp] (photo.east |- 0,-130) -- (32,-130) |- node[m,left,pos=.6]{1}node[m,above,pos=.15]{3..5} ([yshift=4mm]lot.south west);
+\draw (lot.south) -- node[m,right,pos=.12]{1}node[m,right,pos=.8]{0..*}node[role,left,align=right]{\{at most one\\Active\}} (res.north);
+\draw (lot.east |- 0,-86) -- node[m,above,pos=.12]{1}node[m,above,pos=.85]{0..*}node[role,below]{about} (thread.west |- 0,-86);
+\draw[comp] (msg.north) -- node[m,right,pos=.2]{1..*}node[m,right,pos=.85]{1} (thread.south);
+\draw (res.west |- 0,-166) -- node[m,above,pos=.12]{1}node[m,above,pos=.85]{0..2}node[role,below]{rated by} (rate.east |- 0,-166);
+\end{tikzpicture}
+\end{document}

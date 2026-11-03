@@ -898,11 +898,48 @@ that do not communicate a design decision.
 \end{guidance}
 
 \subsection{Class or Domain Model}
-\begin{guidance}
-Show important domain concepts or software classes, relevant attributes and
-operations, relationships, multiplicities, and inheritance where justified.
-\end{guidance}
-\diagramplaceholder{Class or domain diagram}{Example classes: Student, Adviser, Appointment, AvailabilitySlot, and Notification.}
+The domain model is shown in two views of one model so that each stays readable at page
+width. \fref{fig:class-marketplace} covers accounts, lots, and trading;
+\fref{fig:class-screening} covers AI screening, Admin review, and the settings the AI uses,
+and lists every enumeration with its locked values. Lot, LotPhoto, User, and Category
+appear in both views; the second view shows only the attributes it needs. Framework
+classes, such as tokens and database contexts, are left out because they do not express
+a design decision.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{fig_4_5_1_class_marketplace.pdf}
+\caption{Domain model, view 1: marketplace}
+\label{fig:class-marketplace}
+\end{figure}
+
+One User account holds both profiles and switches between them; a ContractorApplication
+must be approved before the user can sell. A Lot belongs to one Zone and one Category,
+whose Unit fixes the quantity unit, and is composed of 3--5 LotPhotos. A Lot has many
+Reservations over time but at most one Active at once, and each buyer may hold at most
+three Active reservations; these constraints are enforced in the database
+(\sref{sec:data-design}). A completed Reservation can receive up to two Ratings, one from
+each side. ChatThreads belong to a Lot and are composed of Messages. A Report refers to a
+lot or a message, and its reporter, like a message sender, is recorded as a User
+reference to keep the diagram readable.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{fig_4_5_1_class_screening.pdf}
+\caption{Domain model, view 2: AI screening, review, and enumerations}
+\label{fig:class-screening}
+\end{figure}
+
+Each screening of a lot creates a new AIAssessment, so a re-screened lot keeps its full
+history for evaluation (DIR-03). An AIAssessment is composed of one PhotoAssessment per
+photo, which records the photo's quality, material, and grade, and each PhotoAssessment
+holds its DetectedDefects. The assessment stores the signals and the Decision Engine's
+outcome with every flag reason raised, and the model versions used (FR-53, FR-58). Each
+ReviewDecision records the Admin's action and the AI outcome it confirmed or overturned,
+which feeds the Admin-agreement measures of the research evaluation. ThresholdConfig and
+ReferencePrice keep each change with the Admin who made it. The enumerations use exactly
+the locked values, so the same words appear in the state machines, the database, the API,
+and the screens.
 
 \subsection{Component Model}
 \begin{guidance}
