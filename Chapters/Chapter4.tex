@@ -535,11 +535,45 @@ thresholds are provisional, are tuned on the team's tuning photos, and are never
 tuned on the test set (Section~\ref{sec:algorithm-design}).
 
 \subsection{State-Machine Model \applicability{State-dependent systems and games}}
-\begin{guidance}
-Model the lifecycle of one important stateful entity. Show states, triggering
-events, guards where needed, actions, and initial and final states.
-\end{guidance}
-\diagramplaceholder{State-machine diagram}{Example entity: Appointment; states may include Requested, Approved, Rescheduled, Completed, and Cancelled.}
+The lot is the central stateful entity, and its reservation decides whether a lot can be
+sold. \fref{fig:st-01} shows the lot lifecycle (ST-01) and \fref{fig:st-02} the
+reservation lifecycle (ST-02). Both use the locked status names, and each transition is
+labelled \emph{event [guard] / action}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_4_4_3_st_lot.pdf}
+\caption{State-machine diagram ST-01: Lot lifecycle}
+\label{fig:st-01}
+\end{figure}
+
+A new lot starts as Draft and enters Screening when it has 3--5 photos and a pickup point
+inside an active zone. A blurry or dark photo returns it to Changes Requested without an
+Admin decision (FR-47). Otherwise, a lot with no flags is published automatically, and a
+lot with any flag, including the AI being unavailable, waits in Pending Review for the
+Admin. Request Edits also leads to Changes Requested, from which the Contractor resubmits
+to Screening; a lot left there for 14 days expires (FR-14). Editing a Published lot sends
+it back to Screening (FR-13), so no change reaches buyers unchecked. A Published lot
+becomes Reserved only through the guarded reservation in \fref{fig:st-02}, returns to
+Published if that reservation is cancelled or ends in No-Show, and becomes Sold when the
+Contractor marks it sold. A lot expires 30 days after publication and can be relisted
+through Screening (FR-15). Rejected and Sold are final (FR-85).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_4_4_3_st_reservation.pdf}
+\caption{State-machine diagram ST-02: Reservation lifecycle}
+\label{fig:st-02}
+\end{figure}
+
+The guard on reserve, that no other Active reservation exists for the lot, is what keeps a
+lot from being reserved by two buyers at once; it is enforced by a version-checked update
+inside a database transaction (UC-03, SD-03, NFR-21). The Contractor ends an Active
+reservation by marking it sold or, only after the 48-hour deadline, No-Show; either user
+can cancel it. If no outcome is recorded within 24 hours after the deadline, the Scheduler
+cancels it without penalty (UC-34), and suspending either user also cancels it (FR-19).
+When a reservation ends without a sale, the lot returns to Published, or to Expired if its
+30 days have passed.
 
 \subsection{Sequence Model}
 \begin{guidance}

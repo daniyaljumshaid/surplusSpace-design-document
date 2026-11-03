@@ -1,0 +1,9 @@
+\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usetikzlibrary{arrows.meta,calc,shapes.geometric}
+\newcommand{\diagramfont}{\scriptsize\linespread{1}\selectfont}
+\tikzset{
+  diagram/.style={x=1mm,y=1mm,font=\diagramfont,>={Stealth[length=1.7mm,width=1.3mm]},line width=0.4pt},
+  st/.style={draw,rounded corners=2.5mm,fill=white,minimum width=34mm,minimum height=10mm,align=center,font=\footnotesize\bfseries},
+  tl/.style={fill=white,inner sep=0.6mm,align=center,font=\diagramfont},
+  ad initial/.style={circle,fill=black,minimum size=3mm,inner sep=0},
+  ad final/.style={circle,draw,double,double distance=0.6mm,fill=black,minimum size=2.4mm,inner sep=0}}
