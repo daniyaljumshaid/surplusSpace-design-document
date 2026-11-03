@@ -123,7 +123,9 @@ brief explanation of important flows, alternatives, or design decisions.
 \subsection{Use-Case Model}
 The human actors are Admin, Customer, and Contractor. Customer and Contractor
 generalise to Registered User, because one account switches between the two
-profiles, and the AI Service is a secondary actor.
+profiles. The secondary actors are the AI Service, the language-model provider (LLM
+Provider), and the Email Service. A Scheduler actor, the timed background job that runs
+every few minutes, expires old lots and cancels reservations whose pickup deadline has passed.
 \tref{tab:use-case-list} lists each use case as a user goal, traced to the
 objective and scope item it supports.
 
@@ -139,29 +141,40 @@ objective and scope item it supports.
 \midrule
 \endhead
 UC-01 & Create Lot & Contractor & None & OBJ-01 & SCP-01 \\
-UC-02 & Search Lots & Customer & None & OBJ-01 & SCP-02, SCP-05 \\
-UC-03 & Reserve Lot & Customer & None & OBJ-01 & SCP-02, SCP-05 \\
-UC-04 & Review Flagged Lot & Admin & None & OBJ-03 & SCP-04 \\
-UC-05 & Ask Listing Assistant & Customer & AI Service & OBJ-03 & SCP-04 \\
-UC-06 & Screen Lot & Contractor & AI Service & OBJ-02 & SCP-03 \\
-UC-07 & Register and Sign In & Registered User & None & OBJ-01 & SCP-02 \\
-UC-08 & Switch Profile & Registered User & None & OBJ-01 & SCP-02 \\
-UC-09 & Apply for Contractor Approval & Registered User & None & OBJ-01 & SCP-02 \\
-UC-10 & Resubmit Lot After Edits & Contractor & \placeholder{TODO} & OBJ-01, OBJ-03 & SCP-01, SCP-04 \\
+UC-02 & Search Lots & Customer & None & OBJ-03 & SCP-02, SCP-05 \\
+UC-03 & Reserve Lot & Customer & None & OBJ-03 & SCP-02, SCP-05 \\
+UC-04 & Review Flagged Lot & Admin & None & OBJ-02 & SCP-04 \\
+UC-05 & Ask Listing Assistant & Customer & AI Service, LLM Provider & OBJ-03 & SCP-04 \\
+UC-06 & Screen Lot & Contractor & AI Service & OBJ-01, OBJ-02 & SCP-03 \\
+UC-07 & Register & Registered User & Email Service & OBJ-03 & SCP-02 \\
+UC-08 & Switch Profile & Registered User & None & OBJ-03 & SCP-02 \\
+UC-09 & Apply for Contractor Approval & Registered User & None & OBJ-02 & SCP-04 \\
+UC-10 & Resubmit Lot After Edits & Contractor & AI Service & OBJ-01, OBJ-02 & SCP-01, SCP-03 \\
 UC-11 & Manage My Lots & Contractor & None & OBJ-01 & SCP-01 \\
-UC-12 & Mark Lot Sold & Contractor & None & OBJ-01 & SCP-02 \\
-UC-13 & View Lot Details & Customer & None & OBJ-01 & SCP-02 \\
-UC-14 & Chat With Seller & Customer & None & OBJ-01 & SCP-05 \\
-UC-15 & Cancel Reservation & Customer & None & OBJ-01 & SCP-02, SCP-05 \\
-UC-16 & Rate Seller & Customer & None & OBJ-01 & SCP-05 \\
-UC-17 & Save Search & Customer & None & OBJ-01 & SCP-05 \\
-UC-18 & Approve Contractor & Admin & None & OBJ-03 & SCP-04 \\
-UC-19 & Override AI Decision & Admin & None & OBJ-03 & SCP-04 \\
-UC-20 & Tune Thresholds & Admin & None & OBJ-03 & SCP-04 \\
-UC-21 & Manage Catalog and Zones & Admin & None & OBJ-03 & SCP-04 \\
-UC-22 & Suspend User & Admin & None & OBJ-03 & SCP-04 \\
-UC-23 & Review Reported Content & Admin & None & OBJ-03 & SCP-04 \\
-UC-24 & View AI Performance Dashboard & Admin & None & OBJ-03 & SCP-04 \\
+UC-12 & Mark Lot Sold & Contractor & None & OBJ-03 & SCP-02 \\
+UC-13 & View Lot Details & Customer & None & OBJ-03 & SCP-02 \\
+UC-14 & Chat With Seller & Customer, Contractor & None & OBJ-03 & SCP-05 \\
+UC-15 & Cancel Reservation & Customer, Contractor & None & OBJ-03 & SCP-02, SCP-05 \\
+UC-16 & Rate User & Registered User & None & OBJ-03 & SCP-05 \\
+UC-17 & Save Search & Customer & None & OBJ-03 & SCP-05 \\
+UC-18 & Approve Contractor & Admin & None & OBJ-02 & SCP-04 \\
+UC-19 & Override AI Decision & Admin & None & OBJ-02 & SCP-04 \\
+UC-20 & Tune Thresholds & Admin & None & OBJ-02 & SCP-04 \\
+UC-21 & Manage Catalog & Admin & None & OBJ-02 & SCP-04 \\
+UC-22 & Suspend User & Admin & None & OBJ-02 & SCP-04 \\
+UC-23 & Review Reported Content & Admin & None & OBJ-02 & SCP-04 \\
+UC-24 & View AI Performance Dashboard & Admin & None & OBJ-02 & SCP-04 \\
+UC-25 & Report Content & Customer, Contractor & None & OBJ-02 & SCP-04 \\
+UC-26 & Reset Password & Registered User & Email Service & OBJ-03 & SCP-02 \\
+UC-27 & View Notifications & Registered User & None & OBJ-03 & SCP-02, SCP-05 \\
+UC-28 & Remove Lot & Contractor & None & OBJ-01 & SCP-01 \\
+UC-29 & Relist Expired Lot & Contractor & AI Service & OBJ-01, OBJ-02 & SCP-01, SCP-03 \\
+UC-30 & Mark No-Show & Contractor & None & OBJ-03 & SCP-02 \\
+UC-31 & Manage Reference Prices & Admin & None & OBJ-01, OBJ-02 & SCP-03, SCP-04 \\
+UC-32 & Expire Lots & Scheduler & None & OBJ-01 & SCP-01 \\
+UC-33 & Sign In & Registered User, Admin & None & OBJ-02, OBJ-03 & SCP-02, SCP-04 \\
+UC-34 & Cancel Overdue Reservation & Scheduler & None & OBJ-03 & SCP-02 \\
+UC-35 & Manage Zones & Admin & None & OBJ-02 & SCP-04 \\
 \bottomrule
 \end{longtable}
 }
@@ -170,14 +183,27 @@ UC-24 & View AI Performance Dashboard & Admin & None & OBJ-03 & SCP-04 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth,height=0.75\textheight,keepaspectratio]{fig_4_4_1_use_case.pdf}
+\includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{fig_4_4_1_use_case.pdf}
 \caption{Use-case diagram}
 \label{fig:use-case-diagram}
 \end{figure}
 
-Create Lot includes Screen Lot because every submitted lot must pass AI screening
-before it can be published. Override AI Decision extends Review Flagged Lot because
-an Admin overrides the AI only in some reviews and only while reviewing a flagged lot.
+Create Lot, Resubmit Lot After Edits, and Relist Expired Lot each include Screen Lot,
+because every new, edited, or relisted lot must pass AI screening before it can be
+published. Each extend relationship marks an optional goal that starts inside its base use
+case. Reserve Lot, Ask Listing Assistant, Chat With Seller, and Report Content extend View
+Lot Details, because they begin from a lot's page and only when the Customer chooses them.
+Chat With Seller also extends Ask Listing Assistant, because the assistant's fallback reply
+directs the Customer to the seller, and Report Content also extends Chat With Seller, because
+a message can be reported while chatting. Save Search extends Search Lots, and Reset Password
+extends Sign In, where a user who has forgotten a password starts it. Resubmit Lot After Edits, Remove Lot, and Relist Expired Lot
+extend Manage My Lots, where the Contractor starts them. Override AI Decision extends Review
+Flagged Lot because an Admin overrides the AI only in some reviews. Register and Sign In
+are separate goals: a user registers once but signs in for every session, and the Admin's
+fixed account signs in without registering. Sign In depends on Register only as a
+precondition, an existing verified account, so no relationship is drawn between them. In
+the same way, being signed in is a precondition of the other use cases rather than an
+included use case, because it is not a step of any user goal.
 
 \tref{tab:uc-create-lot} to \tref{tab:uc-ask-assistant} specify the five core use cases.
 
@@ -194,22 +220,23 @@ Use-case ID and name & UC-01: Create Lot \\
 Primary actor & Contractor \\
 Preconditions & The Contractor is signed in and approved by the Admin. \\
 Trigger & The Contractor opens Create Lot. \\
-Main flow & 1.~The Contractor enters quantity, description, and price.\newline
-2.~The Contractor attaches 3--5 representative photos.\newline
-3.~The Contractor submits the lot.\newline
-4.~The system validates the photo count.\newline
-5.~The system compresses and uploads the photos.\newline
-6.~The system sets the lot status to Screening.\newline
-7.~The system performs UC-06 Screen Lot with the AI Service.\newline
+Main flow & 1.~The Contractor chooses the material, and the system shows its fixed quantity unit.\newline
+2.~The Contractor enters quantity, description, price, and age band.\newline
+3.~The Contractor confirms the pickup location on the map, which starts at the phone's position.\newline
+4.~The Contractor attaches 3--5 representative photos and submits the lot.\newline
+5.~The system validates the photo count and that the location lies inside an active zone.\newline
+6.~The system compresses and uploads the photos, which the server checks and strips of location metadata.\newline
+7.~The system sets the lot status to Screening and performs UC-06 Screen Lot with the AI Service.\newline
 8.~The Decision Engine returns Auto-Publish.\newline
 9.~The system sets the lot status to Published.\newline
 10.~The system shows the status and condition grade to the Contractor. \\
-Alternative or exception flows & A1, fewer than 3 photos (step 4): the system blocks submission, states how many photos to add, and returns to step 2.\newline
-A2, AI Service unavailable (step 7): the lot receives grade Not Assessed, no price suggestion, and flag reason AI Unavailable, and its status becomes Pending Review.\newline
-A3, flagged to review (step 8): the Decision Engine returns Send to Review, the status becomes Pending Review, the system shows each flag reason, and UC-04 follows.\newline
-A4, rejected (after A2 or A3): the Admin rejects the lot in UC-04, and the status becomes Rejected. \\
+Alternative or exception flows & A1, fewer than 3 photos (step 5): the system blocks submission, states how many photos to add, and returns to step 4.\newline
+A2, location outside every active zone (step 5): the system refuses the lot, names the active zones, and returns to step 3.\newline
+A3, AI Service unavailable after one retry (step 7): the lot receives grade Not Assessed, no price suggestion, and flag reason AI Unavailable, and its status becomes Pending Review.\newline
+A4, flagged to review (step 8): the Decision Engine returns Send to Review, the status becomes Pending Review, the system shows each flag reason, and UC-04 follows.\newline
+A5, rejected (after A3 or A4): the Admin rejects the lot in UC-04, the status becomes Rejected, and the lot cannot be resubmitted. \\
 Postconditions & The lot is Published, Pending Review, or Rejected. \\
-Related requirements & FR-01--FR-05, FR-61--FR-65, FR-72, FR-73; NFR-01, NFR-65, NFR-67 \\
+Related requirements & FR-01--FR-04, FR-12, FR-28, FR-61--FR-65, FR-72--FR-74, FR-82, FR-85; NFR-01, NFR-28, NFR-29, NFR-65, NFR-67 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -235,10 +262,10 @@ Main flow & 1.~The Customer sets a location and search radius.\newline
 6.~The system shows the matching lots.\newline
 7.~The Customer selects a lot, and UC-13 View Lot Details follows. \\
 Alternative or exception flows & A1, no matching lot (step 6): the system states that no lot matched and suggests widening the radius or filters, and the flow returns to step 1.\newline
-A2, location unavailable (step 1): \placeholder{TODO: depends on the location input and map decision}.\newline
+A2, location unavailable (step 1): the Customer chooses an area from a list, and the search uses that area's centre point.\newline
 A3, search saved (step 6): the Customer saves the search through UC-17 Save Search. \\
 Postconditions & Matching lots are shown, and no lot data has changed. \\
-Related requirements & FR-06, FR-72, FR-73; NFR-60--NFR-64, NFR-66, NFR-68 \\
+Related requirements & FR-06, FR-72, FR-73, FR-75, FR-84; NFR-20, NFR-60--NFR-64, NFR-66, NFR-68 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -254,19 +281,20 @@ Related requirements & FR-06, FR-72, FR-73; NFR-60--NFR-64, NFR-66, NFR-68 \\
 \midrule
 Use-case ID and name & UC-03: Reserve Lot \\
 Primary actor & Customer \\
-Preconditions & The Customer is signed in, and the lot details screen is open. \\
+Preconditions & The Customer is signed in, the lot details screen is open, and the lot was not listed by the same user. \\
 Trigger & The Customer presses Reserve. \\
 Main flow & 1.~The system starts a database transaction~\citep{postgresqlisolation}.\newline
 2.~The system confirms that the lot status is Published and that its version is unchanged.\newline
-3.~The system creates a reservation with status Active.\newline
+3.~The system creates a reservation with status Active and a 48-hour pickup deadline.\newline
 4.~The system sets the lot status to Reserved.\newline
 5.~The system commits the transaction.\newline
-6.~The system shows the Active reservation to the Customer.\newline
+6.~The system shows the Active reservation and the exact pickup location to the Customer.\newline
 7.~The system shows the Reserved status to the Contractor. \\
 Alternative or exception flows & A1, already reserved (step 2): the version or status check fails, no reservation is created, and the system states that another buyer has reserved the lot.\newline
-A2, expired (step 2): the lot status is Expired, no reservation is created, and the system states that the lot has expired. \\
+A2, expired (step 2): the lot status is Expired, no reservation is created, and the system states that the lot has expired.\newline
+A3, reservation limit reached (step 2): the Customer already holds 3 Active reservations, no reservation is created, and the system states the limit. \\
 Postconditions & On success, the lot is Reserved and has exactly one Active reservation. Otherwise, the lot is unchanged. \\
-Related requirements & FR-07, FR-63, FR-70, FR-73; NFR-66 \\
+Related requirements & FR-07, FR-16--FR-18, FR-63, FR-70, FR-73, FR-75; NFR-21, NFR-66 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -282,7 +310,7 @@ Related requirements & FR-07, FR-63, FR-70, FR-73; NFR-66 \\
 \midrule
 Use-case ID and name & UC-04: Review Flagged Lot \\
 Primary actor & Admin \\
-Preconditions & The Admin is signed in, and at least one lot is Pending Review. \\
+Preconditions & The Admin is signed in with a second factor, and at least one lot is Pending Review. \\
 Trigger & The Admin opens the review queue. \\
 Main flow & 1.~The system lists the Pending Review lots.\newline
 2.~The Admin selects a lot.\newline
@@ -296,7 +324,7 @@ Alternative or exception flows & A1, Reject (step 5): the status becomes Rejecte
 A2, Request Edits (step 5): the Admin writes a message, the status becomes Changes Requested, the Contractor sees the message, and UC-10 follows.\newline
 A3, Override (step 5): UC-19 Override AI Decision extends this use case, the Admin overrules the AI in either direction, and the status becomes Published or Rejected. \\
 Postconditions & The lot is Published, Rejected, or Changes Requested, and the decision is recorded. \\
-Related requirements & FR-04, FR-05, FR-63, FR-65, FR-66; NFR-60--NFR-64 \\
+Related requirements & FR-04, FR-05, FR-24, FR-25, FR-63, FR-65, FR-66; NFR-26, NFR-60--NFR-64 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -320,9 +348,10 @@ Main flow & 1.~The Customer types a question about the lot.\newline
 4.~The system shows the answer.\newline
 5.~The Customer may ask another question, and the flow returns to step 1. \\
 Alternative or exception flows & A1, information missing (step 3): the assistant replies ``not available, contact the seller'', and the Customer may start UC-14 Chat With Seller.\newline
-A2, AI Service unavailable (step 2): the system states that the assistant is unavailable, and the Customer may start UC-14 Chat With Seller. \\
+A2, AI Service or language-model provider unavailable, or the model declines to answer (step 2 or 3): the system shows the fallback reply, and the Customer may start UC-14 Chat With Seller.\newline
+A3, question limit reached (step 1): the Customer has asked 20 questions in the past hour, and the system states when asking is possible again. \\
 Postconditions & The Customer has an answer or a reason why none is available, and no lot data has changed. \\
-Related requirements & FR-08, FR-72; NFR-60, NFR-63, NFR-66 \\
+Related requirements & FR-08, FR-30, FR-72; NFR-06, NFR-60, NFR-63, NFR-66 \\
 \bottomrule
 \end{tabularx}
 \end{table}
