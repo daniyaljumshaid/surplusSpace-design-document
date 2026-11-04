@@ -1,5 +1,4 @@
 % This file is included by uet_thesis.tex.
-% Replace blue placeholders and remove example text before submission.
 
 \chapter{Project Overview}
 \label{chap:overview}
@@ -20,26 +19,29 @@ and category, negotiate through real-time chat, and reserve lots. An AI Listing
 Assistant answers questions using only the listing's own data. The project is
 limited to four material categories and evaluates classification, defect
 detection, price estimation, and agreement between automated decisions and Admin
-judgement.
+judgement. The deliverables are Android and web apps, the AI Service, and an evaluation
+report, giving buyers screened listings and the Admin a smaller review workload.
 
 \section{Background and Motivation}
-Surplus bricks, steel, tiles/marble, and wood are often wasted because
-sellers and buyers lack a trustworthy exchange channel. Reviewed classifieds
-platforms document no automatic check of listing condition, price fairness, or
-description accuracy, and manual moderation is difficult to scale. The project
-therefore combines a construction-material marketplace with an AI verification
-step and a human Admin fallback. The scope is deliberately limited to four
-material categories and documented defect classes so that the system can be
-developed and evaluated within the six-month schedule.
+Construction projects can finish with surplus bricks, steel, tiles/marble, and wood,
+while construction costs in Pakistan keep rising~\citep{thenewscosts2026}, so reusable
+material has value to buyers on a budget. In Lahore such material is sold today through
+general classifieds such as OLX Pakistan and Facebook Marketplace~\citep{olxpakistan,facebookmarketplace},
+which document no check of a listing's condition, description, or price before it goes
+live. Zarea serves businesses and suppliers~\citep{zareaabout}, and Rheaply serves
+organisations reusing items~\citep{rheaplyfeatures}; neither grades condition from
+photos (Chapter~\ref{chap:literature}). Sellers with leftover stock and buyers looking for
+cheaper material are the users affected. The project therefore combines a surplus-material
+marketplace with AI screening and a human Admin, limited to four material categories so
+that it can be built and evaluated within the six-month schedule.
 
 \section{Problem Statement}
-Contractors and sellers listing surplus construction material have no automated
-way to verify, before a listing reaches buyers, that its condition, price, and
-description are consistent and honest. Without such a check, moderation depends on
-people reviewing listings by hand, which does not scale and leaves buyers
-exposed to misrepresented listings. A marketplace is therefore needed that
-screens each listing for material type, visible condition, description accuracy, and
-price fairness before publication while retaining a human Admin as the final authority.
+Sellers listing surplus construction material have no automated way to check,
+before a listing reaches buyers, that its material, condition, description, and
+price agree. Existing marketplaces~\citep{olxpakistan,facebookmarketplace} rely on
+manual, after-the-fact moderation, which does not scale and leaves buyers exposed
+to misrepresented lots. A marketplace is therefore needed that checks each listing
+before publication while keeping a human as the final authority.
 
 \section{Research Questions and Hypotheses \applicability{Research, Hybrid; hypotheses if applicable}}
 \begin{table}[H]
@@ -76,11 +78,18 @@ OBJ-03 & To help buyers make informed and confident decisions before they travel
 The project will develop a marketplace with Admin, Customer, and Contractor
 roles. Its AI pipeline uses CLIP zero-shot classification, material-specific YOLO
 defect detection, a condition engine, description--image consistency checks, and
-XGBoost price estimation. A decision engine auto-publishes clean listings and
+XGBoost price estimation. A Decision Engine auto-publishes clean listings and
 sends uncertain or Mixed-condition listings to an Admin review queue. The core
 platform provides lot-based listings, location and category search, real-time
 chat, negotiation, ratings, saved-search alerts, reservation, and pickup-status
 tracking.
+
+The research part evaluates how well the AI performs. For RQ-01, the classification,
+defect detection, and price models are tested offline on a locked set of team-collected
+photos and on real sale prices from dealer interviews, each against a simple baseline.
+For RQ-02, automated publish-or-review decisions are compared with Admin decisions, and
+Listing Assistant answers are checked against each lot's data.
+Section~\ref{sec:research-methodology} gives the full method.
 
 \section{Scope}
 \subsection{In Scope}
@@ -93,11 +102,11 @@ tracking.
 \toprule
 \textbf{Scope ID} & \textbf{Included item} & \textbf{Objective(s)} \\
 \midrule
-SCP-01 & Lot-based listings with quantity, description, price, and 3--5 representative photographs. & OBJ-01 \\
-SCP-02 & Registered accounts with switchable Customer and Contractor profiles, and Customer/Contractor search, negotiation, reservation, and pickup-status tracking. & OBJ-03 \\
-SCP-03 & AI classification, defect detection, condition grading, consistency checking, and price estimation for the four scoped categories. & OBJ-01, OBJ-02 \\
-SCP-04 & Admin review queue with approval, rejection, edit requests, threshold tuning, and AI override; Contractor approval; catalog, zone, user, and report management; an AI performance dashboard; and the AI Listing Assistant. & OBJ-02, OBJ-03 \\
-SCP-05 & Location, price, and category search; real-time chat and negotiation; ratings, saved-search alerts, reservation, and pickup tracking. & OBJ-03 \\
+SCP-01 & Lot listings with quantity, description, price, and 3--5 photos. & OBJ-01 \\
+SCP-02 & Android and web accounts with switchable Customer and Contractor profiles. & OBJ-03 \\
+SCP-03 & AI screening of lots in the four scoped categories. & OBJ-01, OBJ-02 \\
+SCP-04 & Admin review, AI override, and platform management. & OBJ-02 \\
+SCP-05 & Search, chat, Listing Assistant, reservation, and ratings. & OBJ-03 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -129,9 +138,11 @@ EXC-05 & Automated dispute resolution and delivery. & Buyers and sellers arrange
 \toprule
 \textbf{Stakeholder} & \textbf{Role} & \textbf{Need or interest} & \textbf{Design influence} \\
 \midrule
-Contractor/Seller & Primary user & Create lots, negotiate, and sell surplus material & Lot-based listing and seller tools \\
+Contractor/Seller & Primary user & Any Admin-approved seller (contractor, builder, material dealer, or individual) who wants to sell surplus material & Lot-based listing and seller tools \\
 Customer/Buyer & Primary user & Find trustworthy material and reserve lots & Location, price, category search and AI assistant \\
-Admin & Moderator & Review flagged listings, manage users and categories, and override AI decisions & Review queue, thresholds, dashboard, and moderation controls \\
+Admin & Moderator & Review flagged listings, approve Contractors, manage users, catalog, zones, and reports, and override AI decisions & Review queue, thresholds, dashboard, and moderation controls \\
+Supervisor and evaluators & Oversight & Approve the schedule, ethics, and licence choices, and assess the project & Evaluation plan and approvals recorded in Chapter~5 \\
+Material dealers & Data source & Share real surplus prices in interviews without being named & Price model data and anonymised interview records \\
 \bottomrule
 \end{tabularx}
 \end{table}

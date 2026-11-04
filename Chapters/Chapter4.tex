@@ -1,5 +1,4 @@
 % This file is included by uet_thesis.tex.
-% Replace blue placeholders and remove example text before submission.
 
 \chapter{Design Specification}
 \label{chap:design}
@@ -196,7 +195,7 @@ price per kg?''. The rest cannot, for example ``is delivery included?''.
 
 \subsection{Variables and Data Collection Techniques}
 {\footnotesize
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.41\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
 \caption{Variables and data collection}\label{tab:variables}\\
 \toprule
 \textbf{ID} & \textbf{Variable} & \textbf{Operational definition or measure} & \textbf{Collection source or instrument} \\
@@ -265,11 +264,6 @@ discussion before VAR-06 is computed.
 
 
 \section{Behavioural and Interaction Design \applicability{Development, Hybrid, Game; Research if applicable}}
-\begin{guidance}
-Include only the models needed to explain the project's behaviour and interaction.
-Each UML diagram must use standard UML notation~\citep{omguml251}, remain readable, and be followed by a
-brief explanation of important flows, alternatives, or design decisions.
-\end{guidance}
 
 \subsection{Use-Case Model}
 The human actors are Admin, Customer, and Contractor. Customer and Contractor
@@ -292,20 +286,20 @@ objective and scope item it supports.
 \midrule
 \endhead
 UC-01 & Create Lot & Contractor & None & OBJ-01 & SCP-01 \\
-UC-02 & Search Lots & Customer & None & OBJ-03 & SCP-02, SCP-05 \\
-UC-03 & Reserve Lot & Customer & None & OBJ-03 & SCP-02, SCP-05 \\
+UC-02 & Search Lots & Customer & None & OBJ-03 & SCP-05 \\
+UC-03 & Reserve Lot & Customer & None & OBJ-03 & SCP-05 \\
 UC-04 & Review Flagged Lot & Admin & None & OBJ-02 & SCP-04 \\
-UC-05 & Ask Listing Assistant & Customer & AI Service, LLM Provider & OBJ-03 & SCP-04 \\
+UC-05 & Ask Listing Assistant & Customer & AI Service, LLM Provider & OBJ-03 & SCP-05 \\
 UC-06 & Screen Lot & Contractor & AI Service & OBJ-01, OBJ-02 & SCP-03 \\
 UC-07 & Register & Registered User & Email Service & OBJ-03 & SCP-02 \\
 UC-08 & Switch Profile & Registered User & None & OBJ-03 & SCP-02 \\
 UC-09 & Apply for Contractor Approval & Registered User & None & OBJ-02 & SCP-04 \\
 UC-10 & Resubmit Lot After Edits & Contractor & AI Service & OBJ-01, OBJ-02 & SCP-01, SCP-03 \\
 UC-11 & Manage My Lots & Contractor & None & OBJ-01 & SCP-01 \\
-UC-12 & Mark Lot Sold & Contractor & None & OBJ-03 & SCP-02 \\
-UC-13 & View Lot Details & Customer & None & OBJ-03 & SCP-02 \\
+UC-12 & Mark Lot Sold & Contractor & None & OBJ-03 & SCP-05 \\
+UC-13 & View Lot Details & Customer & None & OBJ-03 & SCP-05 \\
 UC-14 & Chat With Seller & Customer, Contractor & None & OBJ-03 & SCP-05 \\
-UC-15 & Cancel Reservation & Customer, Contractor & None & OBJ-03 & SCP-02, SCP-05 \\
+UC-15 & Cancel Reservation & Customer, Contractor & None & OBJ-03 & SCP-05 \\
 UC-16 & Rate User & Registered User & None & OBJ-03 & SCP-05 \\
 UC-17 & Save Search & Customer & None & OBJ-03 & SCP-05 \\
 UC-18 & Approve Contractor & Admin & None & OBJ-02 & SCP-04 \\
@@ -317,14 +311,14 @@ UC-23 & Review Reported Content & Admin & None & OBJ-02 & SCP-04 \\
 UC-24 & View AI Performance Dashboard & Admin & None & OBJ-02 & SCP-04 \\
 UC-25 & Report Content & Customer, Contractor & None & OBJ-02 & SCP-04 \\
 UC-26 & Reset Password & Registered User & Email Service & OBJ-03 & SCP-02 \\
-UC-27 & View Notifications & Registered User & None & OBJ-03 & SCP-02, SCP-05 \\
+UC-27 & View Notifications & Registered User & None & OBJ-03 & SCP-02 \\
 UC-28 & Remove Lot & Contractor & None & OBJ-01 & SCP-01 \\
 UC-29 & Relist Expired Lot & Contractor & AI Service & OBJ-01, OBJ-02 & SCP-01, SCP-03 \\
-UC-30 & Mark No-Show & Contractor & None & OBJ-03 & SCP-02 \\
+UC-30 & Mark No-Show & Contractor & None & OBJ-03 & SCP-05 \\
 UC-31 & Manage Reference Prices & Admin & None & OBJ-01, OBJ-02 & SCP-03, SCP-04 \\
 UC-32 & Expire Lots & Scheduler & None & OBJ-01 & SCP-01 \\
 UC-33 & Sign In & Registered User, Admin & None & OBJ-02, OBJ-03 & SCP-02, SCP-04 \\
-UC-34 & Cancel Overdue Reservation & Scheduler & None & OBJ-03 & SCP-02 \\
+UC-34 & Cancel Overdue Reservation & Scheduler & None & OBJ-03 & SCP-05 \\
 UC-35 & Manage Zones & Admin & None & OBJ-02 & SCP-04 \\
 \bottomrule
 \end{longtable}
@@ -727,17 +721,12 @@ When a reservation ends without a sale, the lot returns to Published, or to Expi
 30 days have passed.
 
 \subsection{Sequence Model}
-\begin{guidance}
-Show how an important scenario is realized through time-ordered messages among
-actors, system components, and external services. Use activation bars and combined
-fragments such as \texttt{alt}, \texttt{opt}, or \texttt{loop} where appropriate.
-\end{guidance}
 Figures~\ref{fig:sd-01} to~\ref{fig:sd-05} show the five main scenarios in time
 order. Arrows with a filled head are synchronous calls, arrows with an open head
 are asynchronous messages, and dashed arrows are returns. Lot statuses use the
 values in the state-machine model, and message labels give the interface from
-Table~\ref{tab:major-interfaces} where it helps. \placeholder{Replace each remaining
-REST message name with its endpoint once Appendix B.2 is agreed.}
+Table~\ref{tab:major-interfaces} where it helps. Appendix~\ref{sec:rest-api} gives
+the endpoint behind each REST message.
 
 \begin{figure}[H]
 \centering
@@ -1042,11 +1031,6 @@ question always receives a response. The API waits for the answer in the HTTPS
 response, with no retry.
 
 \section{Structural Design \applicability{Development, Hybrid, Game; Research if applicable}}
-\begin{guidance}
-Describe the static structure needed to realize the requirements. Keep models at a
-level appropriate to the project and avoid including generated framework classes
-that do not communicate a design decision.
-\end{guidance}
 
 \subsection{Class or Domain Model}
 The domain model is shown in two views of one model so that each stays readable at page
@@ -1093,10 +1077,6 @@ the locked values, so the same words appear in the state machines, the database,
 and the screens.
 
 \subsection{Component Model}
-\begin{guidance}
-Show deployable or replaceable software components, their provided and required
-interfaces, and dependencies.
-\end{guidance}
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[diagram]
@@ -1189,10 +1169,6 @@ interfaces, and dependencies.
 \end{figure}
 
 \subsection{Deployment Model \applicability{Deployed, distributed, networked, or multi-device systems}}
-\begin{guidance}
-Show execution nodes, devices, environments, deployed artifacts, and communication
-paths. Distinguish physical or virtual nodes from software components.
-\end{guidance}
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[diagram]
@@ -1324,7 +1300,7 @@ time (DD-26), as \tref{tab:redis-keys} lists.
 \textbf{Key} & \textbf{Purpose} & \textbf{Expiry} \\
 \midrule
 \texttt{presence:\{userId\}} & Shows that a user is online in chat (FR-22). & 90 s, renewed by the client \\
-\texttt{assistant:quota:\{userId\}} & Counts Listing Assistant questions in the current hour (FR-56). & 1 hour \\
+\texttt{assistant:quota:\allowbreak\{userId\}} & Counts Listing Assistant questions in the current hour (FR-56). & 1 hour \\
 \texttt{screening:lock:\{lotId\}} & Stops two workers from screening the same lot at once. & 150 s, longer than the AI timeout \\
 \bottomrule
 \end{tabularx}
@@ -1356,7 +1332,7 @@ Team-collected photos & JPEG files with location metadata removed on import, nam
 Annotations & Bounding boxes as YOLO text files and lot labels (material and grade) as CSV, with labeller initials and no other personal data, versioned as \texttt{annotations\_v<N>} with a change log. & Team only. Kept and deleted together with the photos they describe. \\
 Interview notes and questionnaires & Notes typed into a fixed template with no names, using participant codes (D01--D10 for dealers, C01--C06 for contractors). Reported deals go into a CSV keyed by dealer code. Questionnaire responses are exported without email addresses. Signed consent forms are kept apart from the notes, and no list links codes to names (ER-01, ER-02). & Team only, and consent forms only with the supervisor. Kept until the project ends, then disposed of as the supervisor advises (\tref{tab:artifact-management}). Only aggregate results appear in the report. \\
 Price reference data & New-material prices per unit, each with source and date, kept in the system's PostgreSQL table (DIR-07). A CSV snapshot \texttt{reference\_prices\_<date>.csv} is saved with every M-05 training run. & These are published figures, so they may be shared with their citations. Snapshots are kept with the model version they trained. \\
-Trained model weights & PyTorch \texttt{.pt} files and any ONNX or OpenVINO exports, named \texttt{<model>-<material>-v<major>.<minor>-<date>}, for example \texttt{m02-steel-v1.0-2026-12-01.pt}. Each is stored in the team Drive with a short model card giving its training-data version, settings, and validation metrics. The deployed copy sits on the AI Service server, and its version string is stored with every AI result (DIR-03). & Team only. They are not published until the dataset licences are confirmed (P-27). Kept until the final evaluation is complete (\tref{tab:artifact-management}). \\
+Trained model weights & PyTorch \texttt{.pt} files and any ONNX or OpenVINO exports, named \texttt{<model>-<material>-\allowbreak v<major>.<minor>-\allowbreak <date>}, for example \texttt{m02-steel-v1.0-2026-12-01.pt}. Each is stored in the team Drive with a short model card giving its training-data version, settings, and validation metrics. The deployed copy sits on the AI Service server, and its version string is stored with every AI result (DIR-03). & Team only. They are not published until the dataset licences are confirmed (RSK-04). Kept until the final evaluation is complete (\tref{tab:artifact-management}). \\
 Evaluation outputs & Metrics as JSON or CSV, confusion matrices, audit forms, and labelling sheets, named \texttt{eval-<VAR>-<model version>-<date>} under \texttt{results/} in the team Drive. Audit forms and labelling sheets hold lot IDs only. & Team and supervisor. Summaries appear in the final report. Kept until the project ends. \\
 Code and configuration & Python and C\# source, plus YAML or JSON configuration for thresholds, CLIP prompts, the condition-phrase list, and assistant instructions, in the GitHub repository, versioned by commit and release tag. Dataset manifests are kept here too; large files are excluded by \texttt{.gitignore}. & Team only, with no secrets in the repository (\tref{tab:artifact-management}). Kept as the project's permanent record. \\
 \bottomrule
@@ -1452,7 +1428,7 @@ Related requirements & FR-02, FR-40, FR-41, FR-42, FR-52, NFR-03; UC-06; DIR-03 
 }
 
 {\footnotesize
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.29\textwidth}@{}}
 \caption{Defect classes, provisional defect types, and datasets per material}\label{tab:defect-classes}\\
 \toprule
 \textbf{Material} & \textbf{Targeted defects (proposal Table~1.1) and provisional type} & \textbf{Dataset} & \textbf{Known limit} \\
@@ -1464,18 +1440,17 @@ Related requirements & FR-02, FR-40, FR-41, FR-42, FR-52, NFR-03; UC-06; DIR-03 
 \endhead
 Bricks & Cracks (major); broken or spalled areas (major); efflorescence (minor), where the dataset supports it & Wall-Crack-and-Brick-Defect~\citep{wallcrackbrickdefect} & Shows walls rather than loose stacked bricks. Licence to be checked (RSK-04). \\
 Steel & Rust or corrosion (minor); scratches (minor); pitted surface (minor); visible deformation (major), where validated & NEU surface defect database~\citep{song2013neu} & Greyscale images of hot-rolled factory strip with no rust class, so rust and deformation have no training data yet. Terms to be checked (RSK-04). \\
-Tiles/Marble & Cracks (major); chips or broken edges (major); selected stains and surface defects (minor) & ceramics-defects-detection~\citep{ceramicsdefects} & Images are labelled only normal or defective, with no bounding boxes, so boxes must be drawn before a detector can be trained. \\
+Tiles/\allowbreak Marble & Cracks (major); chips or broken edges (major); selected stains and surface defects (minor) & ceramics-defects-detection~\citep{ceramicsdefects} & Images are labelled only normal or defective, with no bounding boxes, so boxes must be drawn before a detector can be trained. \\
 Wood & Knots (minor); selected surface defects (minor); cracks (major); rot or warping (major), where the dataset supports it & VNWoodKnot~\citep{vnwoodknot} & Covers knots only, so the other wood classes have no training data yet. \\
-General surfaces & Six building-surface classes used in the prototype, with class IDs 0 to 5 in the dataset's labels. The dataset publishes no class names, so the names come from the prototype's training configuration (\placeholder{TODO: copy the six names from the prototype's data.yaml}) & Building surface defect dataset~\citep{buildingsurfacedefect}, supplemented by SDNET2018~\citep{sdnet2018} and MBDD2025~\citep{mbdd2025} & Inspection and UAV imagery rather than resale photos. The Hugging Face set has no stated licence; SDNET2018 and MBDD2025 are CC~BY~4.0 (RSK-04). \\
+General surfaces & Six building-surface defect classes, labelled in the dataset only by the IDs 0 to 5; the dataset publishes no class names and the prototype's training configuration is no longer available, so the set is used only to train and measure the prototype baseline & Building surface defect dataset~\citep{buildingsurfacedefect}, supplemented by SDNET2018~\citep{sdnet2018} and MBDD2025~\citep{mbdd2025} & Inspection and UAV imagery rather than resale photos. The Hugging Face set has no stated licence; SDNET2018 and MBDD2025 are CC~BY~4.0 (RSK-04). \\
 \bottomrule
 \end{longtable}
 }
 
-\tref{tab:defect-classes} uses the proposal's datasets, as the team decided (P-27,
-parked). Better-suited sets exist, for example Kodytek wood defects (CC~BY~4.0), a
-Roboflow steel-corrosion set, Roboflow tile-defect sets, and CODEBRIM for masonry. They
-will be adopted only if the team reopens P-27. The minor or major type of each class is
-the project's provisional proposal. It is to be confirmed with the dealer interviews
+\tref{tab:defect-classes} uses the proposal's datasets. Better-suited sets exist, for example Kodytek wood
+defects (CC~BY~4.0), a Roboflow steel-corrosion set, Roboflow tile-defect sets, and
+CODEBRIM for masonry; they remain a fallback if the proposal's sets prove too weak in
+testing (RSK-04). The minor or major type of each class is provisional. It is to be confirmed with the dealer interviews
 (Section~\ref{sec:research-methodology}) and is stored with the model version. Rust is
 minor by type, because surplus steel often carries surface rust, but a rust area covering
 more than 10\% of a photo still makes the photo Major (M-03). A targeted class is used for
@@ -1499,7 +1474,7 @@ Processing steps & 1.~The AI Service loads the four models once at start-up.\new
 2.~The photo is resized to 640 pixels with letterboxing and run through the material's model. Overlapping boxes are merged by the detector's non-maximum suppression.\newline
 3.~Detections with a confidence of at least 0.25 are returned, so the Admin can see weak detections. M-03 grades only those with a confidence of at least 0.40.\newline
 Planned training (MS-04): each model starts from pretrained YOLOv8n weights and is fine-tuned on its material's dataset in \tref{tab:defect-classes} on a Google Colab GPU, with an image size of 640 and 50 epochs as in the prototype. The default augmentation is used, plus added blur, brightness, and scale changes to resemble phone photos. The weights with the best validation mAP@0.5 are kept and stored under a versioned name (Section~\ref{sec:research-data-management}). \\
-Assumptions and limits & The prototype trained YOLOv8n for 50 epochs on the building surface defect dataset~\citep{buildingsurfacedefect}, with 5,882 training images and six classes. On 735 validation images from the same dataset, it reached mAP@0.5 0.69, precision 0.70, and recall 0.62. These figures come from the dataset's own validation split, not from phone photos. The same model gave no detections on a close-up phone photo of rusty steel. This shows the domain gap between inspection images and resale photos (RSK-02). To reduce the gap, the design uses material-specific models and phone-like augmentation, measures each model on the locked team test set against the prototype's general model (NFR-04), and limits claims to validated classes. The dataset gaps in \tref{tab:defect-classes} remain until P-27 is decided. Ultralytics YOLO is licensed under AGPL-3.0~\citep{jocher2023yolov8}, which affects how the AI Service may be deployed and shared. Licence decision under P-27 (to be confirmed with the supervisor): the project is academic and non-commercial, so it uses Ultralytics YOLO under AGPL-3.0. Because the AI Service is reached over a network, its source code is released under AGPL-3.0 at the end of the project, while the weights stay team-only until the dataset licences are confirmed. Any commercial use would need an Ultralytics enterprise licence or a detector under a permissive licence. \\
+Assumptions and limits & The prototype trained YOLOv8n for 50 epochs on the building surface defect dataset~\citep{buildingsurfacedefect}, with 5,882 training images and six classes. On 735 validation images from the same dataset, it reached mAP@0.5 0.69, precision 0.70, and recall 0.62. These figures come from the dataset's own validation split, not from phone photos. The same model gave no detections on a close-up phone photo of rusty steel. This shows the domain gap between inspection images and resale photos (RSK-02). To reduce the gap, the design uses material-specific models and phone-like augmentation, measures each model on the locked team test set against the prototype's general model (NFR-04), and limits claims to validated classes. The dataset gaps in \tref{tab:defect-classes} remain open (RSK-04). Ultralytics YOLO is licensed under AGPL-3.0~\citep{jocher2023yolov8}, which affects how the AI Service may be deployed and shared. Licence decision (DD-36, to be confirmed with the supervisor): the project is academic and non-commercial, so it uses Ultralytics YOLO under AGPL-3.0. Because the AI Service is reached over a network, its source code is released under AGPL-3.0 at the end of the project, while the weights stay team-only until the dataset licences are confirmed. Any commercial use would need an Ultralytics enterprise licence or a detector under a permissive licence. \\
 Related requirements & FR-03, FR-44, NFR-04; RSK-02, RSK-04, RSK-12; ER-05; AD-02 \\
 \bottomrule
 \end{longtable}
@@ -1714,7 +1689,7 @@ small lettered markers, which \tref{tab:wireframe-annotations} explains.
 \end{figure}
 
 {\footnotesize
-\begin{longtable}{@{}p{0.15\textwidth}p{0.26\textwidth}p{0.26\textwidth}p{0.25\textwidth}@{}}
+\begin{longtable}{@{}p{0.15\textwidth}p{0.25\textwidth}p{0.26\textwidth}p{0.25\textwidth}@{}}
 \caption{Wireframe annotations}\label{tab:wireframe-annotations}\\
 \toprule
 \textbf{Wireframe} & \textbf{Validation (V)} & \textbf{Feedback (F)} & \textbf{Accessibility (A)} \\
@@ -1794,13 +1769,8 @@ SEC-25 & Unsafe behaviour when a dependency fails & Failures never publish a lot
 }
 
 \section{Design Decisions and Rationale}
-\begin{guidance}
-Record significant choices, alternatives considered, and reasons for selection.
-Focus on decisions that materially affect quality, cost, risk, maintainability, or
-project feasibility. Do not repeat the tools list from Section~\ref{sec:tools}.
-\end{guidance}
 
-Rows appear in ID order. Each member writes the rows in their own ID block.
+Rows appear in ID order.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.29\textwidth}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.32\textwidth}@{}}
@@ -1817,10 +1787,10 @@ Rows appear in ID order. Each member writes the rows in their own ID block.
 DD-20 & Photos reach the AI Service through time-limited, read-only pre-signed S3 URLs, one per photo. The API sends the URLs, and the AI Service downloads the photos directly. The bucket stays private, and S3 and the AI Service stay in the same AWS region. & The API forwards the photo bytes to the AI Service. & Photo traffic does not load the application server, which also runs chat and search. Accepted limitation: a link can expire, so links are created just before each call and last 15 minutes (provisional). \\
 DD-21 & The AI pipeline runs as a separate Python and FastAPI service on its own machine (Figure~\ref{fig:deployment-diagram}). & Run the models in-process inside the ASP.NET Core API. & The marketplace keeps working when an AI component is unavailable (NFR-01, NFR-42), and the models use Python libraries. Accepted trade-off: an extra network hop over HTTPS, a second machine to run, and a secret API key to manage (SEC-22). \\
 DD-22 & The API accepts a lot and replies at once with status Screening. A background worker takes one lot at a time from PostgreSQL and calls the AI Service over HTTPS, receiving the results in that response (Figure~\ref{fig:sd-01}). & Screen the lot during the seller's submit request; have the AI Service return results by callback or polling. & Inference runs on CPU and can take a few seconds per lot, so the seller does not wait, and the AI Service stays stateless because it holds no jobs. Accepted trade-off: lots queue one at a time, so results are not immediate, and the worker must handle the 120-second timeout and one retry. \\
-DD-23 & Chat and negotiation use a SignalR hub in the ASP.NET Core backend, over WebSocket (INT-03). & \placeholder{Proposed: clients poll the REST API for new messages.} & SignalR keeps a live connection open, so messages arrive instantly, and it runs in the same backend that already authenticates users (SEC-20). Accepted trade-off: the server holds an open connection for each online user, which load testing must cover (NFR-43). \\
+DD-23 & Chat and negotiation use a SignalR hub in the ASP.NET Core backend, over WebSocket (INT-03). & Clients poll the REST API for new messages. & SignalR keeps a live connection open, so messages arrive instantly, and it runs in the same backend that already authenticates users (SEC-20). Accepted trade-off: the server holds an open connection for each online user, which load testing must cover (NFR-43). \\
 DD-24 & The Decision Engine runs in the ASP.NET Core API. & Run the Decision Engine inside the AI Service. & The Admin-tuned thresholds live in the API's database, and the AI Service stays stateless and only returns signals. Accepted trade-off: the API and the AI Service must agree the signal fields exactly (Appendix~\ref{sec:ai-service-interface}). \\
 DD-25 & If the AI Service is unavailable after one retry, the lot receives the grade Not Assessed with no price suggestion and the flag reason AI Unavailable, and moves to Pending Review (FR-28). & Publish the lot without a price suggestion, as the proposal allows. & No lot is published without all checks, and the Admin keeps final authority. Accepted trade-off: an outage adds lots to the Admin review queue, and those lots are not visible to buyers until reviewed. \\
-DD-26 & Redis stores presence and short locks, with expiry times. & \placeholder{Proposed: store presence in PostgreSQL.} & This data is short-lived and not relational, so it suits fast temporary storage. Accepted trade-off: Redis data is not permanent, so anything that must last, such as messages and read status, stays in PostgreSQL. \placeholder{State what the short locks protect.} \\
+DD-26 & Redis stores presence and short locks, with expiry times. & Store presence in PostgreSQL. & This data is short-lived and not relational, so it suits fast temporary storage. Accepted trade-off: Redis data is not permanent, so anything that must last, such as messages and read status, stays in PostgreSQL. The short locks stop two workers from screening the same lot at once (\tref{tab:redis-keys}). \\
 DD-30 & Check the description against the photos with a fixed rule-based list of English and Roman Urdu phrases (M-04, FR-48). & A language model reads the description; a trained text classifier. & The result is the same every time, can be explained to the seller, costs nothing per lot, and cannot be changed by instructions hidden in the description (SEC-13). No labelled descriptions exist to train a classifier. Accepted limitation: claims in unseen wording are missed, and Urdu script is not handled. \\
 DD-31 & Grade a lot by its worst usable photo, and grade it Mixed when its photos include both Good and Major (M-03, FR-46). & Average the photo grades; take the majority grade. & Averaging or voting can hide a major defect that appears in one photo, and a buyer needs to know about it. Mixed sends the lot to review (FR-27). Accepted trade-off: one false detection lowers the grade of the whole lot, and more lots reach the Admin. \\
 DD-32 & Classify the material with zero-shot CLIP and include an ``other'' label next to the four materials (M-01, FR-40). & Fine-tune a material classifier; use only the four material labels. & No labelled photo set of surplus materials exists, and zero-shot CLIP needs none. Without ``other'', a photo of something else is forced into the nearest material with a high score. Accepted limitation: zero-shot accuracy is lower on unusual photos, so the prompts and the 0.60 threshold are tuned on the tuning split. \\

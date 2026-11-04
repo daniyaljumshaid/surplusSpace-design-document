@@ -22,15 +22,15 @@
 \draw (user.east |- 0,-10) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..*} (note.west |- 0,-10);
 \draw (user.east |- 0,-22) -- node[m,above,pos=.5]{1} (106,-22) |- node[m,above,pos=.85]{0..*} (tok.west |- 0,-44);
 \draw (user.east |- 0,-30) -- node[m,above,pos=.5]{1} (101,-30) |- node[m,above,pos=.9]{0..*} (ss.west |- 0,-80);
-\draw (user.south) -- node[m,right,pos=.2]{1 (seller)}node[m,right,pos=.8]{0..*} (lot.north);
+\draw (user.south) -- node[m,right,fill=none,pos=.2]{1 (seller)}node[m,right,fill=none,pos=.8]{0..*} (lot.north);
 \draw (lot.west |- 0,-72) -- node[m,above,pos=.12]{0..*}node[m,above,pos=.88]{1} (zone.east |- 0,-72);
 \draw (lot.west |- 0,-104) -- node[m,above,pos=.12]{0..*}node[m,above,pos=.88]{1} (cat.east |- 0,-104);
-\draw (lot.west |- 0,-132) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{3..5} (photo.east |- 0,-132);
-\draw (lot.south) -- node[m,right,pos=.2]{1}node[m,right,pos=.8]{0..*}node[m,left,pos=.5,align=right]{at most one\\Active} (res.north);
-\draw (lot.east |- 0,-116) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..*} (thread.west |- 0,-116);
-\draw (msg.north) -- node[m,right,pos=.2]{1..*}node[m,right,pos=.8]{1} (thread.south);
-\draw (rep.north) -- node[m,right,pos=.2]{0..*}node[m,right,pos=.8]{0..1} (msg.south);
-\draw (res.west |- 0,-172) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..2} (rate.east |- 0,-172);
+\draw ([xshift=8mm]lot.south west) |- node[m,right,fill=none,pos=.15]{1}node[m,above,pos=.9]{3..5} (photo.east |- 0,-132);
+\draw (lot.south) -- node[m,right,fill=none,pos=.2]{1}node[m,right,fill=none,pos=.8]{0..*}node[m,right,fill=none,pos=.5,align=left]{at most one\\Active} (res.north);
+\draw (lot.east |- 0,-100) -| node[m,above,pos=.15]{1}node[m,right,fill=none,pos=.85]{0..*} ([xshift=8mm]thread.north west);
+\draw (msg.north) -- node[m,right,fill=none,pos=.2]{1..*}node[m,right,fill=none,pos=.8]{1} (thread.south);
+\draw (rep.north) -- node[m,right,fill=none,pos=.2]{0..*}node[m,right,fill=none,pos=.8]{0..1} (msg.south);
+\draw (res.west |- 0,-160) -| node[m,above,pos=.15]{1}node[m,right,fill=none,pos=.8]{0..2} ([xshift=30mm]rate.north west);
 \node[draw,fill=white,align=left,text width=60mm,anchor=north west] at (40,-196)
   {Foreign keys to \textbf{users} that are not drawn: buyer\_id (reservations, chat\_threads), sender\_id, rater\_id, rated\_id, reporter\_id, resolved\_by, decided\_by. reports.lot\_id also references lots.};
 \end{tikzpicture}

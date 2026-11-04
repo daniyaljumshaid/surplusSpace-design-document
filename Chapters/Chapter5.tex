@@ -1,5 +1,4 @@
 % This file is included by uet_thesis.tex.
-% Replace blue placeholders and remove example text before submission.
 
 \chapter{Planning, Risk, and Traceability}
 \label{chap:planning}
@@ -11,7 +10,7 @@ that realize them, and the matching test references, which use the form
 TEST-<requirement ID>. A requirement may appear in more than one row.
 
 {\footnotesize
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.10\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.115\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.205\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
 \caption{Design traceability matrix}\label{tab:traceability}\\
 \toprule
 \textbf{Objective} & \textbf{Scope} & \textbf{Requirement} & \textbf{Design element} & \textbf{Testing-document reference} \\
@@ -34,7 +33,7 @@ OBJ-01 & SCP-03 & FR-48; FR-49 & UC-06; AD-01 & TEST-FR-48; TEST-FR-49 \\
 OBJ-01 & SCP-03 & FR-50; FR-51 & UC-06; UC-31; AD-01 & TEST-FR-50; TEST-FR-51 \\
 OBJ-02 & SCP-03 & FR-53; FR-58; FR-59 & SD-01; AD-01; DD-25 & TEST-FR-53; TEST-FR-58; TEST-FR-59 \\
 OBJ-02 & SCP-04 & FR-52; FR-54 & UC-20; UC-24; Figure~\ref{fig:wf-dashboard} & TEST-FR-52; TEST-FR-54 \\
-OBJ-03 & SCP-04 & FR-55; FR-56; FR-57 & UC-05; SD-05; Figure~\ref{fig:wf-marketplace} & TEST-FR-55; TEST-FR-56; TEST-FR-57 \\
+OBJ-03 & SCP-05 & FR-55; FR-56; FR-57 & UC-05; SD-05; Figure~\ref{fig:wf-marketplace} & TEST-FR-55; TEST-FR-56; TEST-FR-57 \\
 OBJ-02 & SCP-03 & FR-29 & SD-01; SD-02 & TEST-FR-29 \\
 OBJ-02 & SCP-03 & NFR-41 & SD-01; DEP-01 & TEST-NFR-41 \\
 OBJ-02 & SCP-03 & EIR-01 & SEC-22; SEC-23; DD-20; DD-21; DEP-01 & TEST-EIR-01 \\
@@ -46,14 +45,14 @@ OBJ-02 & SCP-04 & FR-11; FR-12; FR-19; FR-81; FR-82 & UC-09; UC-18; UC-21; UC-22
 OBJ-02 & SCP-04 & NFR-07 & UC-24 & TEST-NFR-07 \\
 OBJ-03 & SCP-02 & FR-09; FR-10; FR-71 & UC-07; UC-08; UC-26; UC-33; DD-02 & TEST-FR-09; TEST-FR-10; TEST-FR-71 \\
 OBJ-03 & SCP-02 & NFR-22; NFR-23; NFR-24; NFR-25; NFR-26; NFR-27; NFR-30 & UC-33; SEC-20; SEC-23; SEC-25; DEP-01 & TEST-NFR-22; TEST-NFR-23; TEST-NFR-24; TEST-NFR-25; TEST-NFR-26; TEST-NFR-27; TEST-NFR-30 \\
-OBJ-03 & SCP-02; SCP-05 & FR-06; FR-69; FR-84; NFR-20 & UC-02; UC-17; CMP-01 & TEST-FR-06; TEST-FR-69; TEST-FR-84; TEST-NFR-20 \\
-OBJ-03 & SCP-02; SCP-05 & FR-07; FR-16; FR-17; FR-18; FR-70; NFR-21 & UC-03; UC-15; UC-30; UC-34; SD-03 & TEST-FR-07; TEST-FR-16; TEST-FR-17; TEST-FR-18; TEST-FR-70; TEST-NFR-21 \\
+OBJ-03 & SCP-05 & FR-06; FR-69; FR-84; NFR-20 & UC-02; UC-17; CMP-01 & TEST-FR-06; TEST-FR-69; TEST-FR-84; TEST-NFR-20 \\
+OBJ-03 & SCP-05 & FR-07; FR-16; FR-17; FR-18; FR-70; NFR-21 & UC-03; UC-15; UC-30; UC-34; SD-03 & TEST-FR-07; TEST-FR-16; TEST-FR-17; TEST-FR-18; TEST-FR-70; TEST-NFR-21 \\
 OBJ-03 & SCP-05 & FR-20; FR-21; FR-22; FR-23; FR-31 & UC-14; SD-04; SEC-20; SEC-21; SEC-24; DD-23; DD-26 & TEST-FR-20; TEST-FR-21; TEST-FR-22; TEST-FR-23; TEST-FR-31 \\
 OBJ-03 & SCP-05 & NFR-40; NFR-43 & SD-04; DEP-01 & TEST-NFR-40; TEST-NFR-43 \\
 OBJ-03 & SCP-05 & FR-80; FR-83 & UC-12; UC-16 & TEST-FR-80; TEST-FR-83 \\
-OBJ-03 & SCP-02 & FR-67; FR-68; FR-75; FR-76 & UC-13; UC-27; DD-05; Figure~\ref{fig:wf-marketplace} & TEST-FR-67; TEST-FR-68; TEST-FR-75; TEST-FR-76 \\
+OBJ-03 & SCP-02; SCP-05 & FR-67; FR-68; FR-75; FR-76 & UC-13; UC-27; DD-05; Figure~\ref{fig:wf-marketplace} & TEST-FR-67; TEST-FR-68; TEST-FR-75; TEST-FR-76 \\
 OBJ-03 & SCP-02 & NFR-60; NFR-61; NFR-62; NFR-63; NFR-64; NFR-66; NFR-68 & DD-01; DD-05; Figures~\ref{fig:wf-marketplace} to~\ref{fig:wf-contractor-approvals} & TEST-NFR-60; TEST-NFR-61; TEST-NFR-62; TEST-NFR-63; TEST-NFR-64; TEST-NFR-66; TEST-NFR-68 \\
-OBJ-03 & SCP-04 & FR-08; FR-30; NFR-06 & UC-05; SD-05; CMP-01 & TEST-FR-08; TEST-FR-30; TEST-NFR-06 \\
+OBJ-03 & SCP-05 & FR-08; FR-30; NFR-06 & UC-05; SD-05; CMP-01 & TEST-FR-08; TEST-FR-30; TEST-NFR-06 \\
 \bottomrule
 \end{longtable}
 }
@@ -63,14 +62,15 @@ OBJ-03 & SCP-04 & FR-08; FR-30; NFR-06 & UC-05; SD-05; CMP-01 & TEST-FR-08; TEST
 \centering
 \caption{Verification and validation strategy}
 \label{tab:vv-strategy}
-\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}X X p{0.20\textwidth}@{}}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.20\textwidth}@{}}
 \toprule
 \textbf{Target} & \textbf{Method} & \textbf{Evidence} & \textbf{Responsible role} \\
 \midrule
 Functional requirements & Functional and integration testing & Approved test results in the testing document & Whole team \\
 Security controls & Targeted tests of role checks, sign-in lockout, token revocation, and upload rejection & Security test results in the testing document & Backend developer \\
 Concurrency and load & Load and concurrency tests with k6 or JMeter & Load test results & Real-time and AI integration developer \\
-Stakeholder needs & Demonstration and structured interviews/questionnaire with contractors and dealers & Feedback and validation record & Whole team \\
+Stakeholder needs & Demonstration and structured interviews and a questionnaire with contractors and dealers & Feedback and validation record & Whole team \\
 Research findings: AI models & Evaluation on the locked team test set against baselines (majority class for material, the prototype's general model for defects, a depreciation formula for price) & Metrics report: accuracy, precision, recall, mAP@0.5, MAE, and RMSE & AI/ML lead \\
 Research findings: decisions & Agreement between automated decisions and Admin decisions, plus a manual audit of a random 10\% of auto-published lots & Dashboard export and audit sheet & AI/ML lead \\
 Research findings: assistant & Labelling of answers to a fixed set of 100 questions as supported or not supported by lot data & Labelled answer sheet & AI/ML lead \\
@@ -79,24 +79,19 @@ Research findings: assistant & Labelling of answers to a fixed set of 100 questi
 \end{table}
 
 \section{Testing-Document Reference}
-\begin{guidance}
-Identify the separate testing document that contains the detailed acceptance
-criteria, test cases, datasets, procedures, results, and defect records. Keep its
-version consistent with this design document.
-\end{guidance}
 
 \begin{table}[H]
 \centering
 \caption{Software testing document reference}
 \label{tab:testing-reference}
-\begin{tabularx}{\textwidth}{@{}p{0.25\textwidth}X@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Item} & \textbf{Reference} \\
 \midrule
-Document title & \placeholder{Project Software Testing Document} \\
-Version and date & \placeholder{Version; Day Month Year} \\
-Repository or submission location & \placeholder{Controlled path, repository location, or submission reference} \\
-Responsible team member(s) & \placeholder{Name(s) and role(s)} \\
+Document title & surplusSpace Software Testing Document \\
+Version and date & Yet to be determined \\
+Repository or submission location & \url{https://github.com/daniyaljumshaid/surplusSpace-design-document} \\
+Responsible team member(s) & Whole team, as for MS-08 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -107,7 +102,7 @@ avoid, reduce, transfer, or accept.
 
 {\small
 \setlength{\tabcolsep}{4pt}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.225\textwidth}>{\raggedright\arraybackslash}p{0.125\textwidth}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.245\textwidth}>{\raggedright\arraybackslash}p{0.125\textwidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.10\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
 \caption{Risk register}\label{tab:risk-register}\\
 \toprule
 \textbf{ID} & \textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Response} & \textbf{Owner} \\
@@ -140,7 +135,7 @@ RSK-16 & Interviews yield too few real sale prices to test the price model. & Me
 \section{Project Management Approach and Schedule}
 \tref{tab:schedule} condenses the proposal's 12-month timeline into six months, so work
 runs in parallel tracks and the stretch monetization layer is left out. Month numbers
-convert to calendar dates from the project start date: \placeholder{TODO: actual start date}.
+count from the project start date.
 MS-01 to MS-04, half of the milestones, finish by the end of Month 4. The team reviews progress at a
 15-minute checkpoint twice a week and cross-reviews each member's work.
 
@@ -149,7 +144,7 @@ MS-01 to MS-04, half of the milestones, finish by the end of Month 4. The team r
 \caption{Milestones and schedule}
 \label{tab:schedule}
 \footnotesize
-\begin{tabularx}{\textwidth}{@{}p{0.08\textwidth}X p{0.13\textwidth}p{0.13\textwidth}p{0.23\textwidth}@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.08\textwidth}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.155\textwidth}>{\raggedright\arraybackslash}p{0.205\textwidth}@{}}
 \toprule
 \textbf{ID} & \textbf{Milestone or deliverable} & \textbf{Target date} & \textbf{Dependency} & \textbf{Owner} \\
 \midrule
@@ -192,7 +187,8 @@ Hafsa Shahid.
 \centering
 \caption{Artifact management}
 \label{tab:artifact-management}
-\begin{tabularx}{\textwidth}{@{}p{0.21\textwidth}X X X@{}}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Artifact} & \textbf{Storage and versioning} & \textbf{Access or protection} & \textbf{Backup or retention} \\
 \midrule
@@ -212,19 +208,20 @@ Interview records & Anonymised notes without names (ER-02) & Access limited to t
 \centering
 \caption{Tools and technologies}
 \label{tab:tools-technologies}
-\begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}p{0.20\textwidth}X X@{}}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Tool or technology} & \textbf{Version} & \textbf{Purpose} & \textbf{Project use} \\
 \midrule
 Flutter (Dart) & 3.x & Cross-platform UI & Web and Android marketplace client \\
 ASP.NET Core (C\#) & 10 (long-term support) & Backend API framework & Core marketplace services and authentication \\
-PostgreSQL/PostGIS & Current project version & Relational and geospatial database & Listings, users, locations, and search \\
+PostgreSQL/\allowbreak PostGIS & Current project version & Relational and geospatial database & Listings, users, locations, and search \\
 SignalR and Redis & Current project versions & Real-time communication and presence/cache & Chat, negotiation, and presence \\
 Python/FastAPI & Current project versions & AI service API & Asynchronous AI pipeline integration \\
 PyTorch, OpenCV, CLIP, YOLO & Current project versions & Computer vision and classification & Material classification and defect detection \\
 XGBoost and scikit-learn & Current project versions & Tabular regression and evaluation & Surplus-price estimation \\
 AWS S3, Amazon SES, and AWS Secrets Manager & Current service versions & Object storage, email sending, and secret storage & Listing photographs, verification and reset emails, and API keys \\
-Claude Sonnet 5.5 (\texttt{claude-sonnet-5-5}) & Model ID as given & Language model through an API & Listing Assistant answers \\
+Claude Sonnet 5.5 (\texttt{claude-\allowbreak sonnet-\allowbreak 5-5}) & Model ID as given & Language model through an API & Listing Assistant answers \\
 OpenStreetMap with \texttt{flutter\_map} & Current versions & Map tiles and map widget & Choosing and showing pickup locations \\
 Swagger, Postman, k6/JMeter & Current versions & API and load testing & Functional, API, concurrency, and load testing \\
 Git and GitHub & Current versions & Version control & Source and artifact management \\

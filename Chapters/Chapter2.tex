@@ -1,5 +1,4 @@
 % This file is included by uet_thesis.tex.
-% Replace blue placeholders and remove example text before submission.
 
 \chapter{Requirements Specification}
 \label{chap:requirements}
@@ -7,7 +6,7 @@
 
 \section{Assumptions, Constraints, and Dependencies}
 {\footnotesize
-\begin{longtable}{@{}p{0.09\textwidth}p{0.13\textwidth}p{0.36\textwidth}p{0.34\textwidth}@{}}
+\begin{longtable}{@{}p{0.09\textwidth}p{0.13\textwidth}p{0.36\textwidth}p{0.33\textwidth}@{}}
 \caption{Assumptions, constraints, and dependencies}\label{tab:acd}\\
 \toprule
 \textbf{ID} & \textbf{Type} & \textbf{Statement} & \textbf{Implication} \\
@@ -34,7 +33,7 @@ ACD-11 & Assumption & Interviewed dealers and contractors will share recent surp
 
 \section{Functional Requirements \applicability{Development, Hybrid, Game; Research Software Prototype}}
 {\footnotesize
-\begin{longtable}{@{}p{0.09\textwidth}p{0.52\textwidth}p{0.08\textwidth}p{0.18\textwidth}@{}}
+\begin{longtable}{@{}p{0.09\textwidth}p{0.50\textwidth}p{0.10\textwidth}p{0.18\textwidth}@{}}
 \caption{Functional requirements}\label{tab:functional-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Source} \\
@@ -129,7 +128,7 @@ AI-quality values marked ``target'' are proposed targets that are still to be ag
 the supervisor; the proposal commits to reporting these metrics, not to specific values.
 
 {\footnotesize
-\begin{longtable}{@{}p{0.09\textwidth}p{0.14\textwidth}p{0.55\textwidth}p{0.08\textwidth}@{}}
+\begin{longtable}{@{}p{0.09\textwidth}p{0.16\textwidth}p{0.51\textwidth}p{0.10\textwidth}@{}}
 \caption{Non-functional requirements}\label{tab:nonfunctional-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Attribute} & \textbf{Measurable requirement} & \textbf{Priority} \\
@@ -157,10 +156,10 @@ NFR-27 & Security & 100\% of traffic between clients, the API, the chat hub, and
 NFR-28 & Security & The server shall reject any lot photo that is not JPEG, PNG, or WebP or that is larger than 2 MB. & Must \\
 NFR-29 & Privacy & 100\% of stored lot photos shall have their location metadata removed. & Must \\
 NFR-30 & Maintainability & The backend shall run only on runtime versions that receive security updates for the whole project period. & Must \\
-NFR-40 & Chat performance & A chat message shall reach an online recipient within \placeholder{target time} with \placeholder{number} concurrent users. & Must \\
-NFR-41 & AI turnaround & AI screening of one lot shall complete within \placeholder{target time}. & Must \\
+NFR-40 & Chat performance & A chat message shall reach an online recipient within 1 second for 95\% of messages, with 50 concurrent users (target). & Must \\
+NFR-41 & AI turnaround & AI screening of one lot shall complete within 120 seconds of the worker starting it (target). & Must \\
 NFR-42 & Availability & Search, chat, and reservation shall remain usable while the AI Service is down. & Must \\
-NFR-43 & Load and concurrency & The REST API and chat hub shall support \placeholder{number} concurrent users at \placeholder{request or message rate}, checked with k6 or JMeter. & Must \\
+NFR-43 & Load and concurrency & The REST API and chat hub shall support 50 concurrent users at 10 requests per second (target), checked with k6 or JMeter. & Must \\
 NFR-60 & Accessibility & Text on every screen shall have a contrast ratio of at least 4.5:1, or at least 3:1 for large-scale text, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
 NFR-61 & Accessibility & Every interactive control shall have a touch target of at least 48 by 48 logical pixels on Android and Flutter web, exceeding the 24 by 24 CSS pixel minimum of WCAG 2.2 Level AA~\citep{wcag22}. & Should \\
 NFR-62 & Accessibility & At a text scale of 200\%, every screen shall keep all of its content and functions, meeting WCAG 2.2 Level AA~\citep{wcag22}. & Must \\
@@ -176,7 +175,7 @@ NFR-68 & Portability & Screens shall need no horizontal scrolling at widths from
 
 \section{Data and External Interface Requirements \applicability{If applicable}}
 {\footnotesize
-\begin{longtable}{@{}p{0.09\textwidth}p{0.14\textwidth}p{0.47\textwidth}p{0.22\textwidth}@{}}
+\begin{longtable}{@{}p{0.09\textwidth}p{0.14\textwidth}p{0.46\textwidth}p{0.22\textwidth}@{}}
 \caption{Data and external interface requirements}\label{tab:data-interface-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Type} & \textbf{Requirement} & \textbf{Source or system} \\
@@ -207,7 +206,7 @@ EIR-06 & External service & The client shall display map tiles from a public map
 
 \section{Legal, Ethical, Privacy, and Safety Requirements \applicability{If applicable}}
 {\footnotesize
-\begin{longtable}{@{}p{0.09\textwidth}p{0.13\textwidth}p{0.48\textwidth}p{0.22\textwidth}@{}}
+\begin{longtable}{@{}p{0.09\textwidth}p{0.13\textwidth}p{0.47\textwidth}p{0.22\textwidth}@{}}
 \caption{Legal, ethical, privacy, and safety requirements}\label{tab:leps-requirements}\\
 \toprule
 \textbf{ID} & \textbf{Category} & \textbf{Requirement or obligation} & \textbf{Applicable authority or source} \\
@@ -223,8 +222,8 @@ PR-03 & Privacy & Location metadata shall be removed from every lot photo before
 PR-04 & Privacy & A lot's exact pickup location shall be shown only to a Customer holding an Active reservation on it. & Contractor/Seller \\
 PR-05 & Privacy & The language-model provider shall receive no names, phone numbers, email addresses, or user identifiers. & Project privacy requirement \\
 PR-06 & Privacy & A Contractor's business address and verification notes shall be visible only to the Admin. & Contractor/Seller \\
-ER-01 & Ethics & Interview and questionnaire participants shall provide informed consent, and collected responses shall be used only for requirements and evaluation. & Supervisor/institutional guidance \\
-ER-02 & Ethics & Interview notes shall record no participant names. & Supervisor/institutional guidance \\
+ER-01 & Ethics & Interview and questionnaire participants shall provide informed consent, and collected responses shall be used only for requirements and evaluation. & Supervisor/\allowbreak institutional guidance \\
+ER-02 & Ethics & Interview notes shall record no participant names. & Supervisor/\allowbreak institutional guidance \\
 ER-03 & Ethics & No automated decision shall be final: the Admin shall have the final say on every flagged lot, and the seller shall see each flag reason. & Contractor/Seller \\
 ER-04 & Ethics & Every published lot shall carry the disclosure sentence, so that buyers are not misled about unphotographed items. & Customer/Buyer \\
 ER-05 & Legal & Datasets, models, and software libraries shall be used only under their licence terms, with attribution recorded in the research data management plan. & Dataset and software licences \\

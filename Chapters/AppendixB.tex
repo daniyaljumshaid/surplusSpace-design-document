@@ -1,8 +1,9 @@
 % This file is included by uet_thesis.tex.
-% Replace blue placeholders and remove example text before submission.
 
 \chapter{Supporting Specifications \applicability{If applicable}}
 \label{app:specs}
+% Let long endpoint paths wrap after hyphens.
+\expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks\do\-}
 
 \section{Data Dictionary}
 \label{sec:data-dictionary}
@@ -11,7 +12,7 @@ types; enumerated types use the locked values in \fref{fig:class-screening}. All
 keys reject deletes, and all times are stored in UTC.
 
 {\footnotesize
-\begin{longtable}{@{}p{0.27\textwidth}p{0.18\textwidth}p{0.24\textwidth}p{0.25\textwidth}@{}}
+\begin{longtable}{@{}p{0.26\textwidth}p{0.17\textwidth}p{0.23\textwidth}p{0.24\textwidth}@{}}
 \caption{Data dictionary}\label{tab:data-dictionary}\\
 \toprule
 \textbf{Column} & \textbf{Type} & \textbf{Constraint} & \textbf{Meaning} \\
@@ -39,7 +40,7 @@ user\_\allowbreak{}id & uuid & FK users, unique & Applicant \\
 seller\_\allowbreak{}type & seller\_\allowbreak{}type & not null & Contractor, Builder, Material dealer, Individual \\
 business\_\allowbreak{}name & text & null if Individual &  \\
 business\_\allowbreak{}address & text & not null & Admin-only (PR-06) \\
-yard\_\allowbreak{}location & geography(Point) & not null & Map pin of the address \\
+yard\_\allowbreak{}location & geography(\allowbreak Point) & not null & Map pin of the address \\
 years\_\allowbreak{}in\_\allowbreak{}business & integer & null, $\geq 0$ &  \\
 shop\_\allowbreak{}photo\_\allowbreak{}key & text & null & Object-storage key \\
 link & text & null & Website or social page \\
@@ -65,14 +66,14 @@ revoked\_\allowbreak{}at & timestamptz & null & Sign-out, rotation, suspension \
 \multicolumn{4}{@{}l}{\textbf{saved\_searches}} \\
 id & uuid & PK &  \\
 user\_\allowbreak{}id & uuid & FK users & Customer \\
-centre & geography(Point) & not null &  \\
+centre & geography(\allowbreak Point) & not null &  \\
 radius\_\allowbreak{}km & integer & not null, one of the zone's options &  \\
 max\_\allowbreak{}price & numeric(12,2) & null, $>0$ & Rs \\
 materials & material[] & null & Empty means all \\
 \multicolumn{4}{@{}l}{\textbf{zones}} \\
 id & uuid & PK &  \\
 name & text & not null, unique & e.g. Lahore \\
-centre & geography(Point) & not null &  \\
+centre & geography(\allowbreak Point) & not null &  \\
 radius\_\allowbreak{}km & integer & not null, $>0$ &  \\
 is\_\allowbreak{}active & boolean & not null & Lots only inside active zones (FR-82) \\
 \multicolumn{4}{@{}l}{\textbf{categories}} \\
@@ -89,7 +90,7 @@ quantity & numeric(12,2) & not null, $>0$ & In the category's unit \\
 description & text & not null, max 800 chars &  \\
 total\_\allowbreak{}price & numeric(12,2) & not null, $>0$ & Rs \\
 age\_\allowbreak{}band & age\_\allowbreak{}band & not null &  \\
-pickup\_\allowbreak{}location & geography(Point) & not null, GiST index & Shown exactly only after reserving (FR-75) \\
+pickup\_\allowbreak{}location & geography(\allowbreak Point) & not null, GiST index & Shown exactly only after reserving (FR-75) \\
 status & lot\_\allowbreak{}status & not null & Nine locked statuses \\
 version & integer & not null & Checked on reserve and edit \\
 published\_\allowbreak{}at & timestamptz & null & Starts the 30-day expiry \\
@@ -214,7 +215,7 @@ token), 403 (wrong role), 404 (not found or not visible), 429 (rate limit), and 
 The last column maps each endpoint to the sequence-diagram message it implements.
 
 {\footnotesize
-\begin{longtable}{@{}p{0.27\textwidth}p{0.12\textwidth}p{0.19\textwidth}p{0.27\textwidth}p{0.08\textwidth}@{}}
+\begin{longtable}{@{}p{0.26\textwidth}p{0.11\textwidth}p{0.18\textwidth}p{0.25\textwidth}p{0.08\textwidth}@{}}
 \caption{REST API contract}\label{tab:rest-api}\\
 \toprule
 \textbf{Method and path} & \textbf{Roles} & \textbf{Request} & \textbf{Response; specific errors} & \textbf{SD} \\
@@ -371,7 +372,7 @@ on every join and send (SEC-21). Negotiation uses the same messages as chat
 shows who receives the event. The hub also delivers in-app notifications (FR-76) to signed-in users.
 
 {\small
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.11\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
 \caption{Chat hub events}\label{tab:chat-hub-events}\\
 \toprule
 \textbf{ID} & \textbf{Event name} & \textbf{Direction} & \textbf{Payload} & \textbf{Who may use it} \\

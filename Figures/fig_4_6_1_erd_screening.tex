@@ -15,11 +15,11 @@
 \tbl{ref}{144,-112}{reference\_prices}{\pk{id}\\\fk{category\_id}\\price\_per\_unit\\source\\price\_date\\\fk{changed\_by}\\changed\_at}
 \draw (lot.west |- 0,-8) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{3..5} (photo.east |- 0,-8);
 \draw (lot.east |- 0,-8) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{0..*} (rev.west |- 0,-8);
-\draw (lot.south) -- node[m,right,pos=.2]{1}node[m,right,pos=.8]{0..*} (ai.north);
+\draw (lot.south) -- node[m,right,fill=none,pos=.2]{1}node[m,right,fill=none,pos=.8]{0..*} (ai.north);
 \draw (ai.west |- 0,-48) -- node[m,above,pos=.12]{1}node[m,above,pos=.88]{3..5} (pa.east |- 0,-48);
-\draw (pa.north) -- node[m,right,pos=.2]{0..*}node[m,right,pos=.8]{1} (photo.south);
-\draw (pa.south) -- node[m,right,pos=.2]{1}node[m,right,pos=.8]{0..*} (def.north);
-\draw (rev.south) -- node[m,right,pos=.2]{0..*}node[m,right,pos=.8]{1 (admin)} (user.north);
+\draw (pa.north) -- node[m,right,fill=none,pos=.2]{0..*}node[m,right,fill=none,pos=.8]{1} (photo.south);
+\draw (pa.south) -- node[m,right,fill=none,pos=.2]{1}node[m,right,fill=none,pos=.8]{0..*} (def.north);
+\draw (rev.south) -- node[m,right,fill=none,pos=.2]{0..*}node[m,right,fill=none,pos=.8]{1 (admin)} (user.north);
 \draw (ai.east |- 0,-52) -- node[m,above,pos=.5]{1} (108,-52) |- node[m,above,pos=.85]{0..*} (rev.west |- 0,-30);
 \draw (ref.west |- 0,-120) -- node[m,above,pos=.12]{0..*}node[m,above,pos=.88]{1} (cat.east |- 0,-120);
 \node[draw,fill=white,align=left,text width=62mm,anchor=north west] at (-22,-130)
